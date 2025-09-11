@@ -8,14 +8,14 @@ Install 'remotes' package if needed:
 install.packages("remotes")
 
 Install MitoBEAP from GitHub:
-remotes::install_github("NextGenSeek/testMitoBEAP")
+remotes::install_github("NextGenSeek/MitoBEAP")
 
 ## Option 2 : 
 Install 'devtools' if needed:
 install.packages("devtools")
 
 Install MitoBEAP from GitHub:
-devtools::install_github("NextGenSeek/testMitoBEAP")
+devtools::install_github("NextGenSeek/MitoBEAP")
 
 # How to use MitoBEAP
 Check the vignette
