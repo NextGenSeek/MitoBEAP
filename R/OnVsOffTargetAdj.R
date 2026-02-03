@@ -109,5 +109,5 @@ label_size <- dplyr::case_when(
   check_create_dir(the_dir)
 
   ggplot2::ggsave(file = file.path(the_dir, "OnOffTarget_Adj.png"), plot = p, width = 8, height = 6)
-  ggplot2::ggsave(filename = file.path(the_dir, "OnOffTarget_Adj.pdf"), plot = p, width = 8, height = 6, device = cairo_pdf)
+  ggplot2::ggsave(filename = file.path(the_dir, "OnOffTarget_Adj.pdf"), plot = p, width = 8, height = 6)
 }
