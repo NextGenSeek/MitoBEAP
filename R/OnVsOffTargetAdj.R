@@ -70,17 +70,21 @@ OnVsOffTargetAdj = function(xlab = "Off target effects (%)",
   }
 
 # Dynamic font size based on SampleName length
-Overview_adj$label_size <- scales::rescale(
-  nchar(Overview_adj$SampleName),
-  to = c(6, 3),                    # max → min text size
-  from = range(nchar(Overview_adj$SampleName))
+# Determine global label size based on longest SampleName
+max_label_length <- max(nchar(Overview_adj$SampleName), na.rm = TRUE)
+
+label_size <- dplyr::case_when(
+  max_label_length <= 10 ~ 6,
+  max_label_length <= 15 ~ 5,
+  max_label_length <= 20 ~ 4,
+  TRUE                  ~ 3
 )
-  
   # Create scatterplot
   p <- ggplot(Overview_adj, aes(x = `Adj_percentages`, y = `On target %`, colour = label_column)) +
     geom_point(size = 3, aes(color = label_column)) +
     ggtitle(ggtitle) +
-    geom_text_repel(aes(label = SampleName,color = label_column,size = label_size), box.padding = unit(0.3, "lines"), show.legend = FALSE) +
+    geom_text_repel(
+    label = Overview_adj$SampleName, size = label_size,aes(color = label_column),box.padding = unit(0.3, "lines")) +
     scale_color_manual(values = color_palette) +
     theme(legend.position = "right") +
     theme(axis.text = element_text(size = 12)) +
