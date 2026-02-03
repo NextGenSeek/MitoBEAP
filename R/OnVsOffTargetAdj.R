@@ -69,11 +69,18 @@ OnVsOffTargetAdj = function(xlab = "Off target effects (%)",
     color_palette <- NULL
   }
 
+# Dynamic font size based on SampleName length
+Overview_adj$label_size <- scales::rescale(
+  nchar(Overview_adj$SampleName),
+  to = c(6, 3),                    # max → min text size
+  from = range(nchar(Overview_adj$SampleName))
+)
+  
   # Create scatterplot
   p <- ggplot(Overview_adj, aes(x = `Adj_percentages`, y = `On target %`, colour = label_column)) +
     geom_point(size = 3, aes(color = label_column)) +
     ggtitle(ggtitle) +
-    geom_text_repel(label = Overview_adj$SampleName, size = 6, aes(color = label_column), box.padding = unit(0.3, "lines")) +
+    geom_text_repel(aes(label = SampleName,color = label_column,size = label_size), box.padding = unit(0.3, "lines"), show.legend = FALSE) +
     scale_color_manual(values = color_palette) +
     theme(legend.position = "right") +
     theme(axis.text = element_text(size = 12)) +
@@ -83,6 +90,7 @@ OnVsOffTargetAdj = function(xlab = "Off target effects (%)",
     expand_limits(x = 0, y = 0) +
     xlab(xlab) +
     ylab(ylab) +
+    scale_size_identity() +
     if (condition) guides(color = guide_legend(title = "Condition")) else guides(color = "none")  # Show legend only when condition is TRUE
 
   print(p)
