@@ -53,6 +53,7 @@ CombineOnTarget <- function(OnTargetFiles) {
 
   # --------------------------------------------------------------------------
   assign("All_ontarget", df, envir = .GlobalEnv)
+  assign("OnTarget", df, envir = .GlobalEnv)
   readr::write_csv(df, file.path(out_dir, "OnTarget.csv"))
   invisible(NULL)
 }
