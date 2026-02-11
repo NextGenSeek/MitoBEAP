@@ -17,6 +17,7 @@ OnTargetCalcABE = function(MinXFiles) {
   }
 
   process_file <- function(input) {
+    message("Processing: ", input)
     data <- read.delim(input, row.names = NULL, header = T, sep = ",")
 
     # Install the 'splitstackshape' package if needed: install.packages("splitstackshape")
