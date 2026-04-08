@@ -21,4 +21,4 @@ devtools::install_github("NextGenSeek/MitoBEAP")
 Check the vignette
 
 # Example files
-The folder ExampleFiles contains the files that were used in the paper: Development of the Mitochondrial Base Editor Analysis Package (MitoBEAP) by Van Haute L. et al.
+The folder ExampleFiles contains the files that were used in the paper: Development of the Mitochondrial Base Editor Analysis Package (MitoBEAP) by Mutti. et al.
