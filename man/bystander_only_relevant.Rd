@@ -24,11 +24,11 @@ bystander_only_relevant(
 No return value. Saves a heatmap plot to `./Plots/HeatmapBystanderEffect_only_relevant.png`.
 }
 \description{
-Creates a heatmap of adjusted heteroplasmy percentages for potential target positions surrounding the on-target site.
+Creates a heatmap of adjusted heteroplasmy percentages for potential target sites surrounding the on-target site.
 Highlights potential bystander effects within a user-defined window.
 }
 \examples{
 \dontrun{
-Bystander(BystanderDistance = 10)
+bystander_only_relevant(BystanderDistance = 10)
 }
 }

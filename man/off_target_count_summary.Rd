@@ -5,12 +5,17 @@
 \title{off_target_count_summary}
 \usage{
 off_target_count_summary(
+  Adj = get("Adj", envir = .GlobalEnv),
+  SampleList = get("SampleList", envir = .GlobalEnv),
   lower = 0.1,
   upper = 70,
   condition_levels = c("control", "treated"),
   out_dir = ".",
   csv_prefix = "MutationCount",
-  plot_file = "MutationCount_grouped.pdf"
+  plot_file = "MutationCount_grouped.pdf",
+  make_plot = TRUE,
+  combined_col_in_samplelist = "CombinedName",
+  condition_col = "Condition"
 )
 }
 \arguments{
