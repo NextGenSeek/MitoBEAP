@@ -16,7 +16,7 @@ knitr::opts_chunk$set(warning = FALSE, message = FALSE)
 
 ## Introduction
 
-MitoBEAP is an R package designed to analyze mitochondrial base editing data from DdCBE experiments. It calculates both on-target and off-target editing efficiencies, visualizes editing patterns, and produces reports for submission to data repositories.
+MitoBEAP is an R package designed to analyze mitochondrial base editing data from gene editing experiments, both mitochondrial cytosine base editors (mitoCBE) such as DdCBE and adenine base editors (mitoABE) such as TALED. It calculates both on-target and off-target editing efficiencies, visualizes editing patterns, and produces reports for submission to data repositories.
 
 The package is optimized for input from VarScan2 output in .csv format, and includes functionality for depth filtering, control heteroplasmy adjustment, heatmaps, and summary statistics.
 
@@ -43,7 +43,9 @@ library(RColorBrewer)
 library(MitoBEAP); packageVersion("MitoBEAP")
 ```
 
-For this tutorial, we're using files included with the package. If you want to use your own files, you can upload your own files. If the coverage of a region is too low, a potential single read error will result in high "off-target percentages". Therefore, MitoBEAP requires the user to define the minimum depth or coverage you want to include. We would recommend not to include positions below a depth of 100. Depending on your experiment or amplicon choice, you might also be interested in a certain region only.
+For this tutorial, we're using files included with the package. If you want to use your own files, you can upload your own files. 
+
+If the coverage of a region is too low, a potential single read error will result in high "off-target percentages". Therefore, MitoBEAP requires the user to define the minimum depth or coverage you want to include. We would recommend not to include positions below a depth of 100. Depending on your experiment or amplicon choice, you might also be interested in a certain region only.
 
 To begin, list your raw VarScan2 output files and define a minimum depth threshold for filtering. Skip this step if you have a different type of input files:
 
@@ -98,7 +100,7 @@ head(SampleList)
 
 ## Run Base Editing Analysis
 
-Next, we'll perform the basic calculations. For this step, there are two variants, depending on the input files (VarScan2 as in the example) or alternative input files. As this tool is specifically designed to analyse DdCBE treated samples or adenine base editors (ABE), it will only take C-T and G-A (CBE) or A-T to G-C (ABE) conversions into account and will ignore other changes, as those are existing variant or technical read errors. In this step, you also have to assign the on-target position in your analysis. This matches the position of the reference genome you used to create the original input files.
+Next, we'll perform the basic calculations. For this step, there are two variants, depending on the input files (VarScan2 as in the example) or alternative input files. As this tool is specifically designed to analyse cytosine base editors (CBE) or adenine base editors (ABE), it will only take C-T and G-A (CBE) or A-T to G-C (ABE) conversions into account and will ignore other changes, as those are existing variants or technical errors. In this step, you also have to assign the on-target position for your analysis. This matches the position of the reference genome you used to create the original input files.
 
 The function below can be used if you use VarScan2 input files, like in our example. Otherwise, use the subsequent code (FilterCGEdits/FilterATEdits).
 ```{r eval=FALSE}
@@ -127,7 +129,7 @@ OntargetPosition <- 1561 #CHANGE ME
 lapply(MinXFiles, OnTargetCalcCBE)
 ```
 
-The following shunk should NOT be run if you follow the VarScan2 script. If you have different input files, make sure they're in the correct format.MitoBEAP expects csv files with the following columns: chrom, position, ref_base, depth, base (= alternative base), reads, percentage. 
+The following shunk should NOT be run if you follow the VarScan2 script. If you have different input files, make sure they're in the correct format. MitoBEAP expects .csv files with the following columns: chrom, position, ref_base, depth, base (= alternative base), reads, percentage. 
 
 ```{r eval=FALSE}
 # Select input files
@@ -226,12 +228,6 @@ DepthFile() # default is from start to end
 ## Visualization options
 
 MitoDD also has several options to easily visualize the samples. One of the simples figures is a barchart to show the on-target base editing for each sample:
-
-#```{r echo=FALSE, results='markup'}
-#setwd("/Users/lindadmin/Desktop/SamplesForMitoDD")
-#CreateBarChart(data_type = "OnTarget", colour = "lightgreen")
-#```
-
 
 ```{r eval=FALSE}
 CreateBarChart(data_type = "OnTarget", colour = "lightgreen")
@@ -348,13 +344,13 @@ off_target_count_summary()
 # default plot_file = "MutationCount_grouped.pdf"
 ```
 
-```{r, echo=FALSE, dpi=72, out.width='70%'}
+```{r, echo=FALSE, dpi=72, out.width='60%'}
 knitr::include_graphics("/Users/lindadmin/Desktop/Rtest/MitoBEAP/vignettes/Overview/MutationCount_grouped.pdf")
 ```
 
 ## Heatmap of Bystander Editing
 
-DdCBE base editing can be very specific, bystander mutations can often be detected in the activity window of the base editor, so this requires extra attention. 
+Base editing can be very specific, but bystander mutations can often be detected in the activity window of the base editor, so this requires extra attention. 
 
 Visualize editing levels near the on-target position:
 
@@ -375,7 +371,7 @@ Bystander(BystanderDistance = 10,
 
 This creates the desired heatmap in the folder Plots
 
-```{r, echo=FALSE, dpi=72, out.width='60%'}
+```{r, echo=FALSE, dpi=72, out.width='70%'}
 knitr::include_graphics("/Users/lindadmin/Desktop/Rtest/MitoBEAP/vignettes/Overview/HeatmapBystanderEffect.png")
 ```
 
@@ -390,11 +386,8 @@ bystander_only_relevant(BystanderDistance = 10,
                         y= NONE)
 ```
 
-```{r echo=FALSE}
-setwd("/Users/lindadmin/Desktop/SamplesForMitoDD/ExampleFiles/12S")
-bystander_only_relevant(BystanderDistance = 10,
-                        title = "Bystander effect",
-                        x= "mtDNA position")
+```{r, echo=FALSE, dpi=72, out.width='60%'}
+knitr::include_graphics("/Users/lindadmin/Desktop/Rtest/MitoBEAP/vignettes/Overview/HeatmapBystanderEffect_only_relevant.png")
 ```
 
 
