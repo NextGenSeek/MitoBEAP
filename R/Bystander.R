@@ -55,6 +55,18 @@ ggplot(AdjBy, aes(x = position, y = SampleName, fill = AdjPercentage)) +
                      sec.axis = dup_axis(name = "",
                                          labels = secondary_labels)) +
   guides(fill = guide_colorbar(title = "Percentage (%)")) +
+  geom_rect(
+    aes(
+      xmin = OntargetPosition - 0.5,
+      xmax = OntargetPosition + 0.5,
+      ymin = -Inf,
+      ymax = Inf
+    ),
+    inherit.aes = FALSE,
+    color = "black",
+    fill = NA,
+    linewidth = 1
+  ) +
   coord_fixed() +
   theme(plot.title = element_text(hjust = 0.5),
         axis.text.x = element_text(angle = 45, hjust = 1),

@@ -1,10 +1,10 @@
 ---
 title: "MitoBEAP"
 author: "Lindsey Van Haute"
-date: "2025-08-08"
+date: "2026-04-09"
 output:
-  word_document: default
   pdf_document: default
+  word_document: default
   html_document: default
 ---
 
@@ -49,7 +49,7 @@ To begin, list your raw VarScan2 output files and define a minimum depth thresho
 
 ```{r echo=F}
 ###### NOT VISIBLE, BUT SCRIPT WILL RUN
-setwd("/Users/lindadmin/Desktop/SamplesForMitoDD")
+setwd("/Users/lindadmin/Desktop/SamplesForMitoDD/ExampleFiles/12S")
 # List input files
 RawCountFiles <- list.files("./raw", 
                             pattern = "*.csv",
@@ -116,7 +116,7 @@ lapply(MinXFiles, OnTargetCalcABE)
 
 ```{r echo=FALSE, results='hide'}
 # NOT VISIBLE
-setwd("/Users/lindadmin/Desktop/SamplesForMitoDD")
+setwd("/Users/lindadmin/Desktop/SamplesForMitoDD/ExampleFiles/12S")
 # List files. If you didn't change anything, you can just use the line below:
 MinXFiles <- list.files("./minimum",full.names = TRUE) #Is there a way to avoid this line?
 
@@ -147,7 +147,7 @@ Use the following functions to generate overall summaries of coverage, on-target
 
 ```{r echo=FALSE, results='hide'}
 # NOT VISIBLE
-setwd("/Users/lindadmin/Desktop/SamplesForMitoDD")
+setwd("/Users/lindadmin/Desktop/SamplesForMitoDD/ExampleFiles/12S")
 # If you didn't change anything, you can use the lines below
 CoverageFiles <- list.files("./Coverage", 
                             pattern = "*.txt",
@@ -188,7 +188,7 @@ This creates All_Ontarget_mean_Coverage.csv in the ./Overview directory.
 
 ```{r, echo=FALSE}
 # Script NOT VISIBLE, but results are
-setwd("/Users/lindadmin/Desktop/SamplesForMitoDD")
+setwd("/Users/lindadmin/Desktop/SamplesForMitoDD/ExampleFiles/12S")
 Overview <- read.csv("/Users/lindadmin/Desktop/Rtest/MitoBEAP/vignettes/All_Ontarget_mean_Coverage.csv")
 Overview
 ```
@@ -198,7 +198,7 @@ Overview
 MitoBEAP also has the option to generate an excel spreadsheet with all data, which could be used as overview table when uploading the raw fastq files to a data repository. A spreadsheet can be easily created by the following command:
 
 ```{r echo=FALSE}
-setwd("/Users/lindadmin/Desktop/SamplesForMitoDD")
+setwd("/Users/lindadmin/Desktop/SamplesForMitoDD/ExampleFiles/12S")
 CreateSpreadsheet()
 ```
 
@@ -213,7 +213,7 @@ After running this command, the spreadsheet should now be available in the folde
 Some users might also find the following file useful: The function DepthFile generates a .csv file that shows the heteroplasmy percentage as well as the coverage depth for each position and each sample. Default settings show the entire genome, but users can specify the region of interest. The generated file can also be used to generate heatmaps or other figures using excel, Prism or other software packages.
 
 ```{r echo=FALSE}
-setwd("/Users/lindadmin/Desktop/SamplesForMitoDD")
+setwd("/Users/lindadmin/Desktop/SamplesForMitoDD/ExampleFiles/12S")
 DepthFile(fromP = 1, toP = 500) # default is from start to end
 ```
 
@@ -231,6 +231,7 @@ MitoDD also has several options to easily visualize the samples. One of the simp
 #setwd("/Users/lindadmin/Desktop/SamplesForMitoDD")
 #CreateBarChart(data_type = "OnTarget", colour = "lightgreen")
 #```
+
 
 ```{r eval=FALSE}
 CreateBarChart(data_type = "OnTarget", colour = "lightgreen")
@@ -260,7 +261,7 @@ knitr::include_graphics("/Users/lindadmin/Desktop/Rtest/MitoBEAP/vignettes/Overv
 To visualize off-target effects for each sample individually, scatter plots are very helpful. Again, these can easily be generated. The user can specify to label the dots above a certain level by position.
 
 ```{r echo=FALSE}
-setwd("/Users/lindadmin/Desktop/SamplesForMitoDD")
+setwd("/Users/lindadmin/Desktop/SamplesForMitoDD/ExampleFiles/12S")
 DdCBE_df()
 AdjScatter(labelPercentage = 10) # labelPercentage = default = 10
 ```
@@ -282,7 +283,7 @@ The user can also further optimize the figure, by removing dots below a certain 
 
 To exclude polymorphic positions present in controls:
 ```{r echo=FALSE}
-setwd("/Users/lindadmin/Desktop/SamplesForMitoDD")
+setwd("/Users/lindadmin/Desktop/SamplesForMitoDD/ExampleFiles/12S")
 DdCBE_df(max_threshold = 90, controls = 3)
 AdjScatter(min_threshold = 1.2, labelPercentage = 10) # labelPercentage = default = 10
 ```
@@ -299,7 +300,7 @@ knitr::include_graphics("/Users/lindadmin/Desktop/Rtest/MitoBEAP/vignettes/Overv
 The user might also want to recalculate off-target averages and create a barchart with the above specified maximum heteroplasmy levels in controls. 
 
 ```{r echo=FALSE}
-setwd("/Users/lindadmin/Desktop/SamplesForMitoDD")
+setwd("/Users/lindadmin/Desktop/SamplesForMitoDD/ExampleFiles/12S")
 # Recalculate off-target barchart with this max_threshold
 AdjCreateBarChart(colour = "skyblue")
 ```
@@ -327,7 +328,7 @@ OnVsOffTargetAdj() #standard = Condition = TRUE, FALSE= no condition information
 ```
 
 ```{r echo=FALSE, dpi=72, out.width='60%'}
-setwd("/Users/lindadmin/Desktop/SamplesForMitoDD")
+setwd("/Users/lindadmin/Desktop/SamplesForMitoDD/ExampleFiles/12S")
 OnVsOffTargetAdj() #standard = Condition = TRUE, FALSE= no condition information
 ```
 
@@ -367,7 +368,7 @@ Bystander(BystanderDistance = 10,
 ```
 
 ```{r echo=FALSE}
-setwd("/Users/lindadmin/Desktop/SamplesForMitoDD")
+setwd("/Users/lindadmin/Desktop/SamplesForMitoDD/ExampleFiles/12S")
 Bystander(BystanderDistance = 10,
           x= "mtDNA position")
 ```
@@ -377,6 +378,25 @@ This creates the desired heatmap in the folder Plots
 ```{r, echo=FALSE, dpi=72, out.width='60%'}
 knitr::include_graphics("/Users/lindadmin/Desktop/Rtest/MitoBEAP/vignettes/Overview/HeatmapBystanderEffect.png")
 ```
+
+Alternatively, to create this heatmap with only the potential target sites (CG for CBE or AT for ABE) use the following function
+
+```{r eval=FALSE}
+# BystanderDistance()
+
+bystander_only_relevant(BystanderDistance = 10, 
+                        title = "Bystander effect",
+                        x= "mtDNA position",
+                        y= NONE)
+```
+
+```{r echo=FALSE}
+setwd("/Users/lindadmin/Desktop/SamplesForMitoDD/ExampleFiles/12S")
+bystander_only_relevant(BystanderDistance = 10,
+                        title = "Bystander effect",
+                        x= "mtDNA position")
+```
+
 
 ## Histogram of off-target effect
 
@@ -389,7 +409,7 @@ plot_OffTarget_histograms(bw = 0.1, min_pct = 0.1, max_pct = 5)
 ```
 
 ```{r echo=FALSE, dpi=72, out.width='60%'}
-setwd("/Users/lindadmin/Desktop/SamplesForMitoDD")
+setwd("/Users/lindadmin/Desktop/SamplesForMitoDD/ExampleFiles/12S")
 plot_OffTarget_histograms(bw = 0.1, min_pct = 0.1, max_pct = 5)
 ```
 
