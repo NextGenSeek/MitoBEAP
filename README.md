@@ -22,6 +22,9 @@ install.packages("devtools")
 Install MitoBEAP from GitHub:
 devtools::install_github("NextGenSeek/MitoBEAP")
 
+## Dependencies:
+All dependencies are listed in the DESCRIPTION file and installed automatically via devtools.
+
 # How to use MitoBEAP
 Check the vignette
 
