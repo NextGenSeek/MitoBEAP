@@ -1,7 +1,10 @@
 # MitoBEAP
 MitoBEAP is an R package designed to analyze mitochondrial base editing data from DdCBE experiments. It calculates both on-target and off-target editing efficiencies, visualizes editing patterns, and produces reports for submission to data repositories.
 
-![image](https://github.com/NextGenSeek/MitoBEAP/blob/main/images/HeatmapBystanderEffect.png)
+<p align="center">
+  <img src="images/HeatmapBystanderEffect.png" width="45%">
+  <img src="images/OnOffTarget_Adj.png" width="29%">
+</p>
 
 # How to Install MitoBEAP
 
