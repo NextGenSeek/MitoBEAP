@@ -56,14 +56,18 @@ vignette("MitoBEAP")
 Information can be found in [docs](/docs)
 Detailed usage instructions and example workflows are provided in the package vignette.
 
-# Example files
+## Example files
 The ExampleFiles folder contains example datasets used in the manuscript:
 Development of the Mitochondrial Base Editor Analysis Package (MitoBEAP) by Mutti et al.
 These files can be used to reproduce the analyses and figures shown in the vignette.
 
+---
+
 # Citations
 If you use MitoBEAP in your work, please cite:
 Mutti et al. Development of the Mitochondrial Base Editor Analysis Package (MitoBEAP).
+
+---
 
 # License
 This package is released under the MIT License. See `LICENSE.md` for details.
