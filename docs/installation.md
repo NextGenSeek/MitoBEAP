@@ -9,15 +9,16 @@ remotes::install_github("NextGenSeek/MitoBEAP")
 
 ## Install Required Dependencies
 
-If prompted, allow installation of required packages.
-
-Common dependencies include:
+If prompted, allow installation of required packages:
 
 * dplyr
 * ggplot2
+* ggrepel
 * tidyr
 * readr
 * stringr
+* RColorBrewer
+* tibble
 * patchwork
 * knitr
 * rmarkdown
