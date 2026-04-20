@@ -53,6 +53,7 @@ vignette("MitoBEAP")
 ```
 
 ## Documentation
+Information can be found in [docs](/docs)
 Detailed usage instructions and example workflows are provided in the package vignette.
 
 # Example files
