@@ -47,13 +47,13 @@ Load the package:
 ```r
 library(MitoBEAP)
 ```
-To see a full worked example:
+To see an example, check [docs/quickstart.md](/docs/quickstart.md) or to see a detailed example:
 ```r
 vignette("MitoBEAP")
 ```
 
 ## Documentation
-Information can be found in [docs](/docs)
+Information can be found in [docs](/docs). 
 Detailed usage instructions and example workflows are provided in the package vignette.
 
 ## Example files
