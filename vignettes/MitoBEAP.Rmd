@@ -120,7 +120,7 @@ lapply(MinXFiles, OnTargetCalcABE)
 # NOT VISIBLE
 setwd("/Users/lindadmin/Desktop/SamplesForMitoDD/ExampleFiles/12S")
 # List files. If you didn't change anything, you can just use the line below:
-MinXFiles <- list.files("./minimum",full.names = TRUE) #Is there a way to avoid this line?
+MinXFiles <- list.files("./minimum",full.names = TRUE)
 
 # On-target position:
 OntargetPosition <- 1561 #CHANGE ME 
@@ -238,11 +238,6 @@ knitr::include_graphics("/Users/lindadmin/Desktop/Rtest/MitoBEAP/vignettes/Overv
 ```
 
 Or a barchart showing the mean off-target levels
-
-#```{r echo=FALSE, results='markup'}
-#setwd("/Users/lindadmin/Desktop/SamplesForMitoDD")
-#CreateBarChart(data_type = "OffTarget", colour = "skyblue")
-#```
 
 ```{r eval=FALSE}
 CreateBarChart(data_type = "OffTarget", colour = "skyblue")
