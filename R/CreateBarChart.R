@@ -23,11 +23,11 @@ CreateBarChart <- function(data_type = c("OnTarget", "OffTarget"),
   ## ------------------------------------------------------------------------
   ## 1.  Pick the source object and the *name* of the percentage column
   ## ------------------------------------------------------------------------
-  if (data_type == "All_ontarget") {
+  if (data_type == "OnTarget") {
     if (!exists("OnTarget", envir = .GlobalEnv)) {
       stop("Object 'OnTarget' not found.")
     }
-    df         <- get("OnTarget", envir = .GlobalEnv)
+    df         <- get("All_ontarget", envir = .GlobalEnv)
     perc_col   <- "On target %"
     ylab_title <- "On target %"
 
