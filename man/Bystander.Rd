@@ -10,8 +10,7 @@ Bystander(
   xlab = "mtDNA position",
   ylab = " ",
   fill_colours = c("white", "lightblue", "darkblue"),
-  fill_values  = c(0, 30, 100),
-  use_gradientn = TRUE)
+  fill_values  = c(0, 30, 100)
 }
 \arguments{
 \item{BystanderDistance}{Integer. Number of positions upstream/downstream from the on-target site to include.}
@@ -25,8 +24,6 @@ Bystander(
 \item{fill_colours}{Character vector of colours used for the heatmap fill scale when \code{use_gradientn = TRUE}. The number of colours should match the number of values supplied in \code{fill_values}. Default is \code{c("white", "lightblue", "darkblue")}.}
 
 \item{fill_values}{Numeric vector specifying the percentages that correspond to the colours in \code{fill_colours}. Values are automatically rescaled for use in \code{ggplot2::scale_fill_gradientn()}. Default is \code{c(0, 30, 100)}.}
-
-\item{use_gradientn}{Logical. If \code{TRUE}, uses \code{ggplot2::scale_fill_gradientn()} with user-defined 
 }
 \value{
 No return value. Saves a heatmap plot to `./Plots/HeatmapBystanderEffect.png`.
