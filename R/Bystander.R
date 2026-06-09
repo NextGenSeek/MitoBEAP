@@ -20,8 +20,7 @@ Bystander = function(BystanderDistance = 10,
                      xlab = "mtDNA position",
                      ylab = " ",
                      fill_colours = c("white", "lightblue", "darkblue"),
-                     fill_values  = c(0, 30, 100),
-                     use_gradientn = TRUE) {
+                     fill_values  = c(0, 30, 100)) {
 
   required <- c("Adj", "SampleList", "OntargetPosition")
   missing <- required[!sapply(required, exists, envir = .GlobalEnv)]
@@ -51,8 +50,11 @@ positions <- Adj$position[Adj$position >= (OntargetPosition - BystanderDistance)
 
 ggplot(AdjBy, aes(x = position, y = SampleName, fill = AdjPercentage)) +
   geom_tile(color = "white", lwd = 0.5, linetype = 1) +
-  scale_fill_gradient2(high = "darkblue", mid = "lightblue", low = "white",
-                       midpoint = 30, na.value = "grey96") +
+  scale_fill_gradientn(
+    colours = fill_colours,
+    values = scales::rescale(fill_values),
+    na.value = "grey96"
+  ) +
   scale_x_continuous(name = xlab,
                      breaks = positions,  # Align the breaks with your positions
                      sec.axis = dup_axis(name = "",
