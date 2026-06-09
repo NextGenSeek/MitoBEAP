@@ -8,8 +8,10 @@ Bystander(
   BystanderDistance = 10,
   title = "Bystander effect",
   xlab = "mtDNA position",
-  ylab = " "
-)
+  ylab = " ",
+  fill_colours = c("white", "lightblue", "darkblue"),
+  fill_values  = c(0, 30, 100),
+  use_gradientn = TRUE)
 }
 \arguments{
 \item{BystanderDistance}{Integer. Number of positions upstream/downstream from the on-target site to include.}
@@ -19,6 +21,12 @@ Bystander(
 \item{xlab}{Character. Label for the x-axis. Default is "mtDNA position".}
 
 \item{ylab}{Character. Label for the y-axis. Default is "" (blank).}
+
+\item{fill_colours}{Character vector of colours used for the heatmap fill scale when \code{use_gradientn = TRUE}. The number of colours should match the number of values supplied in \code{fill_values}. Default is \code{c("white", "lightblue", "darkblue")}.}
+
+\item{fill_values}{Numeric vector specifying the percentages that correspond to the colours in \code{fill_colours}. Values are automatically rescaled for use in \code{ggplot2::scale_fill_gradientn()}. Default is \code{c(0, 30, 100)}.}
+
+\item{use_gradientn}{Logical. If \code{TRUE}, uses \code{ggplot2::scale_fill_gradientn()} with user-defined 
 }
 \value{
 No return value. Saves a heatmap plot to `./Plots/HeatmapBystanderEffect.png`.
@@ -29,6 +37,13 @@ Highlights potential bystander effects within a user-defined window.
 }
 \examples{
 \dontrun{
+# Default heatmap
 Bystander(BystanderDistance = 10)
+
+# Custom colour scale
+Bystander(
+  fill_colours = c("white", "yellow", "red"),
+  fill_values = c(0, 10, 100)
+)
 }
 }
