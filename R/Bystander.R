@@ -18,7 +18,10 @@
 Bystander = function(BystanderDistance = 10,
                      title = "Bystander effect",
                      xlab = "mtDNA position",
-                     ylab = " ") {
+                     ylab = " ",
+                     fill_colours = c("white", "lightblue", "darkblue"),
+                     fill_values  = c(0, 30, 100),
+                     use_gradientn = TRUE) {
 
   required <- c("Adj", "SampleList", "OntargetPosition")
   missing <- required[!sapply(required, exists, envir = .GlobalEnv)]
