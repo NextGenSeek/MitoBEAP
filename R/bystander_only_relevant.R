@@ -20,7 +20,9 @@ bystander_only_relevant <- function(
     BystanderDistance = 10,
     title = "Bystander effect",
     xlab = "mtDNA position",
-    ylab = " "
+    ylab = " ",
+    fill_colours = c("white", "lightblue", "darkblue"),
+    fill_values  = c(0, 30, 100)
 ) {
   required <- c("Adj", "SampleList", "OntargetPosition")
   missing <- required[!sapply(required, exists, envir = .GlobalEnv)]
@@ -100,11 +102,9 @@ bystander_only_relevant <- function(
       }
     } +
 
-    ggplot2::scale_fill_gradient2(
-      high = "darkblue",
-      mid = "lightblue",
-      low = "white",
-      midpoint = 30,
+    ggplot2::scale_fill_gradientn(
+      colours = fill_colours,
+      values = scales::rescale(fill_values),
       na.value = "grey96"
     ) +
     ggplot2::scale_x_discrete(
