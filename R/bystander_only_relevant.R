@@ -118,7 +118,7 @@ bystander_only_relevant <- function(
       axis.text.x = ggplot2::element_text(angle = 45, hjust = 1),
       axis.text.y = ggplot2::element_text(size = 14),
 
-      # ✅ ADD X-AXIS LINE
+      # add x-axis line
       axis.line.x = ggplot2::element_line(color = "black", linewidth = 0.4),
       axis.ticks.x = ggplot2::element_line(color = "black"),
 
@@ -141,4 +141,6 @@ bystander_only_relevant <- function(
     width = 8,
     height = 6
   )
+
+  return(p)
 }

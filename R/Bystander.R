@@ -20,8 +20,7 @@ Bystander = function(BystanderDistance = 10,
                      xlab = "mtDNA position",
                      ylab = " ",
                      fill_colours = c("white", "lightblue", "darkblue"),
-                     fill_values  = c(0, 30, 100),
-                     use_gradientn = TRUE) {
+                     fill_values  = c(0, 30, 100)) {
 
   required <- c("Adj", "SampleList", "OntargetPosition")
   missing <- required[!sapply(required, exists, envir = .GlobalEnv)]
@@ -49,7 +48,7 @@ positions <- Adj$position[Adj$position >= (OntargetPosition - BystanderDistance)
 
 # Make heatmap from this file
 
-ggplot(AdjBy, aes(x = position, y = SampleName, fill = AdjPercentage)) +
+p <- ggplot(AdjBy, aes(x = position, y = SampleName, fill = AdjPercentage)) +
   geom_tile(color = "white", lwd = 0.5, linetype = 1) +
   scale_fill_gradientn(
     colours = fill_colours,
@@ -85,5 +84,7 @@ ggplot(AdjBy, aes(x = position, y = SampleName, fill = AdjPercentage)) +
 the_dir <- "./Plots"
 check_create_dir(the_dir)
 
-ggsave(filename = paste0(the_dir,"/","HeatmapBystanderEffect.png"),width = 8, height = 6)
+ggsave(filename = paste0(the_dir,"/","HeatmapBystanderEffect.png"),plot = p, width = 8, height = 6)
+
+return(p)
 }
