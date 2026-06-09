@@ -21,6 +21,10 @@ bystander_only_relevant(
 \item{xlab}{Character. Label for the x-axis. Default is "mtDNA position".}
 
 \item{ylab}{Character. Label for the y-axis. Default is "" (blank).}
+
+\item{fill_colours}{Character vector of colours used for the heatmap fill scale when \code{use_gradientn = TRUE}. The number of colours should match the number of values supplied in \code{fill_values}. Default is \code{c("white", "lightblue", "darkblue")}.}
+
+\item{fill_values}{Numeric vector specifying the percentages that correspond to the colours in \code{fill_colours}. Values are automatically rescaled for use in \code{ggplot2::scale_fill_gradientn()}. Default is \code{c(0, 30, 100)}.}
 }
 \value{
 No return value. Saves a heatmap plot to `./Plots/HeatmapBystanderEffect_only_relevant.png`.
