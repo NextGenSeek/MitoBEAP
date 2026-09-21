@@ -4,10 +4,16 @@
 \alias{CreateOverview}
 \title{CreateOverview}
 \usage{
-CreateOverview()
+CreateOverview(cleanup = FALSE)
+}
+\arguments{
+\item{cleanup}{Logical. If `TRUE`, intermediate output directories
+(`minimum`, `Coverage`, `mean`, `OnTarget`, and `percentages`) are
+deleted after the overview file is created. Default is `FALSE`.}
 }
 \value{
-No return value. Writes a combined summary CSV to the "Overview" directory.
+Invisibly returns the combined overview data frame. The same data
+  are written to "Overview/All_Ontarget_mean_Coverage.csv".
 }
 \description{
 Combines all processed data (`All_mean`, `OnTarget`, `Coverage`, and `SampleList`) into one overview table.

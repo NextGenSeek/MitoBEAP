@@ -4,7 +4,12 @@
 #' The table includes on-target %, off-target %, average coverage, sample names, and ordering.
 #' The result is saved to "All_Ontarget_mean_Coverage.csv" in the "Overview" directory.
 #'
-#' @return No return value. Writes a combined summary CSV to the "Overview" directory.
+#' @param cleanup Logical. If `TRUE`, intermediate output directories
+#'   (`minimum`, `Coverage`, `mean`, `OnTarget`, and `percentages`) are
+#'   deleted after the overview file is created. Default is `FALSE`.
+#'
+#' @return Invisibly returns the combined overview data frame. The same data
+#'   are written to "Overview/All_Ontarget_mean_Coverage.csv".
 #' @export
 #'
 #' @examples
@@ -12,7 +17,7 @@
 #' CreateOverview()
 #' }
 
-CreateOverview = function() {
+CreateOverview <- function(cleanup = FALSE) {
   # Check that required global objects exist
   required_objects <- c("All_mean", "OnTarget", "Coverage", "SampleList")
   missing <- required_objects[!sapply(required_objects, exists, envir = .GlobalEnv)]
@@ -60,13 +65,16 @@ if (!requireNamespace("dplyr", quietly = TRUE)) {
   }
   check_create_dir(the_dir)
 
-write_csv(All_mean,file = paste0(the_dir,"/", "All_Ontarget_mean_Coverage.csv", sep=""))
+  readr::write_csv(All_mean,file = paste0(the_dir,"/", "All_Ontarget_mean_Coverage.csv", sep=""))
 
-# Clean up temporary folders
-unlink("./minimum", recursive = TRUE)
-unlink("./Coverage", recursive = TRUE)
-unlink("./mean", recursive = TRUE)
-unlink("./OnTarget", recursive = TRUE)
-unlink("./percentages", recursive = TRUE)
+# Optionally clean up intermediate folders
+if (isTRUE(cleanup)) {
+  unlink("./minimum", recursive = TRUE)
+  unlink("./Coverage", recursive = TRUE)
+  unlink("./mean", recursive = TRUE)
+  unlink("./OnTarget", recursive = TRUE)
+  unlink("./percentages", recursive = TRUE)
+}
 
+return(invisible(All_mean))
 }
