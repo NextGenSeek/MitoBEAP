@@ -1,10 +1,11 @@
 #' FilterATEdits
 #'
-#' #' Filter for adenine base editing
+#' Filter for adenine base editing
 #'
 #' @param csvFiles list with csv files
 #' @param out_dir output directory. Default "./percentages"
-#' @return Describe what the function returns
+#' @return Invisibly returns `NULL`. Filtered A-to-G and T-to-C editing
+#'   results are written as CSV files to `out_dir`.
 #' @export
 FilterATEdits <- function(csvFiles, out_dir = "./percentages") {
   # ── 1. Safety checks ────────────────────────────────────────────────────────
@@ -24,7 +25,7 @@ FilterATEdits <- function(csvFiles, out_dir = "./percentages") {
     if (!all(req_cols %in% names(dat)))
       stop(sprintf("File %s is missing one or more required columns.", f))
 
-    # ── 3a. Keep only C→T and G→A edits
+    # ── 3a. Keep only A→G and T→C edits
     edits <- subset(
       dat,
       (ref_base == "A" & base == "G") |

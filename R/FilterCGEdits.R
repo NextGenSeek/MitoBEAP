@@ -5,7 +5,9 @@
 #' @param csvFiles list with csv files
 #' @param OntargetPosition Numeric; position within the genome
 #' @param out_dir_base output directory. Default "./percentages"
-#' @return Describe what the function returns
+#' @return Invisibly returns `NULL`. Processed output files are written to
+#'   the `percentages`, `mean`, `OnTarget`, `Coverage`, and `AllPositions`
+#'   directories within `out_dir_base`.
 #' @export
 FilterCGEdits <- function(csvFiles,
                           OntargetPosition,
@@ -20,12 +22,13 @@ FilterCGEdits <- function(csvFiles,
   req_cols <- c("chrom","position","ref_base","depth",
                 "base","reads","percentage")
 
-  mkdir <- function(path) if (!dir.exists(path)) dir.create(path, recursive = TRUE)
-
   # Prepare folders
-  paths <- file.path(out_dir_base,
-                     c("percentages","mean","OnTarget","Coverage","AllPositions"))
-  vapply(paths, mkdir, FUN.VALUE = logical(1))
+  paths <- file.path(
+    out_dir_base,
+    c("percentages", "mean", "OnTarget", "Coverage", "AllPositions")
+  )
+
+  invisible(lapply(paths, dir.create, recursive = TRUE, showWarnings = FALSE))
 
   # ────────────────────────────────────────────────────────────────────────────
   #  2.  Main loop per file

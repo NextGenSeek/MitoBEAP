@@ -12,8 +12,9 @@ FilterATEdits(csvFiles, out_dir = "./percentages")
 \item{out_dir}{output directory. Default "./percentages"}
 }
 \value{
-Describe what the function returns
+Invisibly returns `NULL`. Filtered A-to-G and T-to-C editing
+  results are written as CSV files to `out_dir`.
 }
 \description{
-#' Filter for adenine base editing
+Filter for adenine base editing
 }

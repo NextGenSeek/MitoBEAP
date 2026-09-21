@@ -14,7 +14,9 @@ FilterCGEdits(csvFiles, OntargetPosition, out_dir_base = ".")
 \item{out_dir_base}{output directory. Default "./percentages"}
 }
 \value{
-Describe what the function returns
+Invisibly returns `NULL`. Processed output files are written to
+  the `percentages`, `mean`, `OnTarget`, `Coverage`, and `AllPositions`
+  directories within `out_dir_base`.
 }
 \description{
 Filter for CG editing
