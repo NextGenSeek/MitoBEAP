@@ -9,6 +9,12 @@ CombineOnTarget(OnTargetFiles)
 \arguments{
 \item{OnTargetFiles}{Character vector of file paths to *_ontarget.txt files.}
 }
+\value{
+A data frame containing the on-target editing percentage for each
+input sample. The same data are also assigned to `All_ontarget` and
+`OnTarget` in the global environment and written to
+"./Overview/OnTarget.csv".
+}
 \description{
 Combines on-target editing percentages from multiple output files into
 a single summary table called `All_ontarget` and writes it to
