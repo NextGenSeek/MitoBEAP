@@ -26,8 +26,6 @@ position must have a heteroplasmy percentage greater than or equal to
 }
 \value{
 A data frame containing the adjusted editing percentages.
-  For backward compatibility, the same data are also assigned to
-  `Adj` in the global environment.
 }
 \description{
 Processes base editing data by filtering out positions where control samples exceed a maximum heteroplasmy threshold.

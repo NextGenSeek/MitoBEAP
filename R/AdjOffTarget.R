@@ -11,7 +11,9 @@
 #'   Defaults to the global `OnTarget` object if not supplied.
 #' @param Coverage Data frame containing coverage values.
 #'   Defaults to the global `Coverage` object if not supplied.
-#' @return No return value. Saves a CSV summary file in `./Overview/Adjusted`.
+#' @return A data frame containing the adjusted off-target percentage,
+#'   on-target percentage, and coverage for each sample. The same data are
+#'   also written to `./Overview/Adjusted/Adj_Off_Target_mean_coverage.csv`.
 #' @keywords off-target, adjusted, heteroplasmy, summary
 #' @export
 #' @name AdjOffTarget
@@ -95,9 +97,11 @@ check_create_dir <- function(dir) {
 check_create_dir(the_dir)
 
 # Write the means to a file
-write.csv(offTarget_percentages, file = paste0(the_dir, "/", "Adj_Off_Target_mean_coverage.csv"), row.names = FALSE)
+write.csv(offTarget_percentages,
+          file = paste0(the_dir, "/", "Adj_Off_Target_mean_coverage.csv"),
+          row.names = FALSE
+          )
 
-
-#.GlobalEnv$offTarget_percentages <- offTarget_percentages
+return(offTarget_percentages)
 
 }

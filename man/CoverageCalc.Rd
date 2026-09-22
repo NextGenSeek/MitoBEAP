@@ -11,8 +11,7 @@ CoverageCalc(CoverageFiles)
 }
 \value{
 A data frame containing the coverage for each input sample.
-  The same data are also assigned to `Coverage` in the global environment
-  and written to `./Overview/Coverage.csv`.
+  The same data are also written to `./Overview/Coverage.csv`.
 }
 \description{
 Combines coverage data from multiple files into a single overview file.

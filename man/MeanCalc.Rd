@@ -10,7 +10,8 @@ MeanCalc(MeanFiles)
 \item{MeanFiles}{A character vector of file paths to mean off-target output files (one per sample).}
 }
 \value{
-No return value. A plot is saved to disk.
+A data frame containing the mean off-target percentage for each sample.
+  The same data are also written to `./Overview/All_OffTarget_Mean.csv`.
 }
 \description{
 Combines off-target mean percentage values from multiple samples into a single summary file.

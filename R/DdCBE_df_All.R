@@ -7,8 +7,7 @@
 #' @param SampleList Data frame containing sample metadata.
 #'   Defaults to the global `SampleList` object if not supplied.
 #' @return A data frame containing the mutation data with the adjusted
-#'   percentage in `AdjPercentage`. The same data are also assigned to
-#'   `Adj` in the global environment for backward compatibility.
+#'   percentage in `AdjPercentage`.
 #' @export
 DdCBE_df_All <- function(
     min_threshold = 0,
@@ -55,7 +54,6 @@ DdCBE_df_All <- function(
     )
     )
 
-  assign("Adj", df11, envir = .GlobalEnv)
   return(df11)
 
 }

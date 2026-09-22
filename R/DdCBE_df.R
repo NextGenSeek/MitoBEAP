@@ -13,8 +13,6 @@
 #'   `SampleList` object if not supplied.
 #'
 #' @return A data frame containing the adjusted editing percentages.
-#'   For backward compatibility, the same data are also assigned to
-#'   `Adj` in the global environment.
 #' @export
 #'
 #' @examples
@@ -66,12 +64,7 @@ idx5 <- match(df7$FileName, SampleList$FileName)
 df7$SampleName <- SampleList$SampleName[idx5]
 df7$Condition <- SampleList$Condition[idx5]
 
-
-#.GlobalEnv$df7 <- df7
-
 # Apply max thresholds on control samples to know which positions to ignore
-#df8 <- df7[df7$Condition == "control" & (df7$percentage >= max_threshold | df7$percentage <= min_threshold), ]
-# Including min is wrong, because we will lose information in the on/off target effects
 df8 <- df7[df7$Condition == "control" & (df7$percentage >= max_threshold), ]
 
 # Identify positions exceeding the threshold in at least the
@@ -90,9 +83,6 @@ df11 <- df7 %>%
       TRUE ~ df7$percentage
     )
   )
-
-# Retain the global object for backward compatibility with existing workflows
-assign("Adj", df11, envir = .GlobalEnv)
 
 return(df11)
 }

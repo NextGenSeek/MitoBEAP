@@ -253,13 +253,23 @@ To visualize off-target effects for each sample individually, scatter plots are 
 
 ```{r echo=FALSE}
 setwd("/Users/lindadmin/Desktop/SamplesForMitoDD/ExampleFiles/12S")
-DdCBE_df()
-AdjScatter(labelPercentage = 10) # labelPercentage = default = 10
+Adj <- DdCBE_df(SampleList = SampleList)
+
+AdjScatter(
+  labelPercentage = 10,
+  Adj = Adj,
+  OntargetPosition = OntargetPosition
+)
 ```
 
 ```{r eval=FALSE}
-DdCBE_df()
-AdjScatter(labelPercentage = 10) # Default = 10
+Adj <- DdCBE_df(SampleList = SampleList)
+
+AdjScatter(
+  labelPercentage = 10,
+  Adj = Adj,
+  OntargetPosition = OntargetPosition
+)
 ```
 
 ```{r, echo=FALSE, dpi=72, out.width= '80%'}
@@ -275,13 +285,33 @@ The user can also further optimize the figure, by removing dots below a certain 
 To exclude polymorphic positions present in controls:
 ```{r echo=FALSE}
 setwd("/Users/lindadmin/Desktop/SamplesForMitoDD/ExampleFiles/12S")
-DdCBE_df(max_threshold = 90, controls = 3)
-AdjScatter(min_threshold = 1.2, labelPercentage = 10) # labelPercentage = default = 10
+Adj <- DdCBE_df(
+  max_threshold = 90,
+  controls = 3,
+  SampleList = SampleList
+)
+
+AdjScatter(
+  min_threshold = 1.2,
+  labelPercentage = 10,
+  Adj = Adj,
+  OntargetPosition = OntargetPosition
+) # labelPercentage = default = 10
 ```
 
 ```{r eval=FALSE}
-DdCBE_df(max_threshold = 90, controls = 3)
-AdjScatter(min_threshold = 1.2, labelPercentage = 10) # labelPercentage = default = 10
+Adj <- DdCBE_df(
+  max_threshold = 90,
+  controls = 3,
+  SampleList = SampleList
+)
+
+AdjScatter(
+  min_threshold = 1.2,
+  labelPercentage = 10,
+  Adj = Adj,
+  OntargetPosition = OntargetPosition
+) # labelPercentage = default = 10
 ```
 
 ```{r, echo=FALSE, dpi=72, out.width= '80%'}
@@ -293,14 +323,27 @@ The user might also want to recalculate off-target averages and create a barchar
 ```{r echo=FALSE}
 setwd("/Users/lindadmin/Desktop/SamplesForMitoDD/ExampleFiles/12S")
 # Recalculate off-target barchart with this max_threshold
-AdjCreateBarChart(colour = "skyblue")
+AdjCreateBarChart(
+  colour = "skyblue",
+  Adj = Adj,
+  SampleList = SampleList
+)
 ```
 
 ```{r eval=FALSE}
 # Recalculate off-target average with this max_threshold
-AdjOffTarget()
+AdjOffTargetResults <- AdjOffTarget(
+  Adj = Adj,
+  SampleList = SampleList,
+  OnTarget = OnTarget,
+  Coverage = Coverage
+)
 # Create barchart with this max_threshold
-AdjCreateBarChart(colour = "skyblue")
+AdjCreateBarChart(
+  colour = "skyblue",
+  Adj = Adj,
+  SampleList = SampleList
+)
 ```
 
 ```{r, echo=FALSE, dpi=72, out.width='50%'}
@@ -312,7 +355,11 @@ knitr::include_graphics("/Users/lindadmin/Desktop/Rtest/MitoBEAP/vignettes/Overv
 This plot shows on-target versus adjusted off-target editing:
 
 ```{r eval=FALSE}
-OnVsOffTargetAdj() #standard = Condition = TRUE, FALSE= no condition information
+OnVsOffTargetAdj(
+  Adj = Adj,
+  All_ontarget = OnTarget,
+  SampleList = SampleList
+) #standard = Condition = TRUE, FALSE= no condition information
 # default xlab = "Off target effects (%)",
 # default ylab = "Heteroplasmy level (%)"
 # default ggtitle = "On-versus off-target effects"
@@ -320,7 +367,11 @@ OnVsOffTargetAdj() #standard = Condition = TRUE, FALSE= no condition information
 
 ```{r echo=FALSE, dpi=72, out.width='60%'}
 setwd("/Users/lindadmin/Desktop/SamplesForMitoDD/ExampleFiles/12S")
-OnVsOffTargetAdj() #standard = Condition = TRUE, FALSE= no condition information
+OnVsOffTargetAdj(
+  Adj = Adj,
+  All_ontarget = OnTarget,
+  SampleList = SampleList
+) #standard = Condition = TRUE, FALSE= no condition information
 ```
 
 ## Comparative Plot: grouped results
@@ -350,24 +401,38 @@ Base editing can be very specific, but unintended bystander edits may occur with
 Visualize editing levels near the on-target position:
 
 ```{r eval=FALSE}
-Bystander(BystanderDistance = 10, 
-          title = "Bystander effect",
-          x= "mtDNA position",
-          y= NONE)
+Bystander(
+  BystanderDistance = 10,
+  title = "Bystander effect",
+  xlab = "mtDNA position",
+  Adj = Adj,
+  SampleList = SampleList,
+  OntargetPosition = OntargetPosition
+)
 ```
 
 ```{r echo=FALSE}
 setwd("/Users/lindadmin/Desktop/SamplesForMitoDD/ExampleFiles/12S")
-Bystander(BystanderDistance = 10,
-          x= "mtDNA position")
+Bystander(
+  BystanderDistance = 10,
+  xlab = "mtDNA position",
+  Adj = Adj,
+  SampleList = SampleList,
+  OntargetPosition = OntargetPosition
+)
 ```
 
 This creates the desired heatmap in the folder Plots. By default, the heatmap uses a customizable colour scale in which 0% editing is displayed as white, 30% as light blue, and 100% as dark blue. Users can modify both the colours and the corresponding percentage values:
 
 ```{r}
-#Bystander(BystanderDistance = 10, 
-#          fill_colours = c("white", "yellow", "red"), 
-#          fill_values = c(0, 10, 100) )
+# Bystander(
+#   BystanderDistance = 10,
+#   fill_colours = c("white", "yellow", "red"),
+#   fill_values = c(0, 10, 100),
+#   Adj = Adj,
+#   SampleList = SampleList,
+#   OntargetPosition = OntargetPosition
+# )
 ```
 
 ```{r, echo=FALSE, dpi=72, out.width='70%'}
@@ -377,10 +442,14 @@ knitr::include_graphics("/Users/lindadmin/Desktop/Rtest/MitoBEAP/vignettes/Overv
 Alternatively, to create this heatmap with only the potential target sites (CG for CBE or AT for ABE) use the following function
 
 ```{r eval=FALSE}
-bystander_only_relevant(BystanderDistance = 10, 
-                        title = "Bystander effect",
-                        x= "mtDNA position",
-                        y= NONE)
+bystander_only_relevant(
+  BystanderDistance = 10,
+  title = "Bystander effect",
+  xlab = "mtDNA position",
+  Adj = Adj,
+  SampleList = SampleList,
+  OntargetPosition = OntargetPosition
+)
 ```
 
 ```{r, echo=FALSE, dpi=72, out.width='60%'}
@@ -392,7 +461,13 @@ knitr::include_graphics("/Users/lindadmin/Desktop/Rtest/MitoBEAP/vignettes/Overv
 
 
 ```{r eval=FALSE}
-plot_OffTarget_histograms(bw = 0.1, min_pct = 0.1, max_pct = 5)
+plot_OffTarget_histograms(
+  bw = 0.1,
+  min_pct = 0.1,
+  max_pct = 5,
+  Adj = Adj,
+  OntargetPosition = OntargetPosition
+)
 # default binwidth bw = 1
 # default min_pct = 0
 # default max_pct = Inf
@@ -400,7 +475,13 @@ plot_OffTarget_histograms(bw = 0.1, min_pct = 0.1, max_pct = 5)
 
 ```{r echo=FALSE, dpi=72, out.width='60%'}
 setwd("/Users/lindadmin/Desktop/SamplesForMitoDD/ExampleFiles/12S")
-plot_OffTarget_histograms(bw = 0.1, min_pct = 0.1, max_pct = 5)
+plot_OffTarget_histograms(
+  bw = 0.1,
+  min_pct = 0.1,
+  max_pct = 5,
+  Adj = Adj,
+  OntargetPosition = OntargetPosition
+)
 ```
 
 ```{r, echo=FALSE, dpi=72, out.width='50%'}

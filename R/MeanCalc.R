@@ -5,7 +5,8 @@
 #'
 #' @param MeanFiles A character vector of file paths to mean off-target output files (one per sample).
 #' @keywords off-target, mean, summary
-#' @return No return value. A plot is saved to disk.
+#' @return A data frame containing the mean off-target percentage for each sample.
+#'   The same data are also written to `./Overview/All_OffTarget_Mean.csv`.
 #' @export
 #' @examples
 #' \dontrun{
@@ -46,10 +47,10 @@ df$X1 <- gsub(pattern = "1 ", "", x=df$X1)
 
 names(df) [1]  <- "FileName"
 names(df) [2] <- "Off target %"
-All_mean <- df
+readr::write_csv(
+  df,
+  file = file.path(the_dir, "All_OffTarget_Mean.csv")
+)
 
-# Assign to global environment
-assign("All_mean", df, envir = .GlobalEnv)
-
-write_csv(df,file = paste0(the_dir,"/", "All_OffTarget_Mean.csv", sep=""))
+return(df)
 }

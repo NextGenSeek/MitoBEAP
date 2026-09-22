@@ -10,9 +10,8 @@
 #' @param OnTargetFiles Character vector of file paths to *_ontarget.txt files.
 #'
 #' @return A data frame containing the on-target editing percentage for each
-#' input sample. The same data are also assigned to `All_ontarget` and
-#' `OnTarget` in the global environment and written to
-#' "./Overview/OnTarget.csv".
+#' input sample. The same data are also written to
+#' `./Overview/OnTarget.csv`.
 #'
 #' @export
 CombineOnTarget <- function(OnTargetFiles) {
@@ -58,8 +57,6 @@ CombineOnTarget <- function(OnTargetFiles) {
   df$X1 <- NULL                                   # drop raw column
 
   # --------------------------------------------------------------------------
-  assign("All_ontarget", df, envir = .GlobalEnv)
-  assign("OnTarget", df, envir = .GlobalEnv)
   readr::write_csv(df, file.path(out_dir, "OnTarget.csv"))
 
   return(df)

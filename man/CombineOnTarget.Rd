@@ -11,9 +11,8 @@ CombineOnTarget(OnTargetFiles)
 }
 \value{
 A data frame containing the on-target editing percentage for each
-input sample. The same data are also assigned to `All_ontarget` and
-`OnTarget` in the global environment and written to
-"./Overview/OnTarget.csv".
+input sample. The same data are also written to
+`./Overview/OnTarget.csv`.
 }
 \description{
 Combines on-target editing percentages from multiple output files into

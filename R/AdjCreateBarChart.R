@@ -2,14 +2,24 @@
 #'
 #' Creates a bar chart of adjusted off-target percentages per sample
 #'
-#' @param "colour" Color used to fill the bars. Default is `"skyblue"`.
+#' @param colour Color used to fill the bars. Default is `"skyblue"`.
+#' @param Adj Data frame containing adjusted editing percentages, including
+#'   `SampleName` and `AdjPercentage`. Defaults to the global `Adj` object
+#'   if not supplied.
+#' @param SampleList Data frame containing sample metadata, including
+#'   `SampleName` and `Order`. Defaults to the global `SampleList` object
+#'   if not supplied.
 #' @return No return value. A bar chart PNG is saved to `./Plots/AdjustedPlots/Adjusted_Barchart_offTarget.png`.
 #' @export
 #' @name AdjCreateBarChart
 #'
 #' @examples
 #' \dontrun{
-#' AdjCreateBarChart(colour = "skyblue")
+#' AdjCreateBarChart(
+#'   colour = "skyblue",
+#'   Adj = Adj,
+#'   SampleList = SampleList
+#' )
 #' }
 utils::globalVariables(c(
   "Adj", "SampleList", "SampleName", "AdjPercentage", "OntargetPosition",
@@ -18,7 +28,26 @@ utils::globalVariables(c(
   "Order", "Off target %", "On target %", "RealName"
 ))
 
-AdjCreateBarChart = function(colour = "skyblue") {
+AdjCreateBarChart <- function(
+    colour = "skyblue",
+    Adj = NULL,
+    SampleList = NULL
+) {
+
+  # Use supplied objects; fall back to global objects for backward compatibility
+  if (is.null(Adj)) {
+    if (!exists("Adj", envir = .GlobalEnv, inherits = FALSE)) {
+      stop("Error: 'Adj' must be supplied or exist in the global environment.")
+    }
+    Adj <- get("Adj", envir = .GlobalEnv, inherits = FALSE)
+  }
+
+  if (is.null(SampleList)) {
+    if (!exists("SampleList", envir = .GlobalEnv, inherits = FALSE)) {
+      stop("Error: 'SampleList' must be supplied or exist in the global environment.")
+    }
+    SampleList <- get("SampleList", envir = .GlobalEnv, inherits = FALSE)
+  }
 
 # Calculate the mean of "percentages" for each sample separately
   offTarget_percentages <- Adj %>%

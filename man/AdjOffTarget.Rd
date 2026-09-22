@@ -17,7 +17,9 @@ Defaults to the global `OnTarget` object if not supplied.}
 Defaults to the global `Coverage` object if not supplied.}
 }
 \value{
-No return value. Saves a CSV summary file in `./Overview/Adjusted`.
+A data frame containing the adjusted off-target percentage,
+  on-target percentage, and coverage for each sample. The same data are
+  also written to `./Overview/Adjusted/Adj_Off_Target_mean_coverage.csv`.
 }
 \description{
 Calculates mean adjusted off-target heteroplasmy percentages per sample,

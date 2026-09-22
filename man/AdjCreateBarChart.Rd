@@ -4,7 +4,15 @@
 \alias{AdjCreateBarChart}
 \title{AdjCreateBarChart}
 \arguments{
-\item{"colour"}{Color used to fill the bars. Default is `"skyblue"`.}
+\item{colour}{Color used to fill the bars. Default is `"skyblue"`.}
+
+\item{Adj}{Data frame containing adjusted editing percentages, including
+`SampleName` and `AdjPercentage`. Defaults to the global `Adj` object
+if not supplied.}
+
+\item{SampleList}{Data frame containing sample metadata, including
+`SampleName` and `Order`. Defaults to the global `SampleList` object
+if not supplied.}
 }
 \value{
 No return value. A bar chart PNG is saved to `./Plots/AdjustedPlots/Adjusted_Barchart_offTarget.png`.
@@ -14,6 +22,10 @@ Creates a bar chart of adjusted off-target percentages per sample
 }
 \examples{
 \dontrun{
-AdjCreateBarChart(colour = "skyblue")
+AdjCreateBarChart(
+  colour = "skyblue",
+  Adj = Adj,
+  SampleList = SampleList
+)
 }
 }
