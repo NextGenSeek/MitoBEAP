@@ -6,8 +6,15 @@
 #' @param ylab Character. Label for the y-axis. Default: "Heteroplasmy level (\%)".
 #' @param ggtitle Character. Plot title. Default: "On-versus off-target effects".
 #' @param condition Logical. If TRUE, points are grouped and colored by condition. Default is TRUE.
+#' @param Adj Data frame containing adjusted off-target editing data.
+#'   Defaults to the global `Adj` object if not supplied.
+#' @param All_ontarget Data frame containing on-target editing percentages.
+#'   Defaults to the global `All_ontarget` object if not supplied.
+#' @param SampleList Data frame containing sample metadata.
+#'   Defaults to the global `SampleList` object if not supplied.
 #'
-#' @return No return value. A PNG plot is saved to `./Plots/`.
+#' @return Invisibly returns the ggplot object. PNG and PDF plots are saved
+#'   to `./Plots/AdjustedPlots/`.
 #' @export
 #'
 #' @examples
@@ -18,20 +25,37 @@
 #'   ggtitle = "Comparison"
 #' )
 #' }
-OnVsOffTargetAdj = function(xlab = "Off target effects (%)",
-                           ylab = "Heteroplasmy level (%)",
-                           ggtitle = "On-versus off-target effects",
-                           condition = TRUE) {
-  # Check required global objects
-  required <- c("Adj", "All_ontarget", "SampleList")
-  missing <- required[!sapply(required, exists, envir = .GlobalEnv)]
-  if (length(missing) > 0) {
-    stop("Error: The following required objects are missing from the global environment: ", paste(missing, collapse = ", "))
+OnVsOffTargetAdj <- function(
+    xlab = "Off target effects (%)",
+    ylab = "Heteroplasmy level (%)",
+    ggtitle = "On-versus off-target effects",
+    condition = TRUE,
+    Adj = NULL,
+    All_ontarget = NULL,
+    SampleList = NULL
+) {
+  if (is.null(Adj)) {
+    if (!exists("Adj", envir = .GlobalEnv)) {
+      stop("Error: 'Adj' must be supplied or exist in the global environment.")
+    }
+    Adj <- get("Adj", envir = .GlobalEnv)
   }
 
-  Adj <- get("Adj", envir = .GlobalEnv)
-  OnTarget <- get("All_ontarget", envir = .GlobalEnv)
-  SampleList <- get("SampleList", envir = .GlobalEnv)
+  if (is.null(All_ontarget)) {
+    if (!exists("All_ontarget", envir = .GlobalEnv)) {
+      stop("Error: 'All_ontarget' must be supplied or exist in the global environment.")
+    }
+    All_ontarget <- get("All_ontarget", envir = .GlobalEnv)
+  }
+
+  if (is.null(SampleList)) {
+    if (!exists("SampleList", envir = .GlobalEnv)) {
+      stop("Error: 'SampleList' must be supplied or exist in the global environment.")
+    }
+    SampleList <- get("SampleList", envir = .GlobalEnv)
+  }
+
+  OnTarget <- All_ontarget
 
   # Calculate the mean of "percentages" for each sample separately
   Adj_percentages <- Adj %>%
@@ -110,4 +134,6 @@ label_size <- dplyr::case_when(
 
   ggplot2::ggsave(file = file.path(the_dir, "OnOffTarget_Adj.png"), plot = p, width = 8, height = 6)
   ggplot2::ggsave(filename = file.path(the_dir, "OnOffTarget_Adj.pdf"), plot = p, width = 8, height = 6)
+
+  invisible(p)
 }

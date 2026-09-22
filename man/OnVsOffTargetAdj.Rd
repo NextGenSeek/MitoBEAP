@@ -8,7 +8,10 @@ OnVsOffTargetAdj(
   xlab = "Off target effects (\%)",
   ylab = "Heteroplasmy level (\%)",
   ggtitle = "On-versus off-target effects",
-  condition = TRUE
+  condition = TRUE,
+  Adj = NULL,
+  All_ontarget = NULL,
+  SampleList = NULL
 )
 }
 \arguments{
@@ -19,9 +22,19 @@ OnVsOffTargetAdj(
 \item{ggtitle}{Character. Plot title. Default: "On-versus off-target effects".}
 
 \item{condition}{Logical. If TRUE, points are grouped and colored by condition. Default is TRUE.}
+
+\item{Adj}{Data frame containing adjusted off-target editing data.
+Defaults to the global `Adj` object if not supplied.}
+
+\item{All_ontarget}{Data frame containing on-target editing percentages.
+Defaults to the global `All_ontarget` object if not supplied.}
+
+\item{SampleList}{Data frame containing sample metadata.
+Defaults to the global `SampleList` object if not supplied.}
 }
 \value{
-No return value. A PNG plot is saved to `./Plots/`.
+Invisibly returns the ggplot object. PNG and PDF plots are saved
+  to `./Plots/AdjustedPlots/`.
 }
 \description{
 Creates a scatterplot comparing on-target editing with adjusted off-target effects.
