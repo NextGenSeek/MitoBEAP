@@ -7,30 +7,64 @@
 #' @param title Character. Title of the heatmap plot. Default is "Bystander effect".
 #' @param xlab Character. Label for the x-axis. Default is "mtDNA position".
 #' @param ylab Character. Label for the y-axis. Default is "" (blank).
+#' @param Adj Data frame containing adjusted editing percentages.
+#'   Defaults to the global `Adj` object if not supplied.
+#' @param SampleList Data frame containing sample metadata.
+#'   Defaults to the global `SampleList` object if not supplied.
+#' @param OntargetPosition Numeric; mitochondrial genome position of the
+#'   intended on-target edit. Defaults to the global `OntargetPosition`
+#'   object if not supplied.
+#' @param fill_colours Character vector of colours used for the heatmap gradient.
+#' @param fill_values Numeric vector defining the percentage values corresponding
+#'   to `fill_colours`. Default is `c(0, 30, 100)`.
 #'
-#' @return No return value. Saves a heatmap plot to `./Plots/HeatmapBystanderEffect.png`.
+#' @return A ggplot object. The heatmap is also saved to
+#'   `./Plots/HeatmapBystanderEffect.png`.
 #' @export
 #'
 #' @examples
 #' \dontrun{
+#' # Default heatmap
 #' Bystander(BystanderDistance = 10)
+#'
+#' # Custom colour scale
+#' Bystander(
+#'   fill_colours = c("white", "yellow", "red"),
+#'   fill_values = c(0, 10, 100)
+#' )
 #' }
-Bystander = function(BystanderDistance = 10,
-                     title = "Bystander effect",
-                     xlab = "mtDNA position",
-                     ylab = " ",
-                     fill_colours = c("white", "lightblue", "darkblue"),
-                     fill_values  = c(0, 30, 100)) {
+Bystander <- function(
+    BystanderDistance = 10,
+    title = "Bystander effect",
+    xlab = "mtDNA position",
+    ylab = " ",
+    fill_colours = c("white", "lightblue", "darkblue"),
+    fill_values = c(0, 30, 100),
+    Adj = NULL,
+    SampleList = NULL,
+    OntargetPosition = NULL
+) {
 
-  required <- c("Adj", "SampleList", "OntargetPosition")
-  missing <- required[!sapply(required, exists, envir = .GlobalEnv)]
-  if (length(missing) > 0) {
-    stop("Error: Missing required global objects: ", paste(missing, collapse = ", "))
+  if (is.null(Adj)) {
+    if (!exists("Adj", envir = .GlobalEnv)) {
+      stop("Error: 'Adj' must be supplied or exist in the global environment.")
+    }
+    Adj <- get("Adj", envir = .GlobalEnv)
   }
 
-  Adj <- get("Adj", envir = .GlobalEnv)
-  SampleList <- get("SampleList", envir = .GlobalEnv)
-  OntargetPosition <- get("OntargetPosition", envir = .GlobalEnv)
+  if (is.null(SampleList)) {
+    if (!exists("SampleList", envir = .GlobalEnv)) {
+      stop("Error: 'SampleList' must be supplied or exist in the global environment.")
+    }
+    SampleList <- get("SampleList", envir = .GlobalEnv)
+  }
+
+  if (is.null(OntargetPosition)) {
+    if (!exists("OntargetPosition", envir = .GlobalEnv)) {
+      stop("Error: 'OntargetPosition' must be supplied or exist in the global environment.")
+    }
+    OntargetPosition <- get("OntargetPosition", envir = .GlobalEnv)
+  }
 
 # Select region of interest
 AdjBy <- Adj[Adj$position>=(OntargetPosition-BystanderDistance) & Adj$position<=(OntargetPosition+BystanderDistance),] #select region of interest
