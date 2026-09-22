@@ -4,7 +4,8 @@
 #' highlighting and labeling positions above a user-defined threshold.
 #'
 #' @param min_threshold Numeric; minimum adjusted heteroplasmy percentage to display (default = 0).
-#' @param labelPercentage Numeric; threshold above which positions are labeled on the plot (default = 10).#' @param Adj Data frame containing adjusted editing percentages.
+#' @param labelPercentage Numeric; threshold above which positions are labeled on the plot (default = 10).
+#' @param Adj Data frame containing adjusted editing percentages.
 #'   Defaults to the global `Adj` object if not supplied.
 #' @param OntargetPosition Numeric. Genomic position of the intended on-target
 #'   editing site. Defaults to the global `OntargetPosition` object if not supplied.
@@ -26,17 +27,17 @@ AdjScatter <- function(
 
   # Use supplied objects; fall back to global objects for backward compatibility
   if (is.null(Adj)) {
-    if (!exists("Adj", envir = .GlobalEnv)) {
+    if (!exists("Adj", envir = .GlobalEnv, inherits = FALSE)) {
       stop("Error: 'Adj' must be supplied or created first (e.g., via DdCBE_df()).")
     }
-    Adj <- get("Adj", envir = .GlobalEnv)
+    Adj <- get("Adj", envir = .GlobalEnv, inherits = FALSE)
   }
 
   if (is.null(OntargetPosition)) {
-    if (!exists("OntargetPosition", envir = .GlobalEnv)) {
+    if (!exists("OntargetPosition", envir = .GlobalEnv, inherits = FALSE)) {
       stop("Error: 'OntargetPosition' must be supplied or exist in the global environment.")
     }
-    OntargetPosition <- get("OntargetPosition", envir = .GlobalEnv)
+    OntargetPosition <- get("OntargetPosition", envir = .GlobalEnv, inherits = FALSE)
   }
 
   # Filter and clean data

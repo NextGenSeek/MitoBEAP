@@ -30,31 +30,31 @@ OnVsOffTarget <- function(
 ) {
 
   if (is.null(All_mean)) {
-    if (!exists("All_mean", envir = .GlobalEnv)) {
+    if (!exists("All_mean", envir = .GlobalEnv, inherits = FALSE)) {
       stop("Error: 'All_mean' must be supplied or exist in the global environment.")
     }
-    All_mean <- get("All_mean", envir = .GlobalEnv)
+    All_mean <- get("All_mean", envir = .GlobalEnv, inherits = FALSE)
   }
 
   if (is.null(OnTarget)) {
-    if (!exists("OnTarget", envir = .GlobalEnv)) {
+    if (!exists("OnTarget", envir = .GlobalEnv, inherits = FALSE)) {
       stop("Error: 'OnTarget' must be supplied or exist in the global environment.")
     }
-    OnTarget <- get("OnTarget", envir = .GlobalEnv)
+    OnTarget <- get("OnTarget", envir = .GlobalEnv, inherits = FALSE)
   }
 
   if (is.null(Coverage)) {
-    if (!exists("Coverage", envir = .GlobalEnv)) {
+    if (!exists("Coverage", envir = .GlobalEnv, inherits = FALSE)) {
       stop("Error: 'Coverage' must be supplied or exist in the global environment.")
     }
-    Coverage <- get("Coverage", envir = .GlobalEnv)
+    Coverage <- get("Coverage", envir = .GlobalEnv, inherits = FALSE)
   }
 
   if (is.null(SampleList)) {
-    if (!exists("SampleList", envir = .GlobalEnv)) {
+    if (!exists("SampleList", envir = .GlobalEnv, inherits = FALSE)) {
       stop("Error: 'SampleList' must be supplied or exist in the global environment.")
     }
-    SampleList <- get("SampleList", envir = .GlobalEnv)
+    SampleList <- get("SampleList", envir = .GlobalEnv, inherits = FALSE)
   }
 
   # Clean sample names

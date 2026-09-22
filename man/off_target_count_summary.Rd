@@ -36,9 +36,22 @@ Defaults to the global `SampleList` object if not supplied.}
 \item{csv_prefix}{Default "MutationCount"}
 
 \item{plot_file}{pdf name. Default "MutationCount_grouped.pdf"}
+
+\item{make_plot}{Logical. If `TRUE`, creates the grouped off-target count plot.
+Default is `TRUE`.}
+
+\item{combined_col_in_samplelist}{Character. Name of the column in
+`SampleList` containing the combined sample/group name.
+Default is `"CombinedName"`.}
+
+\item{condition_col}{Character. Name of the column containing the experimental
+condition. Default is `"Condition"`.}
 }
 \value{
-Describe what the function returns
+A list containing per-sample counts (`counts`), grouped summary
+  statistics (`stats`), and the joined input data (`data_joined`).
+  When `make_plot = TRUE`, the returned list also contains the ggplot
+  object (`p`).
 }
 \description{
 What the function does.

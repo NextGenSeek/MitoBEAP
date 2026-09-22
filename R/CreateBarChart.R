@@ -37,10 +37,10 @@ CreateBarChart <- function(
   if (data_type == "OnTarget") {
 
     if (is.null(All_ontarget)) {
-      if (!exists("All_ontarget", envir = .GlobalEnv)) {
+      if (!exists("All_ontarget", envir = .GlobalEnv, inherits = FALSE)) {
         stop("Error: 'All_ontarget' must be supplied or exist in the global environment.")
       }
-      All_ontarget <- get("All_ontarget", envir = .GlobalEnv)
+      All_ontarget <- get("All_ontarget", envir = .GlobalEnv, inherits = FALSE)
     }
 
     df <- All_ontarget
@@ -50,10 +50,10 @@ CreateBarChart <- function(
   } else {
 
     if (is.null(All_mean)) {
-      if (!exists("All_mean", envir = .GlobalEnv)) {
+      if (!exists("All_mean", envir = .GlobalEnv, inherits = FALSE)) {
         stop("Error: 'All_mean' must be supplied or exist in the global environment.")
       }
-      All_mean <- get("All_mean", envir = .GlobalEnv)
+      All_mean <- get("All_mean", envir = .GlobalEnv, inherits = FALSE)
     }
 
     df <- All_mean
@@ -72,10 +72,10 @@ CreateBarChart <- function(
          paste(names(df), collapse = ", "))
   }
   if (is.null(SampleList)) {
-    if (!exists("SampleList", envir = .GlobalEnv)) {
+    if (!exists("SampleList", envir = .GlobalEnv, inherits = FALSE)) {
       stop("Error: 'SampleList' must be supplied or exist in the global environment.")
     }
-    SampleList <- get("SampleList", envir = .GlobalEnv)
+    SampleList <- get("SampleList", envir = .GlobalEnv, inherits = FALSE)
   }
 
   ## ------------------------------------------------------------------------

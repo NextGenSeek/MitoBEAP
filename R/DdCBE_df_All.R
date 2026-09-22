@@ -18,10 +18,10 @@ DdCBE_df_All <- function(
 ) {
 
   if (is.null(SampleList)) {
-    if (!exists("SampleList", envir = .GlobalEnv)) {
+    if (!exists("SampleList", envir = .GlobalEnv, inherits = FALSE)) {
       stop("Error: 'SampleList' must be supplied or exist in the global environment.")
     }
-    SampleList <- get("SampleList", envir = .GlobalEnv)
+    SampleList <- get("SampleList", envir = .GlobalEnv, inherits = FALSE)
   }
 
   AllMutFiles <- list.files("./AllMutations", pattern = "*_Highest_Mutation.csv",

@@ -38,24 +38,24 @@ bystander_only_relevant <- function(
 ) {
   # Use supplied objects; fall back to global objects for backward compatibility
   if (is.null(Adj)) {
-    if (!exists("Adj", envir = .GlobalEnv)) {
+    if (!exists("Adj", envir = .GlobalEnv, inherits = FALSE)) {
       stop("Error: 'Adj' must be supplied or exist in the global environment.")
     }
-    Adj <- get("Adj", envir = .GlobalEnv)
+    Adj <- get("Adj", envir = .GlobalEnv, inherits = FALSE)
   }
 
   if (is.null(SampleList)) {
-    if (!exists("SampleList", envir = .GlobalEnv)) {
+    if (!exists("SampleList", envir = .GlobalEnv, inherits = FALSE)) {
       stop("Error: 'SampleList' must be supplied or exist in the global environment.")
     }
-    SampleList <- get("SampleList", envir = .GlobalEnv)
+    SampleList <- get("SampleList", envir = .GlobalEnv, inherits = FALSE)
   }
 
   if (is.null(OntargetPosition)) {
-    if (!exists("OntargetPosition", envir = .GlobalEnv)) {
+    if (!exists("OntargetPosition", envir = .GlobalEnv, inherits = FALSE)) {
       stop("Error: 'OntargetPosition' must be supplied or exist in the global environment.")
     }
-    OntargetPosition <- get("OntargetPosition", envir = .GlobalEnv)
+    OntargetPosition <- get("OntargetPosition", envir = .GlobalEnv, inherits = FALSE)
   }
 
   Adj$position <- as.numeric(as.character(Adj$position))

@@ -35,31 +35,31 @@ AdjOffTarget <- function(
 
   # Use supplied objects; fall back to global objects for backward compatibility
   if (is.null(Adj)) {
-    if (!exists("Adj", envir = .GlobalEnv)) {
+    if (!exists("Adj", envir = .GlobalEnv, inherits = FALSE)) {
       stop("Error: 'Adj' must be supplied or exist in the global environment.")
     }
-    Adj <- get("Adj", envir = .GlobalEnv)
+    Adj <- get("Adj", envir = .GlobalEnv, inherits = FALSE)
   }
 
   if (is.null(SampleList)) {
-    if (!exists("SampleList", envir = .GlobalEnv)) {
+    if (!exists("SampleList", envir = .GlobalEnv, inherits = FALSE)) {
       stop("Error: 'SampleList' must be supplied or exist in the global environment.")
     }
-    SampleList <- get("SampleList", envir = .GlobalEnv)
+    SampleList <- get("SampleList", envir = .GlobalEnv, inherits = FALSE)
   }
 
   if (is.null(OnTarget)) {
-    if (!exists("OnTarget", envir = .GlobalEnv)) {
+    if (!exists("OnTarget", envir = .GlobalEnv, inherits = FALSE)) {
       stop("Error: 'OnTarget' must be supplied or exist in the global environment.")
     }
-    OnTarget <- get("OnTarget", envir = .GlobalEnv)
+    OnTarget <- get("OnTarget", envir = .GlobalEnv, inherits = FALSE)
   }
 
   if (is.null(Coverage)) {
-    if (!exists("Coverage", envir = .GlobalEnv)) {
+    if (!exists("Coverage", envir = .GlobalEnv, inherits = FALSE)) {
       stop("Error: 'Coverage' must be supplied or exist in the global environment.")
     }
-    Coverage <- get("Coverage", envir = .GlobalEnv)
+    Coverage <- get("Coverage", envir = .GlobalEnv, inherits = FALSE)
   }
 
   # Compute per-sample mean off-target percentage

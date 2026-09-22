@@ -11,7 +11,17 @@
 #' @param out_dir output directory
 #' @param csv_prefix Default "MutationCount"
 #' @param plot_file pdf name. Default "MutationCount_grouped.pdf"
-#' @return Describe what the function returns
+#' @param make_plot Logical. If `TRUE`, creates the grouped off-target count plot.
+#'   Default is `TRUE`.
+#' @param combined_col_in_samplelist Character. Name of the column in
+#'   `SampleList` containing the combined sample/group name.
+#'   Default is `"CombinedName"`.
+#' @param condition_col Character. Name of the column containing the experimental
+#'   condition. Default is `"Condition"`.
+#' @return A list containing per-sample counts (`counts`), grouped summary
+#'   statistics (`stats`), and the joined input data (`data_joined`).
+#'   When `make_plot = TRUE`, the returned list also contains the ggplot
+#'   object (`p`).
 #' @export
 off_target_count_summary <- function(
     Adj = NULL,
@@ -27,17 +37,17 @@ off_target_count_summary <- function(
     condition_col = "Condition"
 ) {
   if (is.null(Adj)) {
-    if (!exists("Adj", envir = .GlobalEnv)) {
+    if (!exists("Adj", envir = .GlobalEnv, inherits = FALSE)) {
       stop("Error: 'Adj' must be supplied or exist in the global environment.")
     }
-    Adj <- get("Adj", envir = .GlobalEnv)
+    Adj <- get("Adj", envir = .GlobalEnv, inherits = FALSE)
   }
 
   if (is.null(SampleList)) {
-    if (!exists("SampleList", envir = .GlobalEnv)) {
+    if (!exists("SampleList", envir = .GlobalEnv, inherits = FALSE)) {
       stop("Error: 'SampleList' must be supplied or exist in the global environment.")
     }
-    SampleList <- get("SampleList", envir = .GlobalEnv)
+    SampleList <- get("SampleList", envir = .GlobalEnv, inherits = FALSE)
   }
 
     # --- checks -----------------------------------------------------------

@@ -35,24 +35,24 @@ OnVsOffTargetAdj <- function(
     SampleList = NULL
 ) {
   if (is.null(Adj)) {
-    if (!exists("Adj", envir = .GlobalEnv)) {
+    if (!exists("Adj", envir = .GlobalEnv, inherits = FALSE)) {
       stop("Error: 'Adj' must be supplied or exist in the global environment.")
     }
-    Adj <- get("Adj", envir = .GlobalEnv)
+    Adj <- get("Adj", envir = .GlobalEnv, inherits = FALSE)
   }
 
   if (is.null(All_ontarget)) {
-    if (!exists("All_ontarget", envir = .GlobalEnv)) {
+    if (!exists("All_ontarget", envir = .GlobalEnv, inherits = FALSE)) {
       stop("Error: 'All_ontarget' must be supplied or exist in the global environment.")
     }
-    All_ontarget <- get("All_ontarget", envir = .GlobalEnv)
+    All_ontarget <- get("All_ontarget", envir = .GlobalEnv, inherits = FALSE)
   }
 
   if (is.null(SampleList)) {
-    if (!exists("SampleList", envir = .GlobalEnv)) {
+    if (!exists("SampleList", envir = .GlobalEnv, inherits = FALSE)) {
       stop("Error: 'SampleList' must be supplied or exist in the global environment.")
     }
-    SampleList <- get("SampleList", envir = .GlobalEnv)
+    SampleList <- get("SampleList", envir = .GlobalEnv, inherits = FALSE)
   }
 
   OnTarget <- All_ontarget
