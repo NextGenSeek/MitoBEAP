@@ -4,7 +4,12 @@
 \alias{DdCBE_df}
 \title{DdCBE_df}
 \usage{
-DdCBE_df(min_threshold = 0, max_threshold = 100, controls = 3)
+DdCBE_df(
+  min_threshold = 0,
+  max_threshold = 100,
+  controls = 3,
+  SampleList = NULL
+)
 }
 \arguments{
 \item{min_threshold}{Minimum heteroplasmy percentage to keep (not used in filtering control samples).}
@@ -14,9 +19,15 @@ DdCBE_df(min_threshold = 0, max_threshold = 100, controls = 3)
 \item{controls}{Minimum number of distinct control samples in which a
 position must have a heteroplasmy percentage greater than or equal to
 `max_threshold` for that position to be excluded.}
+
+\item{SampleList}{Data frame containing sample metadata, including
+`FileName`, `SampleName`, and `Condition`. Defaults to the global
+`SampleList` object if not supplied.}
 }
 \value{
-No return value. The result is assigned to `.GlobalEnv$Adj`.
+A data frame containing the adjusted editing percentages.
+  For backward compatibility, the same data are also assigned to
+  `Adj` in the global environment.
 }
 \description{
 Processes base editing data by filtering out positions where control samples exceed a maximum heteroplasmy threshold.

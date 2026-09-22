@@ -8,8 +8,13 @@
 #' @param controls Minimum number of distinct control samples in which a
 #'   position must have a heteroplasmy percentage greater than or equal to
 #'   `max_threshold` for that position to be excluded.
+#' @param SampleList Data frame containing sample metadata, including
+#'   `FileName`, `SampleName`, and `Condition`. Defaults to the global
+#'   `SampleList` object if not supplied.
 #'
-#' @return No return value. The result is assigned to `.GlobalEnv$Adj`.
+#' @return A data frame containing the adjusted editing percentages.
+#'   For backward compatibility, the same data are also assigned to
+#'   `Adj` in the global environment.
 #' @export
 #'
 #' @examples
@@ -17,11 +22,19 @@
 #' DdCBE_df(min_threshold = 0, max_threshold = 10, controls = 3)
 #' }
 
-DdCBE_df = function(min_threshold = 0, max_threshold = 100, controls = 3) {
+DdCBE_df <- function(
+    min_threshold = 0,
+    max_threshold = 100,
+    controls = 3,
+    SampleList = NULL
+) {
 
-  # Check required object
-  if (!exists("SampleList")) {
-    stop("Error: 'SampleList' must exist in the global environment.")
+  # Use supplied SampleList; fall back to the global object for backward compatibility
+  if (is.null(SampleList)) {
+    if (!exists("SampleList", envir = .GlobalEnv)) {
+      stop("Error: 'SampleList' must be supplied or exist in the global environment.")
+    }
+    SampleList <- get("SampleList", envir = .GlobalEnv)
   }
 
   # Validate numeric inputs
@@ -78,6 +91,8 @@ df11 <- df7 %>%
     )
   )
 
+# Retain the global object for backward compatibility with existing workflows
 assign("Adj", df11, envir = .GlobalEnv)
 
+return(df11)
 }
