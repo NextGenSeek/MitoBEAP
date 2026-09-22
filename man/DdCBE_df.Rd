@@ -11,7 +11,9 @@ DdCBE_df(min_threshold = 0, max_threshold = 100, controls = 3)
 
 \item{max_threshold}{Maximum heteroplasmy percentage allowed in control samples before marking as background (default = 100).}
 
-\item{controls}{Number of control samples required to consistently exceed the threshold for a position to be excluded.}
+\item{controls}{Minimum number of distinct control samples in which a
+position must have a heteroplasmy percentage greater than or equal to
+`max_threshold` for that position to be excluded.}
 }
 \value{
 No return value. The result is assigned to `.GlobalEnv$Adj`.

@@ -5,7 +5,9 @@
 #'
 #' @param min_threshold Minimum heteroplasmy percentage to keep (not used in filtering control samples).
 #' @param max_threshold Maximum heteroplasmy percentage allowed in control samples before marking as background (default = 100).
-#' @param controls Number of control samples required to consistently exceed the threshold for a position to be excluded.
+#' @param controls Minimum number of distinct control samples in which a
+#'   position must have a heteroplasmy percentage greater than or equal to
+#'   `max_threshold` for that position to be excluded.
 #'
 #' @return No return value. The result is assigned to `.GlobalEnv$Adj`.
 #' @export
@@ -59,14 +61,15 @@ df7$Condition <- SampleList$Condition[idx5]
 # Including min is wrong, because we will lose information in the on/off target effects
 df8 <- df7[df7$Condition == "control" & (df7$percentage >= max_threshold), ]
 
-# Position above/below WT threshold in n (=all control) samples
-df8 %>%
-  group_by(position) %>%
-  filter(n() == controls) -> subset #These are the positions we want to ignore
+# Identify positions exceeding the threshold in at least the
+# user-specified number of distinct control samples
+subset <- df8 %>%
+  dplyr::group_by(position) %>%
+  dplyr::filter(dplyr::n_distinct(FileName) >= controls) %>%
+  dplyr::ungroup()
 
-#.GlobalEnv$df9 <- subset
-df10 <- unique(as.vector(df8$position))
-#.GlobalEnv$df10 <- df10
+# Positions to mask
+df10 <- unique(subset$position)
 
 df11 <- df7 %>%
   mutate(AdjPercentage = case_when(
