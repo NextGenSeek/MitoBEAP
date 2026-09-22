@@ -2,6 +2,8 @@
 #'
 #' Loads raw count files from specified file paths, filters rows based on minimum read depth, and writes the filtered data to a subdirectory called "minimum".
 #' @param RawCountFiles A character vector of file paths to raw count data files.
+#' @param depth Numeric. Minimum read depth required to retain a row.
+#'   Default is 30.
 #' @keywords load counts, filter depth
 #' @export
 #' @examples
@@ -11,14 +13,10 @@
 #' LoadRawCount(file_paths)
 #' }
 
-LoadRawCount = function(RawCountFiles) { # specify depth before running this function
+LoadRawCount <- function(RawCountFiles, depth = 30) {
   # Check if all files exist
   if (any(!file.exists(RawCountFiles))) {
     stop("Error: One or more input files do not exist.")
-  }
-  # Check if 'depth' variable exists
-  if (!exists("depth")) {
-    stop("Error: The variable 'depth' is not defined in the global environment.")
   }
 
   # Check if 'depth' is a numeric value
