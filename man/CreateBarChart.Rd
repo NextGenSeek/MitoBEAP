@@ -4,12 +4,27 @@
 \alias{CreateBarChart}
 \title{CreateBarChart}
 \usage{
-CreateBarChart(data_type = c("OnTarget", "OffTarget"), colour = "skyblue")
+CreateBarChart(
+  data_type = c("OnTarget", "OffTarget"),
+  colour = "skyblue",
+  All_ontarget = NULL,
+  All_mean = NULL,
+  SampleList = NULL
+)
 }
 \arguments{
 \item{data_type}{A character string: either `"OnTarget"` or `"OffTarget"`. Determines the input data source.}
 
 \item{colour}{A color name or hex code for the bar fill. Default is `"skyblue"`.}
+
+\item{All_ontarget}{Data frame containing on-target editing percentages.
+Defaults to the global `All_ontarget` object if not supplied.}
+
+\item{All_mean}{Data frame containing mean off-target editing percentages.
+Defaults to the global `All_mean` object if not supplied.}
+
+\item{SampleList}{Data frame containing sample metadata.
+Defaults to the global `SampleList` object if not supplied.}
 }
 \value{
 No return value. A bar chart PNG is saved to `./Plots/Barchart_<data_type>.png`.

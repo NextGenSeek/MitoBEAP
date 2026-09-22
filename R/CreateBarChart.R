@@ -5,6 +5,12 @@
 #'
 #' @param data_type A character string: either `"OnTarget"` or `"OffTarget"`. Determines the input data source.
 #' @param colour A color name or hex code for the bar fill. Default is `"skyblue"`.
+#' @param All_ontarget Data frame containing on-target editing percentages.
+#'   Defaults to the global `All_ontarget` object if not supplied.
+#' @param All_mean Data frame containing mean off-target editing percentages.
+#'   Defaults to the global `All_mean` object if not supplied.
+#' @param SampleList Data frame containing sample metadata.
+#'   Defaults to the global `SampleList` object if not supplied.
 #'
 #' @return No return value. A bar chart PNG is saved to `./Plots/Barchart_<data_type>.png`.
 #' @export
@@ -15,8 +21,13 @@
 #' CreateBarChart(data_type = "OffTarget", colour = "#FF5733")
 #' }
 
-CreateBarChart <- function(data_type = c("OnTarget", "OffTarget"),
-                           colour    = "skyblue") {
+CreateBarChart <- function(
+    data_type = c("OnTarget", "OffTarget"),
+    colour = "skyblue",
+    All_ontarget = NULL,
+    All_mean = NULL,
+    SampleList = NULL
+) {
 
   data_type <- match.arg(data_type)
 
@@ -24,19 +35,29 @@ CreateBarChart <- function(data_type = c("OnTarget", "OffTarget"),
   ## 1.  Pick the source object and the *name* of the percentage column
   ## ------------------------------------------------------------------------
   if (data_type == "OnTarget") {
-    if (!exists("All_ontarget", envir = .GlobalEnv)) {
-      stop("Object 'All_ontarget' not found.")
+
+    if (is.null(All_ontarget)) {
+      if (!exists("All_ontarget", envir = .GlobalEnv)) {
+        stop("Error: 'All_ontarget' must be supplied or exist in the global environment.")
+      }
+      All_ontarget <- get("All_ontarget", envir = .GlobalEnv)
     }
-    df         <- get("All_ontarget", envir = .GlobalEnv)
-    perc_col   <- "On target %"
+
+    df <- All_ontarget
+    perc_col <- "On target %"
     ylab_title <- "On target %"
 
-  } else {                               # OffTarget
-    if (!exists("All_mean", envir = .GlobalEnv)) {
-      stop("Object 'All_mean' not found.")
+  } else {
+
+    if (is.null(All_mean)) {
+      if (!exists("All_mean", envir = .GlobalEnv)) {
+        stop("Error: 'All_mean' must be supplied or exist in the global environment.")
+      }
+      All_mean <- get("All_mean", envir = .GlobalEnv)
     }
-    df         <- get("All_mean", envir = .GlobalEnv)
-    perc_col   <- "Off target %"
+
+    df <- All_mean
+    perc_col <- "Off target %"
     ylab_title <- "Off target %"
   }
 
@@ -50,10 +71,12 @@ CreateBarChart <- function(data_type = c("OnTarget", "OffTarget"),
          perc_col, "'.\nActual columns are: ",
          paste(names(df), collapse = ", "))
   }
-  if (!exists("SampleList", envir = .GlobalEnv)) {
-    stop("Global object 'SampleList' is required but not found.")
+  if (is.null(SampleList)) {
+    if (!exists("SampleList", envir = .GlobalEnv)) {
+      stop("Error: 'SampleList' must be supplied or exist in the global environment.")
+    }
+    SampleList <- get("SampleList", envir = .GlobalEnv)
   }
-  SampleList <- get("SampleList", envir = .GlobalEnv)
 
   ## ------------------------------------------------------------------------
   ## 3.  Clean up file names and coerce to numeric
