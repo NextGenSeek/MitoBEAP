@@ -4,7 +4,10 @@
 #' highlighting and labeling positions above a user-defined threshold.
 #'
 #' @param min_threshold Numeric; minimum adjusted heteroplasmy percentage to display (default = 0).
-#' @param labelPercentage Numeric; threshold above which positions are labeled on the plot (default = 10).
+#' @param labelPercentage Numeric; threshold above which positions are labeled on the plot (default = 10).#' @param Adj Data frame containing adjusted editing percentages.
+#'   Defaults to the global `Adj` object if not supplied.
+#' @param OntargetPosition Numeric. Genomic position of the intended on-target
+#'   editing site. Defaults to the global `OntargetPosition` object if not supplied.
 #'
 #' @keywords plot, heteroplasmy, scatter, labeling
 #' @export
@@ -14,14 +17,26 @@
 #' AdjScatter(min_threshold = 0, labelPercentage = 10)
 #' }
 
-AdjScatter = function(min_threshold = 0, labelPercentage = 10) {
+AdjScatter <- function(
+    min_threshold = 0,
+    labelPercentage = 10,
+    Adj = NULL,
+    OntargetPosition = NULL
+) {
 
-  # Ensure required object exists
-  if (!exists("Adj")) {
-    stop("Error: 'Adj' data frame must be created first (e.g., via DdCBE_df()).")
+  # Use supplied objects; fall back to global objects for backward compatibility
+  if (is.null(Adj)) {
+    if (!exists("Adj", envir = .GlobalEnv)) {
+      stop("Error: 'Adj' must be supplied or created first (e.g., via DdCBE_df()).")
+    }
+    Adj <- get("Adj", envir = .GlobalEnv)
   }
-  if (!exists("OntargetPosition")) {
-    stop("Error: 'OntargetPosition' must be defined in the global environment.")
+
+  if (is.null(OntargetPosition)) {
+    if (!exists("OntargetPosition", envir = .GlobalEnv)) {
+      stop("Error: 'OntargetPosition' must be supplied or exist in the global environment.")
+    }
+    OntargetPosition <- get("OntargetPosition", envir = .GlobalEnv)
   }
 
   # Filter and clean data
@@ -31,8 +46,6 @@ AdjScatter = function(min_threshold = 0, labelPercentage = 10) {
   if (nrow(data) == 0) {
     stop("No data points meet the minimum threshold for plotting.")
   }
-
-  assign("df10", data, envir = .GlobalEnv)
 
 sample_names <- unique(data$SampleName)
 

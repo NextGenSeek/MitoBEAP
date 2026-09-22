@@ -4,12 +4,21 @@
 \alias{AdjScatter}
 \title{AdjScatter}
 \usage{
-AdjScatter(min_threshold = 0, labelPercentage = 10)
+AdjScatter(
+  min_threshold = 0,
+  labelPercentage = 10,
+  Adj = NULL,
+  OntargetPosition = NULL
+)
 }
 \arguments{
 \item{min_threshold}{Numeric; minimum adjusted heteroplasmy percentage to display (default = 0).}
 
-\item{labelPercentage}{Numeric; threshold above which positions are labeled on the plot (default = 10).}
+\item{labelPercentage}{Numeric; threshold above which positions are labeled on the plot (default = 10).#' @param Adj Data frame containing adjusted editing percentages.
+Defaults to the global `Adj` object if not supplied.}
+
+\item{OntargetPosition}{Numeric. Genomic position of the intended on-target
+editing site. Defaults to the global `OntargetPosition` object if not supplied.}
 }
 \description{
 Creates scatterplots showing adjusted heteroplasmy levels for each sample,
