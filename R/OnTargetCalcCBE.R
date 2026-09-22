@@ -4,23 +4,20 @@
 #' Saves outputs like mutation percentages, mean off-target values, on-target editing rates, coverage, and annotated full data.
 #'
 #' @param MinXFiles A character vector of file paths to pre-filtered count data (CSV format).
+#' @param OntargetPosition Numeric. Genomic position of the intended on-target
+#'   editing site.
 #' @keywords CBE, base editing, efficiency, on-target, off-target
 #' @export
 #' @examples
 #' \dontrun{
 #' file_paths <- c("file1.csv", "file2.csv", "file3.csv")
-#' OnTargetCalcCBE(file_paths)
+#' OnTargetCalcCBE(file_paths, OntargetPosition = 1561) # replace 1561 with your on-target position
 #' }
 
-OnTargetCalcCBE = function(MinXFiles) {
+OnTargetCalcCBE <- function(MinXFiles, OntargetPosition) {
   # Check file existence
   if (any(!file.exists(MinXFiles))) {
     stop("One or more input files not found.")
-  }
-
-  # Check OntargetPosition existence
-  if (!exists("OntargetPosition")) {
-    stop("Error: 'OntargetPosition' must be defined in the global environment.")
   }
 
   process_file <- function(input) {

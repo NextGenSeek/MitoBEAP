@@ -4,10 +4,13 @@
 \alias{OnTargetCalcCBE}
 \title{OnTargetCalcCBE}
 \usage{
-OnTargetCalcCBE(MinXFiles)
+OnTargetCalcCBE(MinXFiles, OntargetPosition)
 }
 \arguments{
 \item{MinXFiles}{A character vector of file paths to pre-filtered count data (CSV format).}
+
+\item{OntargetPosition}{Numeric. Genomic position of the intended on-target
+editing site.}
 }
 \description{
 Analyzes count files to calculate base editing efficiency (C→T and G→A conversions), including on- and off-target effects.
@@ -16,7 +19,7 @@ Saves outputs like mutation percentages, mean off-target values, on-target editi
 \examples{
 \dontrun{
 file_paths <- c("file1.csv", "file2.csv", "file3.csv")
-OnTargetCalcCBE(file_paths)
+OnTargetCalcCBE(file_paths, OntargetPosition = 1561) # replace 1561 with your on-target position
 }
 }
 \keyword{CBE,}
