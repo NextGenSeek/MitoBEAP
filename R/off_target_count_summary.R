@@ -1,6 +1,10 @@
 #' off_target_count_summary
 #'
 #' @description What the function does.
+#' @param Adj Data frame containing adjusted off-target editing data.
+#'   Defaults to the global `Adj` object if not supplied.
+#' @param SampleList Data frame containing sample metadata.
+#'   Defaults to the global `SampleList` object if not supplied.
 #' @param lower minimum heteroplasmy level to take into account
 #' @param upper maximum heteroplasmy level to take into account
 #' @param condition_levels Default control and treated
@@ -9,45 +13,60 @@
 #' @param plot_file pdf name. Default "MutationCount_grouped.pdf"
 #' @return Describe what the function returns
 #' @export
-off_target_count_summary <- function(Adj = get("Adj", envir = .GlobalEnv),
-                                      SampleList = get("SampleList", envir = .GlobalEnv),
-                                      lower = 0.1,
-                                      upper = 70,
-                                      condition_levels = c("control", "treated"),
-                                      out_dir       = ".",
-                                      csv_prefix    = "MutationCount",
-                                      plot_file     = "MutationCount_grouped.pdf",
-                                      make_plot     = TRUE,
-                                      combined_col_in_samplelist = "CombinedName",
-                                      condition_col = "Condition") {
-    
+off_target_count_summary <- function(
+    Adj = NULL,
+    SampleList = NULL,
+    lower = 0.1,
+    upper = 70,
+    condition_levels = c("control", "treated"),
+    out_dir = ".",
+    csv_prefix = "MutationCount",
+    plot_file = "MutationCount_grouped.pdf",
+    make_plot = TRUE,
+    combined_col_in_samplelist = "CombinedName",
+    condition_col = "Condition"
+) {
+  if (is.null(Adj)) {
+    if (!exists("Adj", envir = .GlobalEnv)) {
+      stop("Error: 'Adj' must be supplied or exist in the global environment.")
+    }
+    Adj <- get("Adj", envir = .GlobalEnv)
+  }
+
+  if (is.null(SampleList)) {
+    if (!exists("SampleList", envir = .GlobalEnv)) {
+      stop("Error: 'SampleList' must be supplied or exist in the global environment.")
+    }
+    SampleList <- get("SampleList", envir = .GlobalEnv)
+  }
+
     # --- checks -----------------------------------------------------------
     stopifnot(is.data.frame(Adj), is.data.frame(SampleList))
     stopifnot(all(c("FileName", "AdjPercentage") %in% names(Adj)))
     stopifnot("FileName" %in% names(SampleList))
     stopifnot(combined_col_in_samplelist %in% names(SampleList))
     stopifnot(condition_col %in% names(Adj) || condition_col %in% names(SampleList))
-    
+
     if (!is.null(out_dir) && !dir.exists(out_dir))
         dir.create(out_dir, recursive = TRUE)
-    
+
     # --- join CombinedName (and Condition if needed) ----------------------
     join_cols <- c("FileName", combined_col_in_samplelist)
     if (!(condition_col %in% names(Adj)) && (condition_col %in% names(SampleList))) {
         join_cols <- c(join_cols, condition_col)
     }
-    
+
     data <- dplyr::left_join(
         Adj,
         dplyr::distinct(SampleList[, join_cols]),
         by = "FileName"
     )
-    
+
     # rename joined CombinedName to the expected column name
     if (combined_col_in_samplelist != "CombinedName") {
         data <- dplyr::rename(data, CombinedName = dplyr::all_of(combined_col_in_samplelist))
     }
-    
+
     # if Condition exists in both, prefer Adj's and only fill missing from SampleList
     if (condition_col %in% names(Adj) && condition_col %in% names(SampleList)) {
         # after join, SampleList condition will be suffixed .y typically; make it robust:
@@ -61,10 +80,10 @@ off_target_count_summary <- function(Adj = get("Adj", envir = .GlobalEnv),
             data <- dplyr::rename(data, CombinedName = dplyr::all_of(combined_col_in_samplelist))
         }
     }
-    
+
     # final required columns now present?
     stopifnot(all(c("FileName", "CombinedName", "AdjPercentage", condition_col) %in% names(data)))
-    
+
     # --- per-sample counts ------------------------------------------------
     counts <- data %>%
         dplyr::group_by(.data$FileName, .data$CombinedName, .data[[condition_col]]) %>%
@@ -76,7 +95,7 @@ off_target_count_summary <- function(Adj = get("Adj", envir = .GlobalEnv),
         ) %>%
         dplyr::rename(Condition = dplyr::all_of(condition_col)) %>%
         dplyr::mutate(Condition = factor(.data$Condition, levels = condition_levels))
-    
+
     # --- group stats (mean ± SE) -----------------------------------------
     stats <- counts %>%
         dplyr::group_by(.data$CombinedName, .data$Condition) %>%
@@ -85,7 +104,7 @@ off_target_count_summary <- function(Adj = get("Adj", envir = .GlobalEnv),
             se_count  = stats::sd(.data$count_non_missing) / sqrt(dplyr::n()),
             .groups   = "drop"
         )
-    
+
     # --- optional CSV output ---------------------------------------------
     if (!is.null(out_dir)) {
         readr::write_csv(stats,
@@ -93,7 +112,7 @@ off_target_count_summary <- function(Adj = get("Adj", envir = .GlobalEnv),
         readr::write_csv(counts,
                          file.path(out_dir, paste0(csv_prefix, "_per_sample.csv")))
     }
-    
+
     # --- plot -------------------------------------------------------------
     if (make_plot) {
         p <- ggplot2::ggplot(
@@ -116,12 +135,12 @@ off_target_count_summary <- function(Adj = get("Adj", envir = .GlobalEnv),
                 legend.text  = ggplot2::element_text(size = 12),
                 legend.title = ggplot2::element_text(size = 14)
             )
-        
+
         if (!is.null(out_dir))
             ggplot2::ggsave(file.path(out_dir, plot_file), p, width = 7, height = 7)
-        
+
         return(list(counts = counts, stats = stats, p = p, data_joined = data))
     }
-    
+
     list(counts = counts, stats = stats, data_joined = data)
 }

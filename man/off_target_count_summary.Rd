@@ -5,8 +5,8 @@
 \title{off_target_count_summary}
 \usage{
 off_target_count_summary(
-  Adj = get("Adj", envir = .GlobalEnv),
-  SampleList = get("SampleList", envir = .GlobalEnv),
+  Adj = NULL,
+  SampleList = NULL,
   lower = 0.1,
   upper = 70,
   condition_levels = c("control", "treated"),
@@ -19,6 +19,12 @@ off_target_count_summary(
 )
 }
 \arguments{
+\item{Adj}{Data frame containing adjusted off-target editing data.
+Defaults to the global `Adj` object if not supplied.}
+
+\item{SampleList}{Data frame containing sample metadata.
+Defaults to the global `SampleList` object if not supplied.}
+
 \item{lower}{minimum heteroplasmy level to take into account}
 
 \item{upper}{maximum heteroplasmy level to take into account}
