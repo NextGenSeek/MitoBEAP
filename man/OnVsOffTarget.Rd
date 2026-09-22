@@ -7,7 +7,11 @@
 OnVsOffTarget(
   xlab = "Off target effects (\%)",
   ylab = "Heteroplasmy level (\%)",
-  ggtitle = "On-versus off-target effects"
+  ggtitle = "On-versus off-target effects",
+  All_mean = NULL,
+  OnTarget = NULL,
+  Coverage = NULL,
+  SampleList = NULL
 )
 }
 \arguments{
@@ -16,9 +20,21 @@ OnVsOffTarget(
 \item{ylab}{Character. Label for the y-axis. Default: "Heteroplasmy level (\%)".}
 
 \item{ggtitle}{Character. Plot title. Default: "On-versus off-target effects".}
+
+\item{All_mean}{Data frame containing mean off-target editing percentages.
+Defaults to the global `All_mean` object if not supplied.}
+
+\item{OnTarget}{Data frame containing on-target editing percentages.
+Defaults to the global `OnTarget` object if not supplied.}
+
+\item{Coverage}{Data frame containing sequencing coverage information.
+Defaults to the global `Coverage` object if not supplied.}
+
+\item{SampleList}{Data frame containing sample metadata.
+Defaults to the global `SampleList` object if not supplied.}
 }
 \value{
-No return value. A PNG plot is saved to `./Plots/`.
+Invisibly returns the ggplot object. A PNG plot is saved to `./Plots/`.
 }
 \description{
 Creates a scatterplot comparing on-target editing with off-target effects.
