@@ -2,10 +2,11 @@
 title: "MitoBEAP"
 author: "Lindsey Van Haute"
 date: "2026-06-09"
-output:
-  html_document: default
-  word_document: default
-  pdf_document: default
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{MitoBEAP}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, include=FALSE}
