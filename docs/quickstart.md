@@ -23,8 +23,12 @@ chrom, position, ref_base, depth, base, reads, percentage
 
 ```r
 allFiles <- list.files("./InputFolder", pattern = "*.csv", full.names = TRUE)
-filterCGEdits(allFiles) for cytosine base editors
-filterATEdits(allFiles) for adenine base editors
+
+# For cytosine base editors (CBE)
+FilterCGEdits(allFiles)
+
+# For adenine base editors (ABE)
+FilterATEdits(allFiles)
 ```
 
 ## 3. Apply a minimum depth threshold

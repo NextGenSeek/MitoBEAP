@@ -128,7 +128,7 @@ OntargetPosition <- 1561 #CHANGE ME
 lapply(MinXFiles, OnTargetCalcCBE)
 ```
 
-The following shunk should NOT be run if you follow the VarScan2 script. If you have different input files, make sure they're in the correct format. MitoBEAP expects .csv files with the following columns: chrom, position, ref_base, depth, base (= alternative base), reads, percentage. 
+The following chunk should not be run when using the VarScan2 workflow above. It is intended for users starting from pre-processed variant files instead. These input files should be in CSV format and contain the following columns: chrom, position, ref_base, depth, base (alternative base), reads, and percentage.
 
 ```{r eval=FALSE}
 # Select input files
