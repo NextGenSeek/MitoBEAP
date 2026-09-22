@@ -7,6 +7,15 @@
 #' @param title Character. Title of the heatmap plot. Default is "Bystander effect".
 #' @param xlab Character. Label for the x-axis. Default is "mtDNA position".
 #' @param ylab Character. Label for the y-axis. Default is "" (blank).
+#' @param fill_colours Character vector of colours used for the heatmap gradient.
+#' @param fill_values Numeric vector specifying the values corresponding to
+#'   `fill_colours`.
+#' @param Adj Data frame containing adjusted editing percentages.
+#'   Defaults to the global `Adj` object if not supplied.
+#' @param SampleList Data frame containing sample metadata.
+#'   Defaults to the global `SampleList` object if not supplied.
+#' @param OntargetPosition Numeric. Genomic position of the intended on-target
+#'   editing site. Defaults to the global `OntargetPosition` object if not supplied.
 #'
 #' @return No return value. Saves a heatmap plot to `./Plots/HeatmapBystanderEffect_only_relevant.png`.
 #' @export
@@ -22,18 +31,32 @@ bystander_only_relevant <- function(
     xlab = "mtDNA position",
     ylab = " ",
     fill_colours = c("white", "lightblue", "darkblue"),
-    fill_values  = c(0, 30, 100)
+    fill_values = c(0, 30, 100),
+    Adj = NULL,
+    SampleList = NULL,
+    OntargetPosition = NULL
 ) {
-  required <- c("Adj", "SampleList", "OntargetPosition")
-  missing <- required[!sapply(required, exists, envir = .GlobalEnv)]
-
-  if (length(missing) > 0) {
-    stop("Error: Missing required global objects: ", paste(missing, collapse = ", "))
+  # Use supplied objects; fall back to global objects for backward compatibility
+  if (is.null(Adj)) {
+    if (!exists("Adj", envir = .GlobalEnv)) {
+      stop("Error: 'Adj' must be supplied or exist in the global environment.")
+    }
+    Adj <- get("Adj", envir = .GlobalEnv)
   }
 
-  Adj <- get("Adj", envir = .GlobalEnv)
-  SampleList <- get("SampleList", envir = .GlobalEnv)
-  OntargetPosition <- get("OntargetPosition", envir = .GlobalEnv)
+  if (is.null(SampleList)) {
+    if (!exists("SampleList", envir = .GlobalEnv)) {
+      stop("Error: 'SampleList' must be supplied or exist in the global environment.")
+    }
+    SampleList <- get("SampleList", envir = .GlobalEnv)
+  }
+
+  if (is.null(OntargetPosition)) {
+    if (!exists("OntargetPosition", envir = .GlobalEnv)) {
+      stop("Error: 'OntargetPosition' must be supplied or exist in the global environment.")
+    }
+    OntargetPosition <- get("OntargetPosition", envir = .GlobalEnv)
+  }
 
   Adj$position <- as.numeric(as.character(Adj$position))
 

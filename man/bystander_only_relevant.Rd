@@ -10,7 +10,10 @@ bystander_only_relevant(
   xlab = "mtDNA position",
   ylab = " ",
   fill_colours = c("white", "lightblue", "darkblue"),
-  fill_values  = c(0, 30, 100)
+  fill_values = c(0, 30, 100),
+  Adj = NULL,
+  SampleList = NULL,
+  OntargetPosition = NULL
 )
 }
 \arguments{
@@ -22,9 +25,19 @@ bystander_only_relevant(
 
 \item{ylab}{Character. Label for the y-axis. Default is "" (blank).}
 
-\item{fill_colours}{Character vector of colours used for the heatmap fill scale when \code{use_gradientn = TRUE}. The number of colours should match the number of values supplied in \code{fill_values}. Default is \code{c("white", "lightblue", "darkblue")}.}
+\item{fill_colours}{Character vector of colours used for the heatmap gradient.}
 
-\item{fill_values}{Numeric vector specifying the percentages that correspond to the colours in \code{fill_colours}. Values are automatically rescaled for use in \code{ggplot2::scale_fill_gradientn()}. Default is \code{c(0, 30, 100)}.}
+\item{fill_values}{Numeric vector specifying the values corresponding to
+`fill_colours`.}
+
+\item{Adj}{Data frame containing adjusted editing percentages.
+Defaults to the global `Adj` object if not supplied.}
+
+\item{SampleList}{Data frame containing sample metadata.
+Defaults to the global `SampleList` object if not supplied.}
+
+\item{OntargetPosition}{Numeric. Genomic position of the intended on-target
+editing site. Defaults to the global `OntargetPosition` object if not supplied.}
 }
 \value{
 No return value. Saves a heatmap plot to `./Plots/HeatmapBystanderEffect_only_relevant.png`.
