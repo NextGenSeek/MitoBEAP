@@ -3,6 +3,14 @@
 #' Calculates mean adjusted off-target heteroplasmy percentages per sample,
 #' and merges with corresponding on-target percentages and average coverage.
 #'
+#' @param Adj Data frame containing adjusted editing percentages.
+#'   Defaults to the global `Adj` object if not supplied.
+#' @param SampleList Data frame containing sample metadata.
+#'   Defaults to the global `SampleList` object if not supplied.
+#' @param OnTarget Data frame containing on-target editing values.
+#'   Defaults to the global `OnTarget` object if not supplied.
+#' @param Coverage Data frame containing coverage values.
+#'   Defaults to the global `Coverage` object if not supplied.
 #' @return No return value. Saves a CSV summary file in `./Overview/Adjusted`.
 #' @keywords off-target, adjusted, heteroplasmy, summary
 #' @export
@@ -18,18 +26,41 @@ utils::globalVariables(c(
   "avg_count", "sd_count", "make_plot", "base", "reads", "depth", "type",
   "Order", "Off target %", "On target %", "RealName"
 ))
-AdjOffTarget = function() {
+AdjOffTarget <- function(
+    Adj = NULL,
+    SampleList = NULL,
+    OnTarget = NULL,
+    Coverage = NULL
+) {
 
-  required_objects <- c("Adj", "SampleList", "OnTarget", "Coverage")
-  missing <- required_objects[!sapply(required_objects, exists, envir = .GlobalEnv)]
-  if (length(missing) > 0) {
-    stop("Error: The following required objects are missing from the global environment: ", paste(missing, collapse = ", "))
+  # Use supplied objects; fall back to global objects for backward compatibility
+  if (is.null(Adj)) {
+    if (!exists("Adj", envir = .GlobalEnv)) {
+      stop("Error: 'Adj' must be supplied or exist in the global environment.")
+    }
+    Adj <- get("Adj", envir = .GlobalEnv)
   }
 
-  Adj <- get("Adj", envir = .GlobalEnv)
-  SampleList <- get("SampleList", envir = .GlobalEnv)
-  OnTarget <- get("OnTarget", envir = .GlobalEnv)
-  Coverage <- get("Coverage", envir = .GlobalEnv)
+  if (is.null(SampleList)) {
+    if (!exists("SampleList", envir = .GlobalEnv)) {
+      stop("Error: 'SampleList' must be supplied or exist in the global environment.")
+    }
+    SampleList <- get("SampleList", envir = .GlobalEnv)
+  }
+
+  if (is.null(OnTarget)) {
+    if (!exists("OnTarget", envir = .GlobalEnv)) {
+      stop("Error: 'OnTarget' must be supplied or exist in the global environment.")
+    }
+    OnTarget <- get("OnTarget", envir = .GlobalEnv)
+  }
+
+  if (is.null(Coverage)) {
+    if (!exists("Coverage", envir = .GlobalEnv)) {
+      stop("Error: 'Coverage' must be supplied or exist in the global environment.")
+    }
+    Coverage <- get("Coverage", envir = .GlobalEnv)
+  }
 
   # Compute per-sample mean off-target percentage
   offTarget_percentages <- Adj %>%

@@ -3,6 +3,19 @@
 \name{AdjOffTarget}
 \alias{AdjOffTarget}
 \title{AdjOffTarget}
+\arguments{
+\item{Adj}{Data frame containing adjusted editing percentages.
+Defaults to the global `Adj` object if not supplied.}
+
+\item{SampleList}{Data frame containing sample metadata.
+Defaults to the global `SampleList` object if not supplied.}
+
+\item{OnTarget}{Data frame containing on-target editing values.
+Defaults to the global `OnTarget` object if not supplied.}
+
+\item{Coverage}{Data frame containing coverage values.
+Defaults to the global `Coverage` object if not supplied.}
+}
 \value{
 No return value. Saves a CSV summary file in `./Overview/Adjusted`.
 }
