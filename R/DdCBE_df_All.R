@@ -4,9 +4,25 @@
 #' @param min_threshold Numeric; minimum heteroplasmy level to take into account, Default = 0
 #' @param max_threshold Numeric; maximum heteroplasmy level in the controls to take into account, Default = 60
 #' @param controls Numeric; number of controls that need to have heteroplasmy level above max_threshold. Default = 2
-#' @return Describe what the function returns
+#' @param SampleList Data frame containing sample metadata.
+#'   Defaults to the global `SampleList` object if not supplied.
+#' @return A data frame containing the mutation data with the adjusted
+#'   percentage in `AdjPercentage`. The same data are also assigned to
+#'   `Adj` in the global environment for backward compatibility.
 #' @export
-DdCBE_df_All = function(min_threshold = 0, max_threshold = 60, controls = 2) {
+DdCBE_df_All <- function(
+    min_threshold = 0,
+    max_threshold = 60,
+    controls = 2,
+    SampleList = NULL
+) {
+
+  if (is.null(SampleList)) {
+    if (!exists("SampleList", envir = .GlobalEnv)) {
+      stop("Error: 'SampleList' must be supplied or exist in the global environment.")
+    }
+    SampleList <- get("SampleList", envir = .GlobalEnv)
+  }
 
   AllMutFiles <- list.files("./AllMutations", pattern = "*_Highest_Mutation.csv",
                             full.names = TRUE)
@@ -25,14 +41,12 @@ DdCBE_df_All = function(min_threshold = 0, max_threshold = 60, controls = 2) {
   # Apply max thresholds on control samples to know which positions to ignore
   df8 <- df7[df7$Condition == "control" & (df7$MM_percentage >= max_threshold), ]
 
-  # Position above/below WT threshold in n (=all control) samples
-  df8 %>%
-    group_by(position) %>%
-    filter(n() == controls) -> subset #These are the positions we want to ignore
+  subset <- df8 %>%
+    dplyr::group_by(position) %>%
+    dplyr::filter(dplyr::n_distinct(FileName) >= controls) %>%
+    dplyr::ungroup()
 
-  #.GlobalEnv$df9 <- subset
-  df10 <- unique(as.vector(df8$position))
-  #.GlobalEnv$df10 <- df10
+  df10 <- unique(subset$position)
 
   df11 <- df7 %>%
     mutate(AdjPercentage = case_when(
@@ -41,6 +55,7 @@ DdCBE_df_All = function(min_threshold = 0, max_threshold = 60, controls = 2) {
     )
     )
 
-  .GlobalEnv$Adj <- df11
+  assign("Adj", df11, envir = .GlobalEnv)
+  return(df11)
 
 }

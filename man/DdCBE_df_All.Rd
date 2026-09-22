@@ -4,7 +4,12 @@
 \alias{DdCBE_df_All}
 \title{DdCBE_df_All}
 \usage{
-DdCBE_df_All(min_threshold = 0, max_threshold = 60, controls = 2)
+DdCBE_df_All(
+  min_threshold = 0,
+  max_threshold = 60,
+  controls = 2,
+  SampleList = NULL
+)
 }
 \arguments{
 \item{min_threshold}{Numeric; minimum heteroplasmy level to take into account, Default = 0}
@@ -12,9 +17,14 @@ DdCBE_df_All(min_threshold = 0, max_threshold = 60, controls = 2)
 \item{max_threshold}{Numeric; maximum heteroplasmy level in the controls to take into account, Default = 60}
 
 \item{controls}{Numeric; number of controls that need to have heteroplasmy level above max_threshold. Default = 2}
+
+\item{SampleList}{Data frame containing sample metadata.
+Defaults to the global `SampleList` object if not supplied.}
 }
 \value{
-Describe what the function returns
+A data frame containing the mutation data with the adjusted
+  percentage in `AdjPercentage`. The same data are also assigned to
+  `Adj` in the global environment for backward compatibility.
 }
 \description{
 What the function does.
