@@ -4,7 +4,9 @@
 #' Strips unnecessary parts from filenames, renames columns, and saves the result as "Coverage.csv".
 #'
 #' @param CoverageFiles A character vector of file paths to coverage summary files (CSV).
-#' @return None. Used for its side effect: writes 'Coverage.csv' to disk.
+#' @return A data frame containing the coverage for each input sample.
+#'   The same data are also assigned to `Coverage` in the global environment
+#'   and written to `./Overview/Coverage.csv`.
 #' @keywords coverage, directory, combine
 #' @export
 #' @examples
@@ -41,5 +43,10 @@ names(df4) [1]  <- "FileName"
 names(df4) [2] <- "Coverage"
 Coverage <- df4
 
-write_csv(df4,file = paste0(the_dir,"/", "Coverage.csv", sep=""))
+# Assign to global environment for downstream MitoBEAP functions
+assign("Coverage", df4, envir = .GlobalEnv)
+
+readr::write_csv(df4, file = file.path(the_dir, "Coverage.csv"))
+
+return(df4)
 }

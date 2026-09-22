@@ -15,34 +15,38 @@ OnVsOffTarget = function(xlab = "Off target effects (%)",
                          ylab = "Heteroplasmy level (%)",
                          ggtitle = "On-versus off-target effects") {
 
-  required_objects <- c("Mean", "OnTarget", "Coverage", "SampleList")
+  required_objects <- c("All_mean", "OnTarget", "Coverage", "SampleList")
   missing <- required_objects[!sapply(required_objects, exists, envir = .GlobalEnv)]
   if (length(missing) > 0) {
-    stop("Error: The following required objects are missing from the global environment: ", paste(missing, collapse = ", "))
+    stop(
+      "Error: The following required objects are missing from the global environment: ",
+      paste(missing, collapse = ", ")
+    )
   }
 
-  Mean <- get("Mean", envir = .GlobalEnv)
+  All_mean <- get("All_mean", envir = .GlobalEnv)
   OnTarget <- get("OnTarget", envir = .GlobalEnv)
   Coverage <- get("Coverage", envir = .GlobalEnv)
   SampleList <- get("SampleList", envir = .GlobalEnv)
 
-# Clean sample names
-Mean$Sample <- gsub("_mean", "", Mean$Sample)
-Mean$`Off target %` <- gsub("1 ", "", Mean$`Off target %`)
-OnTarget$Sample <- gsub("_ontarget", "", OnTarget$Sample)
-Coverage$Sample <- gsub("_coverage", "", Coverage$Sample)
+  # Clean sample names
+  All_mean$FileName <- gsub("_mean", "", All_mean$FileName)
+  All_mean$`Off target %` <- gsub("^1_", "", All_mean$`Off target %`)
+  OnTarget$FileName <- gsub("_ontarget", "", OnTarget$FileName)
+  Coverage$FileName <- gsub("_coverage", "", Coverage$FileName)
 
-idx3 <- match(Mean$Sample, OnTarget$Sample)
-Mean$`On target %` <- OnTarget$`On target %`[idx3]
+  # Match on-target editing and coverage using FileName
+  idx3 <- match(All_mean$FileName, OnTarget$FileName)
+  All_mean$`On target %` <- OnTarget$`On target %`[idx3]
 
-idx4 <- match(Mean$Sample, Coverage$Sample)
-Mean$Coverage <- Coverage$Coverage [idx4]
+  idx4 <- match(All_mean$FileName, Coverage$FileName)
+  All_mean$Coverage <- Coverage$Coverage[idx4]
 
-idx5 <- match(Mean$Sample, SampleList$Sample)
-Mean$RealName <- SampleList$Name [idx5]
-#Mean$Order <- SampleList$Order [idx5]
+  # Add the user-facing sample name
+  idx5 <- match(All_mean$FileName, SampleList$FileName)
+  All_mean$RealName <- SampleList$SampleName[idx5]
 
-Overview_df <- as.data.frame(Mean)
+  Overview_df <- as.data.frame(All_mean)
 Overview_df$`Off target %` <- as.numeric(gsub(pattern = "\\s+", "", x = Overview_df$`Off target %`))
 Overview_df$`On target %` <- as.numeric(Overview_df$`On target %`)
 
