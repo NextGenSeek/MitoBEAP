@@ -4,7 +4,13 @@
 \alias{plot_OffTarget_histograms}
 \title{plot_offTarget_histograms}
 \usage{
-plot_OffTarget_histograms(bw = 1, min_pct = 0, max_pct = Inf)
+plot_OffTarget_histograms(
+  bw = 1,
+  min_pct = 0,
+  max_pct = Inf,
+  Adj = NULL,
+  OntargetPosition = NULL
+)
 }
 \arguments{
 \item{bw}{Bin width}
@@ -12,6 +18,12 @@ plot_OffTarget_histograms(bw = 1, min_pct = 0, max_pct = Inf)
 \item{min_pct}{Minimum heteroplasmy percentage}
 
 \item{max_pct}{Maximum heteroplasmy percentage}
+
+\item{Adj}{Data frame containing editing percentages.
+Defaults to the global `Adj` object if not supplied.}
+
+\item{OntargetPosition}{Numeric. Genomic position of the intended on-target
+editing site. Defaults to the global `OntargetPosition` object if not supplied.}
 }
 \value{
 Describe what the function returns
