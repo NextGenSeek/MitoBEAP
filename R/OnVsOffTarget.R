@@ -54,8 +54,8 @@ p <- ggplot(Overview_df,aes(x=`Off target %`, y=`On target %`, label = RealName)
   theme(axis.text = element_text(size=14)) +
   theme(axis.title = element_text(size = 20)) +
   expand_limits(x=0,y=0) +
-  xlab(xlab) +
-  ylab(ylab)
+  ggplot2::xlab(xlab) +
+  ggplot2::ylab(ylab)
 
 # Create output directory
 the_dir <- "./Plots"

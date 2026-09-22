@@ -92,9 +92,9 @@ label_size <- dplyr::case_when(
     theme(panel.background = element_blank(),
           axis.line = element_line(color = "black")) +
     expand_limits(x = 0, y = 0) +
-    xlab(xlab) +
-    ylab(ylab) +
-    scale_size_identity() +
+    ggplot2::xlab(xlab) +
+    ggplot2::ylab(ylab) +
+    ggplot2::scale_size_identity() +
     if (condition) guides(color = guide_legend(title = "Condition")) else guides(color = "none")  # Show legend only when condition is TRUE
 
   print(p)

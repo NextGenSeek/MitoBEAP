@@ -56,7 +56,7 @@ ggplot2::ggplot(sample_data, aes(x=position, y=AdjPercentage, color=legend)) +
   guides(fill = guide_legend(override.aes = aes(label = ""))) +
   labs(y="heteroplasmy level", x="Position") +
     theme(axis.text=element_text(size=12)) +
-    ylim(0,100) +
+    ggplot2::ylim(0, 100) +
     scale_color_manual(values = c("Off target / background" = "black", "On target" = "red")) +
     ggtitle(paste(sample_name)) # Title with sample name
 

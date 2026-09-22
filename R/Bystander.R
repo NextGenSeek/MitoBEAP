@@ -50,7 +50,7 @@ positions <- Adj$position[Adj$position >= (OntargetPosition - BystanderDistance)
 
 p <- ggplot(AdjBy, aes(x = position, y = SampleName, fill = AdjPercentage)) +
   geom_tile(color = "white", lwd = 0.5, linetype = 1) +
-  scale_fill_gradientn(
+  ggplot2::scale_fill_gradientn(
     colours = fill_colours,
     values = scales::rescale(fill_values),
     na.value = "grey96"
@@ -60,7 +60,7 @@ p <- ggplot(AdjBy, aes(x = position, y = SampleName, fill = AdjPercentage)) +
                      sec.axis = dup_axis(name = "",
                                          labels = secondary_labels)) +
   guides(fill = guide_colorbar(title = "Percentage (%)")) +
-  geom_rect(
+  ggplot2::geom_rect(
     aes(
       xmin = OntargetPosition - 0.5,
       xmax = OntargetPosition + 0.5,
@@ -78,8 +78,8 @@ p <- ggplot(AdjBy, aes(x = position, y = SampleName, fill = AdjPercentage)) +
         axis.text.y    = element_text(size = 14),
         axis.text.x.top = element_text(angle = 0, hjust = 0.5)) +  # Set secondary axis labels horizontally
   ggtitle(title) +
-  xlab(xlab) +
-  ylab(ylab)
+  ggplot2::xlab(xlab) +
+  ggplot2::ylab(ylab)
 
 the_dir <- "./Plots"
 check_create_dir(the_dir)
