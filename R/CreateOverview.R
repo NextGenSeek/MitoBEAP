@@ -7,7 +7,14 @@
 #' @param cleanup Logical. If `TRUE`, intermediate output directories
 #'   (`minimum`, `Coverage`, `mean`, `OnTarget`, and `percentages`) are
 #'   deleted after the overview file is created. Default is `FALSE`.
-#'
+#' @param All_mean Data frame containing the combined off-target mean values.
+#'   Defaults to the global `All_mean` object if not supplied.
+#' @param OnTarget Data frame containing on-target editing values.
+#'   Defaults to the global `OnTarget` object if not supplied.
+#' @param Coverage Data frame containing coverage values.
+#'   Defaults to the global `Coverage` object if not supplied.
+#' @param SampleList Data frame containing sample metadata.
+#'   Defaults to the global `SampleList` object if not supplied.
 #' @return Invisibly returns the combined overview data frame. The same data
 #'   are written to "Overview/All_Ontarget_mean_Coverage.csv".
 #' @export
@@ -17,19 +24,42 @@
 #' CreateOverview()
 #' }
 
-CreateOverview <- function(cleanup = FALSE) {
-  # Check that required global objects exist
-  required_objects <- c("All_mean", "OnTarget", "Coverage", "SampleList")
-  missing <- required_objects[!sapply(required_objects, exists, envir = .GlobalEnv)]
-  if (length(missing) > 0) {
-    stop("Error: The following required objects are missing from the global environment: ", paste(missing, collapse = ", "))
+CreateOverview <- function(
+    All_mean = NULL,
+    OnTarget = NULL,
+    Coverage = NULL,
+    SampleList = NULL,
+    cleanup = FALSE
+) {
+
+  # Use supplied objects; fall back to global objects for backward compatibility
+  if (is.null(All_mean)) {
+    if (!exists("All_mean", envir = .GlobalEnv)) {
+      stop("Error: 'All_mean' must be supplied or exist in the global environment.")
+    }
+    All_mean <- get("All_mean", envir = .GlobalEnv)
   }
 
-  # Reference objects safely
-  All_mean <- get("All_mean", envir = .GlobalEnv)
-  OnTarget <- get("OnTarget", envir = .GlobalEnv)
-  Coverage <- get("Coverage", envir = .GlobalEnv)
-  SampleList <- get("SampleList", envir = .GlobalEnv)
+  if (is.null(OnTarget)) {
+    if (!exists("OnTarget", envir = .GlobalEnv)) {
+      stop("Error: 'OnTarget' must be supplied or exist in the global environment.")
+    }
+    OnTarget <- get("OnTarget", envir = .GlobalEnv)
+  }
+
+  if (is.null(Coverage)) {
+    if (!exists("Coverage", envir = .GlobalEnv)) {
+      stop("Error: 'Coverage' must be supplied or exist in the global environment.")
+    }
+    Coverage <- get("Coverage", envir = .GlobalEnv)
+  }
+
+  if (is.null(SampleList)) {
+    if (!exists("SampleList", envir = .GlobalEnv)) {
+      stop("Error: 'SampleList' must be supplied or exist in the global environment.")
+    }
+    SampleList <- get("SampleList", envir = .GlobalEnv)
+  }
 
   # Clean and merge fields
   All_mean$FileName <- gsub("_mean", "", All_mean$FileName)

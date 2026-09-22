@@ -4,9 +4,27 @@
 \alias{CreateOverview}
 \title{CreateOverview}
 \usage{
-CreateOverview(cleanup = FALSE)
+CreateOverview(
+  All_mean = NULL,
+  OnTarget = NULL,
+  Coverage = NULL,
+  SampleList = NULL,
+  cleanup = FALSE
+)
 }
 \arguments{
+\item{All_mean}{Data frame containing the combined off-target mean values.
+Defaults to the global `All_mean` object if not supplied.}
+
+\item{OnTarget}{Data frame containing on-target editing values.
+Defaults to the global `OnTarget` object if not supplied.}
+
+\item{Coverage}{Data frame containing coverage values.
+Defaults to the global `Coverage` object if not supplied.}
+
+\item{SampleList}{Data frame containing sample metadata.
+Defaults to the global `SampleList` object if not supplied.}
+
 \item{cleanup}{Logical. If `TRUE`, intermediate output directories
 (`minimum`, `Coverage`, `mean`, `OnTarget`, and `percentages`) are
 deleted after the overview file is created. Default is `FALSE`.}
