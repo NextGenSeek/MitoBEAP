@@ -15,11 +15,16 @@ Defaults to the global `OnTarget` object if not supplied.}
 
 \item{Coverage}{Data frame containing coverage values.
 Defaults to the global `Coverage` object if not supplied.}
+
+\item{out_dir_base}{Base analysis directory. Defaults to the current working
+directory (`"."`). Output is written to the `Overview/Adjusted`
+subdirectory within this directory.}
 }
 \value{
 A data frame containing the adjusted off-target percentage,
   on-target percentage, and coverage for each sample. The same data are
-  also written to `./Overview/Adjusted/Adj_Off_Target_mean_coverage.csv`.
+  also written to `Overview/Adjusted/Adj_Off_Target_mean_coverage.csv`
+  within `out_dir_base`.
 }
 \description{
 Calculates mean adjusted off-target heteroplasmy percentages per sample,

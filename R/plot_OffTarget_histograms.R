@@ -9,14 +9,19 @@
 #'   Defaults to the global `Adj` object if not supplied.
 #' @param OntargetPosition Numeric. Genomic position of the intended on-target
 #'   editing site. Defaults to the global `OntargetPosition` object if not supplied.
-#' @return Describe what the function returns
+#' @param out_dir_base Base analysis directory. Defaults to the current working
+#'   directory (`"."`). Histogram PDFs are written to the `Plots` subdirectory
+#'   within this directory.
+#' @return Invisibly returns `NULL`. One histogram PDF per sample is saved
+#'   to the `Plots` subdirectory within `out_dir_base`.
 #' @export
 plot_OffTarget_histograms <- function(
     bw = 1,
     min_pct = 0,
     max_pct = Inf,
     Adj = NULL,
-    OntargetPosition = NULL
+    OntargetPosition = NULL,
+    out_dir_base = "."
 ) {
 
   # Use supplied objects; fall back to global objects for backward compatibility
@@ -67,6 +72,10 @@ plot_OffTarget_histograms <- function(
             " bins of width ", bw,
             "(range ", lower_edge, "-", upper_edge, ")")
 
+    ## ---- output directory ------------------------------------------------------
+    the_dir <- file.path(out_dir_base, "Plots")
+    check_create_dir(the_dir)
+
     ## ---- loop over samples -----------------------------------------------------
     for (nm in unique(Adj_subset$SampleName)) {
 
@@ -89,7 +98,7 @@ plot_OffTarget_histograms <- function(
       safe_nm <- gsub("[^A-Za-z0-9_]", "_", nm)
 
       ggsave(
-        filename = paste0("Histogram_", safe_nm, ".pdf"),
+        filename = file.path(the_dir, paste0("Histogram_", safe_nm, ".pdf")),
         plot     = p,
         width    = 7,
         height   = 5

@@ -2,12 +2,32 @@
 #'
 #' Calculate all mutations
 #'
-#' @param AllReportFiles list with csv files
+#' @param AllReportFiles Optional character vector of input CSV file paths.
+#'   If not supplied, files ending in `_allMutations.csv` are read from the
+#'   `counts` subdirectory within `out_dir_base`.
+#' @param out_dir_base Base analysis directory. Defaults to the current working
+#'   directory (`"."`). Input files are read from the `counts` subdirectory
+#'   when `AllReportFiles` is not supplied, and output is written to the
+#'   `AllMutations` subdirectory.
 #' @return Describe what the function returns
 #' @export
-CalcAllMutations = function(AllReportFiles) {
-  AllReportFiles <- list.files("./counts", pattern = "*_allMutations.csv",
-                               full.names = TRUE)
+CalcAllMutations <- function(
+    AllReportFiles = NULL,
+    out_dir_base = "."
+) {
+  if (is.null(AllReportFiles)) {
+    counts_dir <- file.path(out_dir_base, "counts")
+
+    AllReportFiles <- list.files(
+      counts_dir,
+      pattern = "_allMutations\\.csv$",
+      full.names = TRUE
+    )
+
+    if (length(AllReportFiles) == 0) {
+      stop("Error: No mutation count files found in '", counts_dir, "'.")
+    }
+  }
   process_file <- function(input) {
     df9 <- read.delim(input, row.names = NULL, header = T, sep = ",")
 
@@ -78,10 +98,16 @@ CalcAllMutations = function(AllReportFiles) {
       }
     }
     # Save all positions file
-    the_dir <- "./AllMutations"
+    the_dir <- file.path(out_dir_base, "AllMutations")
     check_create_dir(the_dir)
 
-    write_csv(new_df,file = paste0(the_dir,"/", file_path_sans_ext(basename(input)), "_Highest_Mutation.csv", sep=""))
+    readr::write_csv(
+      new_df,
+      file = file.path(
+        the_dir,
+        paste0(tools::file_path_sans_ext(basename(input)), "_Highest_Mutation.csv")
+      )
+    )
 
   }
   lapply(AllReportFiles, process_file)

@@ -4,20 +4,23 @@
 \alias{CombineOnTarget}
 \title{CombineOnTarget}
 \usage{
-CombineOnTarget(OnTargetFiles)
+CombineOnTarget(OnTargetFiles, out_dir_base = ".")
 }
 \arguments{
 \item{OnTargetFiles}{Character vector of file paths to *_ontarget.txt files.}
+
+\item{out_dir_base}{Base output directory. Defaults to the current working
+directory (`"."`). The `Overview` subdirectory is created within this directory.}
 }
 \value{
 A data frame containing the on-target editing percentage for each
-input sample. The same data are also written to
-`./Overview/OnTarget.csv`.
+  input sample. The same data are also written to `Overview/OnTarget.csv`
+  within `out_dir_base`.
 }
 \description{
 Combines on-target editing percentages from multiple output files into
-a single summary table called `All_ontarget` and writes it to
-"./Overview/OnTarget.csv".
+a single summary table and writes it to `Overview/OnTarget.csv`
+within `out_dir_base`.
 }
 \details{
 Empty files that contain only the sentinel "x" (or have no data rows

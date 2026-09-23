@@ -4,10 +4,17 @@
 \alias{OnTargetCalcABE}
 \title{OnTargetCalcABE}
 \usage{
-OnTargetCalcABE(MinXFiles)
+OnTargetCalcABE(MinXFiles, OntargetPosition, out_dir_base = ".")
 }
 \arguments{
 \item{MinXFiles}{A character vector of file paths}
+
+\item{OntargetPosition}{Numeric. Genomic position of the intended on-target
+editing site.}
+
+\item{out_dir_base}{Base output directory. Defaults to the current working
+directory (`"."`). The `percentages`, `mean`, `OnTarget`, `Coverage`,
+and `AllPositions` subdirectories are created within this directory.}
 }
 \description{
 This function allows you to perform all necessary calculations for adenine base editing on and off target effects
@@ -16,7 +23,7 @@ This function allows you to perform all necessary calculations for adenine base 
 \dontrun{
 # Usage example
 file_paths <- c("file1.csv", "file2.csv", "file3.csv")
-OnTargetCalcAB(file_paths)
+OnTargetCalcABE(file_paths, OntargetPosition = 1561)
 }
 }
 \keyword{(default}

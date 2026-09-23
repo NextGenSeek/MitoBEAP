@@ -4,13 +4,16 @@
 \alias{LoadRawCount}
 \title{LoadRawCount}
 \usage{
-LoadRawCount(RawCountFiles, depth = 30)
+LoadRawCount(RawCountFiles, depth = 30, out_dir_base = ".")
 }
 \arguments{
 \item{RawCountFiles}{A character vector of file paths to raw count data files.}
 
 \item{depth}{Numeric. Minimum read depth required to retain a row.
 Default is 30.}
+
+\item{out_dir_base}{Base output directory. Defaults to the current working
+directory (`"."`). The `minimum` subdirectory is created within this directory.}
 }
 \description{
 Loads raw count files from specified file paths, filters rows based on minimum read depth, and writes the filtered data to a subdirectory called "minimum".

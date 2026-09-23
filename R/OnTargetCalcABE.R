@@ -2,16 +2,25 @@
 #'
 #' This function allows you to perform all necessary calculations for adenine base editing on and off target effects
 #' @param MinXFiles A character vector of file paths
+#' @param OntargetPosition Numeric. Genomic position of the intended on-target
+#'   editing site.
+#' @param out_dir_base Base output directory. Defaults to the current working
+#'   directory (`"."`). The `percentages`, `mean`, `OnTarget`, `Coverage`,
+#'   and `AllPositions` subdirectories are created within this directory.
 #' @keywords Load counts and filter for minimum depth (default = 30)
 #' @export
 #' @examples
 #' \dontrun{
 #' # Usage example
 #' file_paths <- c("file1.csv", "file2.csv", "file3.csv")
-#' OnTargetCalcAB(file_paths)
+#' OnTargetCalcABE(file_paths, OntargetPosition = 1561)
 #' }
 
-OnTargetCalcABE = function(MinXFiles) {
+OnTargetCalcABE <- function(
+    MinXFiles,
+    OntargetPosition,
+    out_dir_base = "."
+) {
   if (any(!file.exists(MinXFiles))) {
     stop("One or more input files not found.")
   }
@@ -91,12 +100,12 @@ OnTargetCalcABE = function(MinXFiles) {
 
     AllAT <- rbind(data3, test2)
 
-     the_dir <- "./percentages" #Name the new desired directory
+    the_dir <- file.path(out_dir_base, "percentages") #Name the new desired directory
      check_create_dir(the_dir)
 
      # write as new csv
      write_csv(AllAT,file = paste0(the_dir,"/", file_path_sans_ext(basename(input)), ".csv", sep=""))
-     the_dir <- "./mean" #Name the new desired directory
+     the_dir <- file.path(out_dir_base, "mean") #Name the new desired directory
      check_create_dir(the_dir)
 
      # Calulate mean percentage without on target
@@ -109,7 +118,7 @@ OnTargetCalcABE = function(MinXFiles) {
      # Extract on target percentage
      ontarget <- data3[(data3$position == OntargetPosition),]
 
-     the_dir <- "./OnTarget" #Name the new desired directory
+     the_dir <- file.path(out_dir_base, "OnTarget") #Name the new desired directory
      check_create_dir(the_dir)
 
      # As the mutations can be in any column, do this for ontarget:
@@ -138,7 +147,7 @@ OnTargetCalcABE = function(MinXFiles) {
 
      ################# Add average coverage ################
 
-     the_dir <- "./Coverage" #Name the new desired directory
+     the_dir <- file.path(out_dir_base, "Coverage") #Name the new desired directory
      check_create_dir(the_dir)
 
      # Calculate average coverage and save as separate file
@@ -154,7 +163,7 @@ OnTargetCalcABE = function(MinXFiles) {
      colnames(data) [c(5,6)] <- c("RefBase","RefReads")  #Change column names
 
      # Save all positions file
-     the_dir <- "./AllPositions"
+     the_dir <- file.path(out_dir_base, "AllPositions")
      check_create_dir(the_dir)
 
      write_csv(data,file = paste0(the_dir,"/", file_path_sans_ext(basename(input)), ".csv", sep=""))

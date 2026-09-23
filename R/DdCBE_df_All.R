@@ -6,6 +6,9 @@
 #' @param controls Numeric; number of controls that need to have heteroplasmy level above max_threshold. Default = 2
 #' @param SampleList Data frame containing sample metadata.
 #'   Defaults to the global `SampleList` object if not supplied.
+#' @param out_dir_base Base analysis directory. Defaults to the current working
+#'   directory (`"."`). Input files are read from the `AllMutations`
+#'   subdirectory within this directory.
 #' @return A data frame containing the mutation data with the adjusted
 #'   percentage in `AdjPercentage`.
 #' @export
@@ -13,7 +16,8 @@ DdCBE_df_All <- function(
     min_threshold = 0,
     max_threshold = 60,
     controls = 2,
-    SampleList = NULL
+    SampleList = NULL,
+    out_dir_base = "."
 ) {
 
   if (is.null(SampleList)) {
@@ -23,8 +27,18 @@ DdCBE_df_All <- function(
     SampleList <- get("SampleList", envir = .GlobalEnv, inherits = FALSE)
   }
 
-  AllMutFiles <- list.files("./AllMutations", pattern = "*_Highest_Mutation.csv",
-                            full.names = TRUE)
+  all_mutations_dir <- file.path(out_dir_base, "AllMutations")
+
+  AllMutFiles <- list.files(
+    all_mutations_dir,
+    pattern = "_Highest_Mutation\\.csv$",
+    full.names = TRUE
+  )
+
+  if (length(AllMutFiles) == 0) {
+    stop("Error: No mutation files found in '", all_mutations_dir, "'.")
+  }
+
   df7 <- AllMutFiles %>%
     purrr::set_names(nm = (basename(.) %>% tools::file_path_sans_ext())) %>% # Name without extension
     purrr::map_df(read_csv,

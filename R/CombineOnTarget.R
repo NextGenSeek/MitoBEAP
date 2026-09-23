@@ -1,26 +1,28 @@
 #' CombineOnTarget
 #'
 #' Combines on-target editing percentages from multiple output files into
-#' a single summary table called `All_ontarget` and writes it to
-#' "./Overview/OnTarget.csv".
+#' a single summary table and writes it to `Overview/OnTarget.csv`
+#' within `out_dir_base`.
 #'
 #' Empty files that contain only the sentinel "x" (or have no data rows
 #' after the header) are assigned an on-target percentage of 0.
 #'
 #' @param OnTargetFiles Character vector of file paths to *_ontarget.txt files.
+#' @param out_dir_base Base output directory. Defaults to the current working
+#'   directory (`"."`). The `Overview` subdirectory is created within this directory.
 #'
 #' @return A data frame containing the on-target editing percentage for each
-#' input sample. The same data are also written to
-#' `./Overview/OnTarget.csv`.
+#'   input sample. The same data are also written to `Overview/OnTarget.csv`
+#'   within `out_dir_base`.
 #'
 #' @export
-CombineOnTarget <- function(OnTargetFiles) {
+CombineOnTarget <- function(OnTargetFiles, out_dir_base = ".") {
 
   if (any(!file.exists(OnTargetFiles))) {
     stop("Error: One or more on-target files do not exist.")
   }
 
-  out_dir <- "./Overview"
+  out_dir <- file.path(out_dir_base, "Overview")
   if (!dir.exists(out_dir)) dir.create(out_dir, recursive = TRUE)
 
   ## Helper: always returns a tibble with X1 as *character*

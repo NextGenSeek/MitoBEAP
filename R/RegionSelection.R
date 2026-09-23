@@ -7,6 +7,8 @@
 #' @param position_range A numeric vector of length 2 specifying the start and end positions to retain. If NULL, uses the full range in each file.
 #' @param depth_filter Logical; if TRUE, applies a depth threshold filter.
 #' @param min_depth Minimum read depth to retain rows (used only if \code{depth_filter = TRUE}).
+#' @param out_dir_base Base output directory. Defaults to the current working
+#'   directory (`"."`). The `minimum` subdirectory is created within this directory.
 #' @keywords region selection, filter, depth
 #' @export
 #' @examples
@@ -14,7 +16,13 @@
 #' file_paths <- c("sample1.txt", "sample2.txt")
 #' RegionSelection(file_paths, position_range = c(1000, 5000), depth_filter = TRUE, min_depth = 30)
 #' }
-RegionSelection <- function(RawCountFiles, position_range = NULL, depth_filter = FALSE, min_depth = 0) {
+RegionSelection <- function(
+    RawCountFiles,
+    position_range = NULL,
+    depth_filter = FALSE,
+    min_depth = 0,
+    out_dir_base = "."
+) {
   # Validate file existence
   if (any(!file.exists(RawCountFiles))) {
     stop("Error: One or more input files do not exist.")
@@ -78,11 +86,17 @@ RegionSelection <- function(RawCountFiles, position_range = NULL, depth_filter =
       }
     }
 
-    the_dir <- "./minimum"
+    the_dir <- file.path(out_dir_base, "minimum")
     check_create_dir(the_dir)
 
     # Save filtered file
-    write_csv(data, file = paste0(the_dir, "/", file_path_sans_ext(basename(input)), ".csv"))
+    readr::write_csv(
+      data,
+      file = file.path(
+        the_dir,
+        paste0(tools::file_path_sans_ext(basename(input)), ".csv")
+      )
+    )
   }
 
   lapply(RawCountFiles, process_file)

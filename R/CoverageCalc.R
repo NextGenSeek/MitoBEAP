@@ -4,8 +4,11 @@
 #' Strips unnecessary parts from filenames, renames columns, and saves the result as "Coverage.csv".
 #'
 #' @param CoverageFiles A character vector of file paths to coverage summary files (CSV).
+#' @param out_dir_base Base output directory. Defaults to the current working
+#'   directory (`"."`). The `Overview` subdirectory is created within this directory.
 #' @return A data frame containing the coverage for each input sample.
-#'   The same data are also written to `./Overview/Coverage.csv`.
+#'   The same data are also written to `Overview/Coverage.csv` within
+#'   `out_dir_base`.
 #' @keywords coverage, directory, combine
 #' @export
 #' @examples
@@ -13,14 +16,14 @@
 #' CoverageFiles <- c("./data/coverage_file1.csv", "./data/coverage_file2.csv")
 #' CoverageCalc(CoverageFiles)
 #' }
-CoverageCalc <- function(CoverageFiles) {
+CoverageCalc <- function(CoverageFiles, out_dir_base = ".") {
   # Check if all files exist
   if (any(!file.exists(CoverageFiles))) {
     stop("Error: One or more coverage files do not exist.")
   }
 
   # Create output directory
-  the_dir <- "./Overview"
+  the_dir <- file.path(out_dir_base, "Overview")
   check_create_dir <- function(dir) {
     if (!dir.exists(dir)) {
       dir.create(dir, recursive = TRUE)

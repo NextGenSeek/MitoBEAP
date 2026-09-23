@@ -10,7 +10,8 @@ off_target_count_summary(
   lower = 0.1,
   upper = 70,
   condition_levels = c("control", "treated"),
-  out_dir = ".",
+  out_dir_base = ".",
+  out_dir = NULL,
   csv_prefix = "MutationCount",
   plot_file = "MutationCount_grouped.pdf",
   make_plot = TRUE,
@@ -31,7 +32,12 @@ Defaults to the global `SampleList` object if not supplied.}
 
 \item{condition_levels}{Default control and treated}
 
-\item{out_dir}{output directory}
+\item{out_dir_base}{Base analysis directory. Defaults to the current working
+directory (`"."`). By default, output files are written to the `Plots`
+subdirectory within this directory.}
+
+\item{out_dir}{Optional explicit output directory. If supplied, this overrides
+`out_dir_base` for backward compatibility.}
 
 \item{csv_prefix}{Default "MutationCount"}
 

@@ -15,8 +15,13 @@
 #'   Defaults to the global `Coverage` object if not supplied.
 #' @param SampleList Data frame containing sample metadata.
 #'   Defaults to the global `SampleList` object if not supplied.
+#' @param out_dir_base Base analysis directory. Defaults to the current working
+#'   directory (`"."`). The overview file is written to the `Overview`
+#'   subdirectory, and any optional cleanup is performed on intermediate
+#'   subdirectories within this directory.
 #' @return Invisibly returns the combined overview data frame. The same data
-#'   are written to "Overview/All_Ontarget_mean_Coverage.csv".
+#'   are written to `Overview/All_Ontarget_mean_Coverage.csv` within
+#'   `out_dir_base`.
 #' @export
 #'
 #' @examples
@@ -29,7 +34,8 @@ CreateOverview <- function(
     OnTarget = NULL,
     Coverage = NULL,
     SampleList = NULL,
-    cleanup = FALSE
+    cleanup = FALSE,
+    out_dir_base = "."
 ) {
 
   # Use supplied objects; fall back to global objects for backward compatibility
@@ -87,7 +93,7 @@ if (!requireNamespace("dplyr", quietly = TRUE)) {
   All_mean <- dplyr::arrange(All_mean, Order)
 
   # Create output directory if needed
-  the_dir <- "./Overview"
+  the_dir <- file.path(out_dir_base, "Overview")
   check_create_dir <- function(dir) {
     if (!dir.exists(dir)) {
       dir.create(dir, recursive = TRUE)
@@ -95,16 +101,19 @@ if (!requireNamespace("dplyr", quietly = TRUE)) {
   }
   check_create_dir(the_dir)
 
-  readr::write_csv(All_mean,file = paste0(the_dir,"/", "All_Ontarget_mean_Coverage.csv", sep=""))
+  readr::write_csv(
+    All_mean,
+    file = file.path(the_dir, "All_Ontarget_mean_Coverage.csv")
+  )
 
 # Optionally clean up intermediate folders
-if (isTRUE(cleanup)) {
-  unlink("./minimum", recursive = TRUE)
-  unlink("./Coverage", recursive = TRUE)
-  unlink("./mean", recursive = TRUE)
-  unlink("./OnTarget", recursive = TRUE)
-  unlink("./percentages", recursive = TRUE)
-}
+  if (isTRUE(cleanup)) {
+    unlink(file.path(out_dir_base, "minimum"), recursive = TRUE)
+    unlink(file.path(out_dir_base, "Coverage"), recursive = TRUE)
+    unlink(file.path(out_dir_base, "mean"), recursive = TRUE)
+    unlink(file.path(out_dir_base, "OnTarget"), recursive = TRUE)
+    unlink(file.path(out_dir_base, "percentages"), recursive = TRUE)
+  }
 
 return(invisible(All_mean))
 }

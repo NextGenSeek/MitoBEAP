@@ -13,7 +13,8 @@ Bystander(
   fill_values = c(0, 30, 100),
   Adj = NULL,
   SampleList = NULL,
-  OntargetPosition = NULL
+  OntargetPosition = NULL,
+  out_dir_base = "."
 )
 }
 \arguments{
@@ -39,10 +40,14 @@ Defaults to the global `SampleList` object if not supplied.}
 \item{OntargetPosition}{Numeric; mitochondrial genome position of the
 intended on-target edit. Defaults to the global `OntargetPosition`
 object if not supplied.}
+
+\item{out_dir_base}{Base analysis directory. Defaults to the current working
+directory (`"."`). The heatmap is written to the `Plots` subdirectory
+within this directory.}
 }
 \value{
-A ggplot object. The heatmap is also saved to
-  `./Plots/HeatmapBystanderEffect.png`.
+A ggplot object. The heatmap is also saved as
+  `Plots/HeatmapBystanderEffect.png` within `out_dir_base`.
 }
 \description{
 Creates a heatmap of adjusted heteroplasmy percentages for positions surrounding the on-target site.

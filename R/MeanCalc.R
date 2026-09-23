@@ -4,9 +4,12 @@
 #' The result is saved as "All_OffTarget_Mean.csv" in the "Overview" directory.
 #'
 #' @param MeanFiles A character vector of file paths to mean off-target output files (one per sample).
+#' @param out_dir_base Base output directory. Defaults to the current working
+#'   directory (`"."`). The `Overview` subdirectory is created within this directory.
 #' @keywords off-target, mean, summary
 #' @return A data frame containing the mean off-target percentage for each sample.
-#'   The same data are also written to `./Overview/All_OffTarget_Mean.csv`.
+#'   The same data are also written to `Overview/All_OffTarget_Mean.csv`
+#'   within `out_dir_base`.
 #' @export
 #' @examples
 #' \dontrun{
@@ -16,7 +19,7 @@
 
 # Calculate off-target values
 
-MeanCalc = function(MeanFiles) {
+MeanCalc <- function(MeanFiles, out_dir_base = ".") {
 
   # Check if all files exist
   if (any(!file.exists(MeanFiles))) {
@@ -24,7 +27,7 @@ MeanCalc = function(MeanFiles) {
   }
 
   # Create output directory
-  the_dir <- "./Overview"
+  the_dir <- file.path(out_dir_base, "Overview")
   check_create_dir <- function(dir) {
     if (!dir.exists(dir)) {
       dir.create(dir, recursive = TRUE)

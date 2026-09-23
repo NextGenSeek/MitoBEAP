@@ -4,13 +4,17 @@
 \alias{OnTargetCalcCBE}
 \title{OnTargetCalcCBE}
 \usage{
-OnTargetCalcCBE(MinXFiles, OntargetPosition)
+OnTargetCalcCBE(MinXFiles, OntargetPosition, out_dir_base = ".")
 }
 \arguments{
 \item{MinXFiles}{A character vector of file paths to pre-filtered count data (CSV format).}
 
 \item{OntargetPosition}{Numeric. Genomic position of the intended on-target
 editing site.}
+
+\item{out_dir_base}{Base output directory. Defaults to the current working
+directory (`"."`). The `percentages`, `mean`, `OnTarget`, `Coverage`,
+and `AllPositions` subdirectories are created within this directory.}
 }
 \description{
 Analyzes count files to calculate base editing efficiency (C→T and G→A conversions), including on- and off-target effects.

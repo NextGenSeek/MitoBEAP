@@ -4,7 +4,9 @@
 #'
 #' @param csvFiles list with csv files
 #' @param OntargetPosition Numeric; position within the genome
-#' @param out_dir_base output directory. Default "./percentages"
+#' @param out_dir_base Base analysis directory. Defaults to the current working
+#'   directory (`"."`). Output files are written to the `percentages`, `mean`,
+#'   `OnTarget`, `Coverage`, and `AllPositions` subdirectories within this directory.
 #' @return Invisibly returns `NULL`. Processed output files are written to
 #'   the `percentages`, `mean`, `OnTarget`, `Coverage`, and `AllPositions`
 #'   directories within `out_dir_base`.

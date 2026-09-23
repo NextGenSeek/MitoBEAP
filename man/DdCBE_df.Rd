@@ -8,7 +8,8 @@ DdCBE_df(
   min_threshold = 0,
   max_threshold = 100,
   controls = 3,
-  SampleList = NULL
+  SampleList = NULL,
+  out_dir_base = "."
 )
 }
 \arguments{
@@ -23,6 +24,10 @@ position must have a heteroplasmy percentage greater than or equal to
 \item{SampleList}{Data frame containing sample metadata, including
 `FileName`, `SampleName`, and `Condition`. Defaults to the global
 `SampleList` object if not supplied.}
+
+\item{out_dir_base}{Base analysis directory. Defaults to the current working
+directory (`"."`). Input files are read from the `AllPositions`
+subdirectory within this directory.}
 }
 \value{
 A data frame containing the adjusted editing percentages.

@@ -11,8 +11,12 @@
 #'   Defaults to the global `All_mean` object if not supplied.
 #' @param SampleList Data frame containing sample metadata.
 #'   Defaults to the global `SampleList` object if not supplied.
+#' @param out_dir_base Base analysis directory. Defaults to the current working
+#'   directory (`"."`). The plot is written to the `Plots` subdirectory
+#'   within this directory.
 #'
-#' @return No return value. A bar chart PNG is saved to `./Plots/Barchart_<data_type>.png`.
+#' @return Invisibly returns the ggplot object. The bar chart is also saved as
+#'   `Plots/Barchart_<data_type>.png` within `out_dir_base`.
 #' @export
 #'
 #' @examples
@@ -26,7 +30,8 @@ CreateBarChart <- function(
     colour = "skyblue",
     All_ontarget = NULL,
     All_mean = NULL,
-    SampleList = NULL
+    SampleList = NULL,
+    out_dir_base = "."
 ) {
 
   data_type <- match.arg(data_type)
@@ -97,7 +102,7 @@ CreateBarChart <- function(
   ## ------------------------------------------------------------------------
   ## 4.  Build the bar chart
   ## ------------------------------------------------------------------------
-  the_dir <- "./Plots"
+  the_dir <- file.path(out_dir_base, "Plots")
   if (!dir.exists(the_dir)) dir.create(the_dir, recursive = TRUE)
 
   p <- ggplot2::ggplot(df, aes(x = SampleName, y = .data[[perc_col]])) +

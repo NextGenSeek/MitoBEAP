@@ -9,7 +9,8 @@ plot_OffTarget_histograms(
   min_pct = 0,
   max_pct = Inf,
   Adj = NULL,
-  OntargetPosition = NULL
+  OntargetPosition = NULL,
+  out_dir_base = "."
 )
 }
 \arguments{
@@ -24,9 +25,14 @@ Defaults to the global `Adj` object if not supplied.}
 
 \item{OntargetPosition}{Numeric. Genomic position of the intended on-target
 editing site. Defaults to the global `OntargetPosition` object if not supplied.}
+
+\item{out_dir_base}{Base analysis directory. Defaults to the current working
+directory (`"."`). Histogram PDFs are written to the `Plots` subdirectory
+within this directory.}
 }
 \value{
-Describe what the function returns
+Invisibly returns `NULL`. One histogram PDF per sample is saved
+  to the `Plots` subdirectory within `out_dir_base`.
 }
 \description{
 Make histograms

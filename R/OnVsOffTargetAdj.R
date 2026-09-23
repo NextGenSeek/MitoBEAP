@@ -12,9 +12,12 @@
 #'   Defaults to the global `All_ontarget` object if not supplied.
 #' @param SampleList Data frame containing sample metadata.
 #'   Defaults to the global `SampleList` object if not supplied.
+#' @param out_dir_base Base analysis directory. Defaults to the current working
+#'   directory (`"."`). PNG and PDF plots are written to the
+#'   `Plots/AdjustedPlots` subdirectory within this directory.
 #'
 #' @return Invisibly returns the ggplot object. PNG and PDF plots are saved
-#'   to `./Plots/AdjustedPlots/`.
+#'   to the `Plots/AdjustedPlots` subdirectory within `out_dir_base`.
 #' @export
 #'
 #' @examples
@@ -32,7 +35,8 @@ OnVsOffTargetAdj <- function(
     condition = TRUE,
     Adj = NULL,
     All_ontarget = NULL,
-    SampleList = NULL
+    SampleList = NULL,
+    out_dir_base = "."
 ) {
   if (is.null(Adj)) {
     if (!exists("Adj", envir = .GlobalEnv, inherits = FALSE)) {
@@ -124,7 +128,7 @@ label_size <- dplyr::case_when(
   print(p)
 
   # Save plot
-  the_dir <- "./Plots/AdjustedPlots"
+  the_dir <- file.path(out_dir_base, "Plots", "AdjustedPlots")
   check_create_dir <- function(dir) {
     if (!dir.exists(dir)) {
       dir.create(dir, recursive = TRUE)

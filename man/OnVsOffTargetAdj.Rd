@@ -11,7 +11,8 @@ OnVsOffTargetAdj(
   condition = TRUE,
   Adj = NULL,
   All_ontarget = NULL,
-  SampleList = NULL
+  SampleList = NULL,
+  out_dir_base = "."
 )
 }
 \arguments{
@@ -31,10 +32,14 @@ Defaults to the global `All_ontarget` object if not supplied.}
 
 \item{SampleList}{Data frame containing sample metadata.
 Defaults to the global `SampleList` object if not supplied.}
+
+\item{out_dir_base}{Base analysis directory. Defaults to the current working
+directory (`"."`). PNG and PDF plots are written to the
+`Plots/AdjustedPlots` subdirectory within this directory.}
 }
 \value{
 Invisibly returns the ggplot object. PNG and PDF plots are saved
-  to `./Plots/AdjustedPlots/`.
+  to the `Plots/AdjustedPlots` subdirectory within `out_dir_base`.
 }
 \description{
 Creates a scatterplot comparing on-target editing with adjusted off-target effects.

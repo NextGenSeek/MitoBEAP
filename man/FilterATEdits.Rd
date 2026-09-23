@@ -4,16 +4,21 @@
 \alias{FilterATEdits}
 \title{FilterATEdits}
 \usage{
-FilterATEdits(csvFiles, out_dir = "./percentages")
+FilterATEdits(csvFiles, out_dir_base = ".", out_dir = NULL)
 }
 \arguments{
-\item{csvFiles}{list with csv files}
+\item{csvFiles}{Character vector containing paths to the input CSV files.}
 
-\item{out_dir}{output directory. Default "./percentages"}
+\item{out_dir_base}{Base analysis directory. Defaults to the current working
+directory (`"."`). By default, filtered files are written to the
+`percentages` subdirectory within this directory.}
+
+\item{out_dir}{Optional explicit output directory. If supplied, this overrides
+`out_dir_base` for backward compatibility.}
 }
 \value{
 Invisibly returns `NULL`. Filtered A-to-G and T-to-C editing
-  results are written as CSV files to `out_dir`.
+  results are written to the selected output directory.
 }
 \description{
 Filter for adenine base editing

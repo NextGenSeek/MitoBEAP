@@ -13,7 +13,11 @@
 #'   Defaults to the global `Coverage` object if not supplied.
 #' @param SampleList Data frame containing sample metadata.
 #'   Defaults to the global `SampleList` object if not supplied.
-#' @return Invisibly returns the ggplot object. A PNG plot is saved to `./Plots/`.
+#' @param out_dir_base Base analysis directory. Defaults to the current working
+#'   directory (`"."`). The plot is written to the `Plots` subdirectory
+#'   within this directory.
+#' @return Invisibly returns the ggplot object. A PNG plot is saved to the
+#'   `Plots` subdirectory within `out_dir_base`.
 #' @export
 #' @examples
 #' \dontrun{
@@ -26,7 +30,8 @@ OnVsOffTarget <- function(
     All_mean = NULL,
     OnTarget = NULL,
     Coverage = NULL,
-    SampleList = NULL
+    SampleList = NULL,
+    out_dir_base = "."
 ) {
 
   if (is.null(All_mean)) {
@@ -90,7 +95,7 @@ p <- ggplot(Overview_df,aes(x=`Off target %`, y=`On target %`, label = RealName)
   ggplot2::ylab(ylab)
 
 # Create output directory
-the_dir <- "./Plots"
+the_dir <- file.path(out_dir_base, "Plots")
 check_create_dir <- function(dir) {
   if (!dir.exists(dir)) {
     dir.create(dir, recursive = TRUE)

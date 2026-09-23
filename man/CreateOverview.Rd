@@ -9,7 +9,8 @@ CreateOverview(
   OnTarget = NULL,
   Coverage = NULL,
   SampleList = NULL,
-  cleanup = FALSE
+  cleanup = FALSE,
+  out_dir_base = "."
 )
 }
 \arguments{
@@ -28,10 +29,16 @@ Defaults to the global `SampleList` object if not supplied.}
 \item{cleanup}{Logical. If `TRUE`, intermediate output directories
 (`minimum`, `Coverage`, `mean`, `OnTarget`, and `percentages`) are
 deleted after the overview file is created. Default is `FALSE`.}
+
+\item{out_dir_base}{Base analysis directory. Defaults to the current working
+directory (`"."`). The overview file is written to the `Overview`
+subdirectory, and any optional cleanup is performed on intermediate
+subdirectories within this directory.}
 }
 \value{
 Invisibly returns the combined overview data frame. The same data
-  are written to "Overview/All_Ontarget_mean_Coverage.csv".
+  are written to `Overview/All_Ontarget_mean_Coverage.csv` within
+  `out_dir_base`.
 }
 \description{
 Combines all processed data (`All_mean`, `OnTarget`, `Coverage`, and `SampleList`) into one overview table.

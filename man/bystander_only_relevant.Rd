@@ -13,7 +13,8 @@ bystander_only_relevant(
   fill_values = c(0, 30, 100),
   Adj = NULL,
   SampleList = NULL,
-  OntargetPosition = NULL
+  OntargetPosition = NULL,
+  out_dir_base = "."
 )
 }
 \arguments{
@@ -38,9 +39,14 @@ Defaults to the global `SampleList` object if not supplied.}
 
 \item{OntargetPosition}{Numeric. Genomic position of the intended on-target
 editing site. Defaults to the global `OntargetPosition` object if not supplied.}
+
+\item{out_dir_base}{Base analysis directory. Defaults to the current working
+directory (`"."`). The heatmap is written to the `Plots` subdirectory
+within this directory.}
 }
 \value{
-No return value. Saves a heatmap plot to `./Plots/HeatmapBystanderEffect_only_relevant.png`.
+A ggplot object. The heatmap is also saved as
+  `Plots/HeatmapBystanderEffect_only_relevant.png` within `out_dir_base`.
 }
 \description{
 Creates a heatmap of adjusted heteroplasmy percentages for potential target sites surrounding the on-target site.

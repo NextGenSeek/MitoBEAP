@@ -9,7 +9,12 @@
 #' @param SampleList Data frame containing sample metadata, including
 #'   `SampleName` and `Order`. Defaults to the global `SampleList` object
 #'   if not supplied.
-#' @return No return value. A bar chart PNG is saved to `./Plots/AdjustedPlots/Adjusted_Barchart_offTarget.png`.
+#' @param out_dir_base Base analysis directory. Defaults to the current working
+#'   directory (`"."`). The plot is written to the `Plots/AdjustedPlots`
+#'   subdirectory within this directory.
+#' @return Invisibly returns `NULL`. The bar chart is saved to
+#'   `Plots/AdjustedPlots/Adjusted_Barchart_offTarget.png` within
+#'   `out_dir_base`.
 #' @export
 #' @name AdjCreateBarChart
 #'
@@ -31,7 +36,8 @@ utils::globalVariables(c(
 AdjCreateBarChart <- function(
     colour = "skyblue",
     Adj = NULL,
-    SampleList = NULL
+    SampleList = NULL,
+    out_dir_base = "."
 ) {
 
   # Use supplied objects; fall back to global objects for backward compatibility
@@ -57,7 +63,7 @@ AdjCreateBarChart <- function(
     )
 data <- offTarget_percentages %>% drop_na()
 
-the_dir <- "./Plots" #Name the new desired directory
+the_dir <- file.path(out_dir_base, "Plots", "AdjustedPlots") #Name the new desired directory
 check_create_dir(the_dir)
 
 # Make a simple bar chart
@@ -83,7 +89,10 @@ p<- ggplot2::ggplot(data, aes(x=SampleName, y=offTarget_percentage)) +
 
 plot(p)
 # Save plot
-outname_png = paste0(the_dir,"/AdjustedPlots/","Adjusted_Barchart_offTarget.png")
+outname_png <- file.path(
+  the_dir,
+  "Adjusted_Barchart_offTarget.png"
+)
 ggsave(outname_png, plot = p, width = 8, height = 6)
 invisible(dev.off())
 

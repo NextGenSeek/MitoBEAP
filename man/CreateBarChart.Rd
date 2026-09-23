@@ -9,7 +9,8 @@ CreateBarChart(
   colour = "skyblue",
   All_ontarget = NULL,
   All_mean = NULL,
-  SampleList = NULL
+  SampleList = NULL,
+  out_dir_base = "."
 )
 }
 \arguments{
@@ -25,9 +26,14 @@ Defaults to the global `All_mean` object if not supplied.}
 
 \item{SampleList}{Data frame containing sample metadata.
 Defaults to the global `SampleList` object if not supplied.}
+
+\item{out_dir_base}{Base analysis directory. Defaults to the current working
+directory (`"."`). The plot is written to the `Plots` subdirectory
+within this directory.}
 }
 \value{
-No return value. A bar chart PNG is saved to `./Plots/Barchart_<data_type>.png`.
+Invisibly returns the ggplot object. The bar chart is also saved as
+  `Plots/Barchart_<data_type>.png` within `out_dir_base`.
 }
 \description{
 Creates bar charts for either on-target or off-target editing percentages per sample.

@@ -4,6 +4,8 @@
 #' @param RawCountFiles A character vector of file paths to raw count data files.
 #' @param depth Numeric. Minimum read depth required to retain a row.
 #'   Default is 30.
+#' @param out_dir_base Base output directory. Defaults to the current working
+#'   directory (`"."`). The `minimum` subdirectory is created within this directory.
 #' @keywords load counts, filter depth
 #' @export
 #' @examples
@@ -13,7 +15,11 @@
 #' LoadRawCount(file_paths)
 #' }
 
-LoadRawCount <- function(RawCountFiles, depth = 30) {
+LoadRawCount <- function(
+    RawCountFiles,
+    depth = 30,
+    out_dir_base = "."
+) {
   # Check if all files exist
   if (any(!file.exists(RawCountFiles))) {
     stop("Error: One or more input files do not exist.")
@@ -42,11 +48,17 @@ LoadRawCount <- function(RawCountFiles, depth = 30) {
        dir.create(the_dir, recursive = TRUE) } #Creates a directory if it doesn't already exist
     }
 
-    the_dir <- "./minimum"
+   the_dir <- file.path(out_dir_base, "minimum")
    check_create_dir(the_dir)
 
   # write as new csv
-  write_csv(data, file = paste0(the_dir, "/", file_path_sans_ext(basename(input)), '.csv', sep = ""))
+   readr::write_csv(
+     data,
+     file = file.path(
+       the_dir,
+       paste0(tools::file_path_sans_ext(basename(input)), ".csv")
+     )
+   )
 
 }
 lapply(RawCountFiles, process_file)

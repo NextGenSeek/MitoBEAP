@@ -11,6 +11,9 @@
 #' @param SampleList Data frame containing sample metadata, including
 #'   `FileName`, `SampleName`, and `Condition`. Defaults to the global
 #'   `SampleList` object if not supplied.
+#' @param out_dir_base Base analysis directory. Defaults to the current working
+#'   directory (`"."`). Input files are read from the `AllPositions`
+#'   subdirectory within this directory.
 #'
 #' @return A data frame containing the adjusted editing percentages.
 #' @export
@@ -24,7 +27,8 @@ DdCBE_df <- function(
     min_threshold = 0,
     max_threshold = 100,
     controls = 3,
-    SampleList = NULL
+    SampleList = NULL,
+    out_dir_base = "."
 ) {
 
   # Use supplied SampleList; fall back to the global object for backward compatibility
@@ -40,10 +44,16 @@ DdCBE_df <- function(
     stop("Error: 'min_threshold', 'max_threshold', and 'controls' must be numeric.")
   }
 
-  # Read report files
-  AllReportFiles <- list.files("./AllPositions", pattern = "\\.csv$", full.names = TRUE)
+  all_positions_dir <- file.path(out_dir_base, "AllPositions")
+
+  AllReportFiles <- list.files(
+    all_positions_dir,
+    pattern = "\\.csv$",
+    full.names = TRUE
+  )
+
   if (length(AllReportFiles) == 0) {
-    stop("Error: No report files found in './AllPositions'.")
+    stop("Error: No report files found in '", all_positions_dir, "'.")
   }
 
 df7 <- AllReportFiles %>%

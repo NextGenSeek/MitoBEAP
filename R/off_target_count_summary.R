@@ -8,7 +8,11 @@
 #' @param lower minimum heteroplasmy level to take into account
 #' @param upper maximum heteroplasmy level to take into account
 #' @param condition_levels Default control and treated
-#' @param out_dir output directory
+#' @param out_dir_base Base analysis directory. Defaults to the current working
+#'   directory (`"."`). By default, output files are written to the `Plots`
+#'   subdirectory within this directory.
+#' @param out_dir Optional explicit output directory. If supplied, this overrides
+#'   `out_dir_base` for backward compatibility.
 #' @param csv_prefix Default "MutationCount"
 #' @param plot_file pdf name. Default "MutationCount_grouped.pdf"
 #' @param make_plot Logical. If `TRUE`, creates the grouped off-target count plot.
@@ -29,7 +33,8 @@ off_target_count_summary <- function(
     lower = 0.1,
     upper = 70,
     condition_levels = c("control", "treated"),
-    out_dir = ".",
+    out_dir_base = ".",
+    out_dir = NULL,
     csv_prefix = "MutationCount",
     plot_file = "MutationCount_grouped.pdf",
     make_plot = TRUE,
@@ -48,6 +53,11 @@ off_target_count_summary <- function(
       stop("Error: 'SampleList' must be supplied or exist in the global environment.")
     }
     SampleList <- get("SampleList", envir = .GlobalEnv, inherits = FALSE)
+  }
+
+  # Determine output directory
+  if (is.null(out_dir)) {
+    out_dir <- file.path(out_dir_base, "Plots")
   }
 
     # --- checks -----------------------------------------------------------

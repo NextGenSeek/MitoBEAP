@@ -4,12 +4,20 @@
 \alias{DepthFile}
 \title{DepthFile}
 \usage{
-DepthFile(fromP = 1, toP = NULL)
+DepthFile(fromP = 1, toP = NULL, SampleList = NULL, out_dir_base = ".")
 }
 \arguments{
 \item{fromP}{Integer, starting position for the range of interest. Default is 1.}
 
 \item{toP}{Integer, ending position for the range of interest. If not supplied, the max position found is used.}
+
+\item{SampleList}{Data frame containing sample metadata, including
+`FileName` and `SampleName`. Defaults to the global `SampleList`
+object if not supplied.}
+
+\item{out_dir_base}{Base analysis directory. Defaults to the current working
+directory (`"."`). Input files are read from the `AllPositions`
+subdirectory and output is written to the `Overview` subdirectory.}
 }
 \description{
 Creates an overview file containing the depth and heteroplasmy percentage per position

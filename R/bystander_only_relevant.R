@@ -16,8 +16,11 @@
 #'   Defaults to the global `SampleList` object if not supplied.
 #' @param OntargetPosition Numeric. Genomic position of the intended on-target
 #'   editing site. Defaults to the global `OntargetPosition` object if not supplied.
-#'
-#' @return No return value. Saves a heatmap plot to `./Plots/HeatmapBystanderEffect_only_relevant.png`.
+#' @param out_dir_base Base analysis directory. Defaults to the current working
+#'   directory (`"."`). The heatmap is written to the `Plots` subdirectory
+#'   within this directory.
+#' @return A ggplot object. The heatmap is also saved as
+#'   `Plots/HeatmapBystanderEffect_only_relevant.png` within `out_dir_base`.
 #' @export
 #'
 #' @examples
@@ -34,7 +37,8 @@ bystander_only_relevant <- function(
     fill_values = c(0, 30, 100),
     Adj = NULL,
     SampleList = NULL,
-    OntargetPosition = NULL
+    OntargetPosition = NULL,
+    out_dir_base = "."
 ) {
   # Use supplied objects; fall back to global objects for backward compatibility
   if (is.null(Adj)) {
@@ -155,11 +159,11 @@ bystander_only_relevant <- function(
 
   print(p)
 
-  the_dir <- "./Plots"
+  the_dir <- file.path(out_dir_base, "Plots")
   check_create_dir(the_dir)
 
   ggplot2::ggsave(
-    filename = paste0(the_dir, "/HeatmapBystanderEffect_only_relevant.png"),
+    filename = file.path(the_dir, "HeatmapBystanderEffect_only_relevant.png"),
     plot = p,
     width = 8,
     height = 6

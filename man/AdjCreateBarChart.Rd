@@ -13,9 +13,15 @@ if not supplied.}
 \item{SampleList}{Data frame containing sample metadata, including
 `SampleName` and `Order`. Defaults to the global `SampleList` object
 if not supplied.}
+
+\item{out_dir_base}{Base analysis directory. Defaults to the current working
+directory (`"."`). The plot is written to the `Plots/AdjustedPlots`
+subdirectory within this directory.}
 }
 \value{
-No return value. A bar chart PNG is saved to `./Plots/AdjustedPlots/Adjusted_Barchart_offTarget.png`.
+Invisibly returns `NULL`. The bar chart is saved to
+  `Plots/AdjustedPlots/Adjusted_Barchart_offTarget.png` within
+  `out_dir_base`.
 }
 \description{
 Creates a bar chart of adjusted off-target percentages per sample

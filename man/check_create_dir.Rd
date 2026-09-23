@@ -4,16 +4,16 @@
 \alias{check_create_dir}
 \title{check_create_dir}
 \usage{
-check_create_dir(the_dir = "./subfolder")
+check_create_dir(the_dir = "subfolder")
 }
 \arguments{
-\item{the_dir}{directory. Default ./subfolder}
+\item{the_dir}{Character. Directory to create. Default is `"subfolder"`.}
 }
 \description{
 This function allows you create and name a subdirectory
 }
 \examples{
-check_create_dir("./name_subdir")
+check_create_dir("name_subdir")
 }
 \keyword{(sub)directory}
 \keyword{create}

@@ -8,7 +8,8 @@ AdjScatter(
   min_threshold = 0,
   labelPercentage = 10,
   Adj = NULL,
-  OntargetPosition = NULL
+  OntargetPosition = NULL,
+  out_dir_base = "."
 )
 }
 \arguments{
@@ -21,6 +22,10 @@ Defaults to the global `Adj` object if not supplied.}
 
 \item{OntargetPosition}{Numeric. Genomic position of the intended on-target
 editing site. Defaults to the global `OntargetPosition` object if not supplied.}
+
+\item{out_dir_base}{Base analysis directory. Defaults to the current working
+directory (`"."`). Plots are written to the `Plots/AdjustedPlots`
+subdirectory within this directory.}
 }
 \description{
 Creates scatterplots showing adjusted heteroplasmy levels for each sample,

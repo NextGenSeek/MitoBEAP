@@ -8,7 +8,8 @@ RegionSelection(
   RawCountFiles,
   position_range = NULL,
   depth_filter = FALSE,
-  min_depth = 0
+  min_depth = 0,
+  out_dir_base = "."
 )
 }
 \arguments{
@@ -19,6 +20,9 @@ RegionSelection(
 \item{depth_filter}{Logical; if TRUE, applies a depth threshold filter.}
 
 \item{min_depth}{Minimum read depth to retain rows (used only if \code{depth_filter = TRUE}).}
+
+\item{out_dir_base}{Base output directory. Defaults to the current working
+directory (`"."`). The `minimum` subdirectory is created within this directory.}
 }
 \description{
 Filters genomic count data files based on a specified position range and an optional depth threshold.

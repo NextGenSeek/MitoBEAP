@@ -5,6 +5,12 @@
 #'
 #' @param fromP Integer, starting position for the range of interest. Default is 1.
 #' @param toP Integer, ending position for the range of interest. If not supplied, the max position found is used.
+#' @param SampleList Data frame containing sample metadata, including
+#'   `FileName` and `SampleName`. Defaults to the global `SampleList`
+#'   object if not supplied.
+#' @param out_dir_base Base analysis directory. Defaults to the current working
+#'   directory (`"."`). Input files are read from the `AllPositions`
+#'   subdirectory and output is written to the `Overview` subdirectory.
 #' @keywords depth, heteroplasmy, overview
 #' @export
 #' @examples
@@ -12,17 +18,32 @@
 #' DepthFile(fromP = 300, toP = 500)
 #' }
 
-DepthFile = function(fromP = 1, toP = NULL) {
+DepthFile <- function(
+    fromP = 1,
+    toP = NULL,
+    SampleList = NULL,
+    out_dir_base = "."
+) {
 
-  # Ensure required object exists
-  if (!exists("SampleList")) {
-    stop("Error: 'SampleList' object must exist.")
+  # Use supplied SampleList; fall back to the global object for backward compatibility
+  if (is.null(SampleList)) {
+    if (!exists("SampleList", envir = .GlobalEnv, inherits = FALSE)) {
+      stop("Error: 'SampleList' must be supplied or exist in the global environment.")
+    }
+    SampleList <- get("SampleList", envir = .GlobalEnv, inherits = FALSE)
   }
 
   # Read all files from AllPositions folder
-  AllReportFiles <- list.files("./AllPositions", pattern = "\\.csv$", full.names = TRUE)
+  all_positions_dir <- file.path(out_dir_base, "AllPositions")
+
+  AllReportFiles <- list.files(
+    all_positions_dir,
+    pattern = "\\.csv$",
+    full.names = TRUE
+  )
+
   if (length(AllReportFiles) == 0) {
-    stop("Error: No CSV files found in './AllPositions'.")
+    stop("Error: No CSV files found in '", all_positions_dir, "'.")
   }
 
   df7 <- AllReportFiles %>%
@@ -63,7 +84,7 @@ combined_df <- combined %>%
   dplyr::select(type, dplyr::everything())
 
 # Output directory
-the_dir <- "./Overview"
+the_dir <- file.path(out_dir_base, "Overview")
 check_create_dir <- function(dir) {
   if (!dir.exists(dir)) {
     dir.create(dir, recursive = TRUE)
@@ -71,5 +92,8 @@ check_create_dir <- function(dir) {
 }
 check_create_dir(the_dir)
 
-write_csv(combined_df,file = paste0(the_dir,"/", "DepthFile.csv", sep=""))
+readr::write_csv(
+  combined_df,
+  file = file.path(the_dir, "DepthFile.csv")
+)
 }

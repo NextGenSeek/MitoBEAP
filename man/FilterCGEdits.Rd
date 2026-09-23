@@ -11,7 +11,9 @@ FilterCGEdits(csvFiles, OntargetPosition, out_dir_base = ".")
 
 \item{OntargetPosition}{Numeric; position within the genome}
 
-\item{out_dir_base}{output directory. Default "./percentages"}
+\item{out_dir_base}{Base analysis directory. Defaults to the current working
+directory (`"."`). Output files are written to the `percentages`, `mean`,
+`OnTarget`, `Coverage`, and `AllPositions` subdirectories within this directory.}
 }
 \value{
 Invisibly returns `NULL`. Processed output files are written to

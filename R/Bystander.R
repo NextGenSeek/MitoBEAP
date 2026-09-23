@@ -17,9 +17,11 @@
 #' @param fill_colours Character vector of colours used for the heatmap gradient.
 #' @param fill_values Numeric vector defining the percentage values corresponding
 #'   to `fill_colours`. Default is `c(0, 30, 100)`.
-#'
-#' @return A ggplot object. The heatmap is also saved to
-#'   `./Plots/HeatmapBystanderEffect.png`.
+#' @param out_dir_base Base analysis directory. Defaults to the current working
+#'   directory (`"."`). The heatmap is written to the `Plots` subdirectory
+#'   within this directory.
+#' @return A ggplot object. The heatmap is also saved as
+#'   `Plots/HeatmapBystanderEffect.png` within `out_dir_base`.
 #' @export
 #'
 #' @examples
@@ -42,7 +44,8 @@ Bystander <- function(
     fill_values = c(0, 30, 100),
     Adj = NULL,
     SampleList = NULL,
-    OntargetPosition = NULL
+    OntargetPosition = NULL,
+    out_dir_base = "."
 ) {
 
   if (is.null(Adj)) {
@@ -115,10 +118,15 @@ p <- ggplot(AdjBy, aes(x = position, y = SampleName, fill = AdjPercentage)) +
   ggplot2::xlab(xlab) +
   ggplot2::ylab(ylab)
 
-the_dir <- "./Plots"
+the_dir <- file.path(out_dir_base, "Plots")
 check_create_dir(the_dir)
 
-ggsave(filename = paste0(the_dir,"/","HeatmapBystanderEffect.png"),plot = p, width = 8, height = 6)
+ggsave(
+  filename = file.path(the_dir, "HeatmapBystanderEffect.png"),
+  plot = p,
+  width = 8,
+  height = 6
+)
 
 return(p)
 }

@@ -4,7 +4,15 @@
 \alias{CodonAllFile}
 \title{CodonAllFile}
 \usage{
-CodonAllFile()
+CodonAllFile(Adj = NULL, out_dir_base = ".")
+}
+\arguments{
+\item{Adj}{Data frame containing adjusted mutation percentages.
+Defaults to the global `Adj` object if not supplied.}
+
+\item{out_dir_base}{Base analysis directory. Defaults to the current working
+directory (`"."`). Output files are written to the `Overview/CodonFile`
+subdirectory within this directory.}
 }
 \value{
 creates csv file for each sample

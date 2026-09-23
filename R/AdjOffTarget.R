@@ -11,9 +11,13 @@
 #'   Defaults to the global `OnTarget` object if not supplied.
 #' @param Coverage Data frame containing coverage values.
 #'   Defaults to the global `Coverage` object if not supplied.
+#' @param out_dir_base Base analysis directory. Defaults to the current working
+#'   directory (`"."`). Output is written to the `Overview/Adjusted`
+#'   subdirectory within this directory.
 #' @return A data frame containing the adjusted off-target percentage,
 #'   on-target percentage, and coverage for each sample. The same data are
-#'   also written to `./Overview/Adjusted/Adj_Off_Target_mean_coverage.csv`.
+#'   also written to `Overview/Adjusted/Adj_Off_Target_mean_coverage.csv`
+#'   within `out_dir_base`.
 #' @keywords off-target, adjusted, heteroplasmy, summary
 #' @export
 #' @name AdjOffTarget
@@ -32,7 +36,8 @@ AdjOffTarget <- function(
     Adj = NULL,
     SampleList = NULL,
     OnTarget = NULL,
-    Coverage = NULL
+    Coverage = NULL,
+    out_dir_base = "."
 ) {
 
   # Use supplied objects; fall back to global objects for backward compatibility
@@ -88,7 +93,7 @@ idx5 <- match(offTarget_percentages$FileName, SampleList$FileName)
 offTarget_percentages$RealName <- SampleList$SampleName [idx5]
 
 # Output directory
-the_dir <- "./Overview/Adjusted"
+the_dir <- file.path(out_dir_base, "Overview", "Adjusted")
 check_create_dir <- function(dir) {
   if (!dir.exists(dir)) {
     dir.create(dir, recursive = TRUE)
@@ -97,10 +102,11 @@ check_create_dir <- function(dir) {
 check_create_dir(the_dir)
 
 # Write the means to a file
-write.csv(offTarget_percentages,
-          file = paste0(the_dir, "/", "Adj_Off_Target_mean_coverage.csv"),
-          row.names = FALSE
-          )
+write.csv(
+  offTarget_percentages,
+  file = file.path(the_dir, "Adj_Off_Target_mean_coverage.csv"),
+  row.names = FALSE
+)
 
 return(offTarget_percentages)
 

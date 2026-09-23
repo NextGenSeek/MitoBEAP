@@ -9,7 +9,9 @@
 #'   Defaults to the global `Adj` object if not supplied.
 #' @param OntargetPosition Numeric. Genomic position of the intended on-target
 #'   editing site. Defaults to the global `OntargetPosition` object if not supplied.
-#'
+#' @param out_dir_base Base analysis directory. Defaults to the current working
+#'   directory (`"."`). Plots are written to the `Plots/AdjustedPlots`
+#'   subdirectory within this directory.
 #' @keywords plot, heteroplasmy, scatter, labeling
 #' @export
 #'
@@ -22,7 +24,8 @@ AdjScatter <- function(
     min_threshold = 0,
     labelPercentage = 10,
     Adj = NULL,
-    OntargetPosition = NULL
+    OntargetPosition = NULL,
+    out_dir_base = "."
 ) {
 
   # Use supplied objects; fall back to global objects for backward compatibility
@@ -55,7 +58,7 @@ for (sample_name in sample_names) {
   sample_data$legend <- ifelse(sample_data$position == OntargetPosition, "On target", "Off target / background")
 
   # Create output directory if it doesn't exist
-  the_dir <- "./Plots/AdjustedPlots"
+  the_dir <- file.path(out_dir_base, "Plots", "AdjustedPlots")
   check_create_dir <- function(dir) {
     if (!dir.exists(dir)) {
       dir.create(dir, recursive = TRUE)
@@ -75,7 +78,10 @@ ggplot2::ggplot(sample_data, aes(x=position, y=AdjPercentage, color=legend)) +
     ggtitle(paste(sample_name)) # Title with sample name
 
   # Save plot
-  outname_png = paste0(the_dir,"/" ,sample_name,'.png')
+outname_png <- file.path(
+  the_dir,
+  paste0(sample_name, ".png")
+)
   ggsave(outname_png, width = 10, height = 4)
 
   # Ensure graphics devices are closed

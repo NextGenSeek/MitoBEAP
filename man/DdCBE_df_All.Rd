@@ -8,7 +8,8 @@ DdCBE_df_All(
   min_threshold = 0,
   max_threshold = 60,
   controls = 2,
-  SampleList = NULL
+  SampleList = NULL,
+  out_dir_base = "."
 )
 }
 \arguments{
@@ -20,6 +21,10 @@ DdCBE_df_All(
 
 \item{SampleList}{Data frame containing sample metadata.
 Defaults to the global `SampleList` object if not supplied.}
+
+\item{out_dir_base}{Base analysis directory. Defaults to the current working
+directory (`"."`). Input files are read from the `AllMutations`
+subdirectory within this directory.}
 }
 \value{
 A data frame containing the mutation data with the adjusted

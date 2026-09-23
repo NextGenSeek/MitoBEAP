@@ -4,10 +4,17 @@
 \alias{CreateSpreadsheet}
 \title{CreateSpreadsheet}
 \usage{
-CreateSpreadsheet()
+CreateSpreadsheet(out_dir_base = ".")
+}
+\arguments{
+\item{out_dir_base}{Base analysis directory. Defaults to the current working
+directory (`"."`). Input files are read from the `AllPositions`
+subdirectory and the Excel workbook is written to the `Overview`
+subdirectory.}
 }
 \value{
-No return value. Saves an Excel workbook to the "Overview" directory.
+No return value. Saves `All_data.xlsx` to the `Overview`
+  subdirectory within `out_dir_base`.
 }
 \description{
 Combines all CSV files from the "AllPositions" folder into a multi-sheet Excel workbook.

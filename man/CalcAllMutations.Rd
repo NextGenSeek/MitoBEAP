@@ -4,10 +4,17 @@
 \alias{CalcAllMutations}
 \title{CalcAllMutations}
 \usage{
-CalcAllMutations(AllReportFiles)
+CalcAllMutations(AllReportFiles = NULL, out_dir_base = ".")
 }
 \arguments{
-\item{AllReportFiles}{list with csv files}
+\item{AllReportFiles}{Optional character vector of input CSV file paths.
+If not supplied, files ending in `_allMutations.csv` are read from the
+`counts` subdirectory within `out_dir_base`.}
+
+\item{out_dir_base}{Base analysis directory. Defaults to the current working
+directory (`"."`). Input files are read from the `counts` subdirectory
+when `AllReportFiles` is not supplied, and output is written to the
+`AllMutations` subdirectory.}
 }
 \value{
 Describe what the function returns

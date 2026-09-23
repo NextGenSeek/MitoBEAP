@@ -4,14 +4,18 @@
 \alias{CoverageCalc}
 \title{CoverageCalc}
 \usage{
-CoverageCalc(CoverageFiles)
+CoverageCalc(CoverageFiles, out_dir_base = ".")
 }
 \arguments{
 \item{CoverageFiles}{A character vector of file paths to coverage summary files (CSV).}
+
+\item{out_dir_base}{Base output directory. Defaults to the current working
+directory (`"."`). The `Overview` subdirectory is created within this directory.}
 }
 \value{
 A data frame containing the coverage for each input sample.
-  The same data are also written to `./Overview/Coverage.csv`.
+  The same data are also written to `Overview/Coverage.csv` within
+  `out_dir_base`.
 }
 \description{
 Combines coverage data from multiple files into a single overview file.
