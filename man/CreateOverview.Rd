@@ -10,7 +10,8 @@ CreateOverview(
   Coverage = NULL,
   SampleList = NULL,
   cleanup = FALSE,
-  out_dir_base = "."
+  out_dir_base = ".",
+  coverage_ratio_warning = 10
 )
 }
 \arguments{
@@ -34,6 +35,10 @@ deleted after the overview file is created. Default is `FALSE`.}
 directory (`"."`). The overview file is written to the `Overview`
 subdirectory, and any optional cleanup is performed on intermediate
 subdirectories within this directory.}
+
+\item{coverage_ratio_warning}{Numeric coverage ratio above which a warning
+is issued when the highest-coverage sample exceeds the lowest-coverage
+sample by this factor. Default is 10. Set to `NULL` to disable the check.}
 }
 \value{
 Invisibly returns the combined overview data frame. The same data

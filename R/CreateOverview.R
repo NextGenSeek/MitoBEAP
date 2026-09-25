@@ -19,6 +19,9 @@
 #'   directory (`"."`). The overview file is written to the `Overview`
 #'   subdirectory, and any optional cleanup is performed on intermediate
 #'   subdirectories within this directory.
+#' @param coverage_ratio_warning Numeric coverage ratio above which a warning
+#'   is issued when the highest-coverage sample exceeds the lowest-coverage
+#'   sample by this factor. Default is 10. Set to `NULL` to disable the check.
 #' @return Invisibly returns the combined overview data frame. The same data
 #'   are written to `Overview/All_Ontarget_mean_Coverage.csv` within
 #'   `out_dir_base`.
@@ -35,7 +38,8 @@ CreateOverview <- function(
     Coverage = NULL,
     SampleList = NULL,
     cleanup = FALSE,
-    out_dir_base = "."
+    out_dir_base = ".",
+    coverage_ratio_warning = 10
 ) {
 
   # Use supplied objects; fall back to global objects for backward compatibility
@@ -79,6 +83,48 @@ CreateOverview <- function(
 
   idx4 <- match(All_mean$FileName, Coverage$FileName)
   All_mean$Coverage <- Coverage$Coverage[idx4]
+
+  # Warn when sequencing coverage differs substantially across samples
+  if (!is.null(coverage_ratio_warning)) {
+
+    if (!is.numeric(coverage_ratio_warning) ||
+        length(coverage_ratio_warning) != 1 ||
+        is.na(coverage_ratio_warning) ||
+        coverage_ratio_warning <= 1) {
+      stop(
+        "'coverage_ratio_warning' must be a single numeric value greater than 1, or NULL."
+      )
+    }
+
+    coverage_values <- as.numeric(All_mean$Coverage)
+    coverage_values <- coverage_values[
+      is.finite(coverage_values) & coverage_values > 0
+    ]
+
+    if (length(coverage_values) >= 2) {
+
+      coverage_ratio <- max(coverage_values) / min(coverage_values)
+
+      if (coverage_ratio > coverage_ratio_warning) {
+        warning(
+          sprintf(
+            paste0(
+              "Sequencing coverage differs by %.1f-fold across samples ",
+              "(minimum %.1fx; maximum %.1fx). ",
+              "This exceeds the coverage warning threshold of %.1f-fold. ",
+              "Differences in sequencing depth may affect comparisons of ",
+              "low-frequency editing events."
+            ),
+            coverage_ratio,
+            min(coverage_values),
+            max(coverage_values),
+            coverage_ratio_warning
+          ),
+          call. = FALSE
+        )
+      }
+    }
+  }
 
   idx5 <- match(All_mean$FileName, SampleList$FileName)
   All_mean$RealName <- SampleList$SampleName[idx5]
