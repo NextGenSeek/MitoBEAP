@@ -16,6 +16,8 @@
 #'   subdirectory within this directory.
 #'
 #' @return A data frame containing the adjusted editing percentages.
+#'   The function also reports the number and coordinates of positions masked
+#'   based on the specified control threshold.
 #' @export
 #'
 #' @examples
@@ -85,7 +87,21 @@ subset <- df8 %>%
   dplyr::ungroup()
 
 # Positions to mask
-df10 <- unique(subset$position)
+df10 <- sort(unique(subset$position))
+
+message(
+  "Masked positions: ", length(df10),
+  " (threshold >= ", max_threshold,
+  "% in at least ", controls,
+  ifelse(controls == 1, " control sample)", " control samples)")
+)
+
+if (length(df10) > 0) {
+  message(
+    "Positions masked: ",
+    paste(df10, collapse = ", ")
+  )
+}
 
 df11 <- df7 %>%
   mutate(AdjPercentage = case_when(

@@ -31,6 +31,8 @@ subdirectory within this directory.}
 }
 \value{
 A data frame containing the adjusted editing percentages.
+  The function also reports the number and coordinates of positions masked
+  based on the specified control threshold.
 }
 \description{
 Processes base editing data by filtering out positions where control samples exceed a maximum heteroplasmy threshold.
