@@ -31,14 +31,39 @@ LoadRawCount <- function(
   }
 
   process_file <- function(input) {
-  col_Names <- c(paste0("A", 1:10)) # makes it easier later
-  suppressWarnings(data <- read.delim(input, row.names = NULL, col.names = col_Names))
-  data[data == ""] <- NA
+    # Read the variable-width VarScan count table.
+    # The first five fields are fixed; additional fields contain allele information.
+    data <- read.delim(
+      input,
+      header = FALSE,
+      skip = 1,
+      fill = TRUE,
+      stringsAsFactors = FALSE
+    )
 
-  #data <- as.data.frame(data)
+    if (ncol(data) < 6) {
+      stop(
+        "VarScan input must contain at least six columns: ",
+        basename(input)
+      )
+    }
 
-  #Change column names
-  colnames(data) [c(1:9)] <- c("chrom","position","ref_base","depth_all","depth","A6","A7","A8","A9")
+    fixed_names <- c(
+      "chrom",
+      "position",
+      "ref_base",
+      "depth_all",
+      "depth"
+    )
+
+    allele_names <- paste0("A", 6:ncol(data))
+
+    names(data) <- c(
+      fixed_names,
+      allele_names
+    )
+
+    data[data == ""] <- NA
 
   #Keep only rows with a depth of more than X reads (default 30)
   data <- data[data$depth > depth, ]
