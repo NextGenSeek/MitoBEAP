@@ -1,6 +1,11 @@
 #' CalcAllMutations
 #'
-#' Calculate all mutations
+#' Identify the most abundant mismatch at each position
+#'
+#' For each genomic position, identifies the most abundant non-reference base
+#' and calculates its percentage of the total coverage. For a complete
+#' chemistry-independent spectrum containing all non-reference substitutions,
+#' use \code{\link{CalculateMismatchSpectrum}}.
 #'
 #' @param AllReportFiles Optional character vector of input CSV file paths.
 #'   If not supplied, files ending in `_allMutations.csv` are read from the
@@ -9,7 +14,10 @@
 #'   directory (`"."`). Input files are read from the `counts` subdirectory
 #'   when `AllReportFiles` is not supplied, and output is written to the
 #'   `AllMutations` subdirectory.
-#' @return Describe what the function returns
+#' @return Invisibly returns \code{NULL}. For each input file, the function
+#'   writes a CSV file containing the most abundant non-reference base at each
+#'   position, its read depth, total coverage, and mismatch percentage to the
+#'   \code{AllMutations} subdirectory.
 #' @export
 CalcAllMutations <- function(
     AllReportFiles = NULL,

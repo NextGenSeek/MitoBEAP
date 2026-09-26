@@ -17,8 +17,17 @@ when `AllReportFiles` is not supplied, and output is written to the
 `AllMutations` subdirectory.}
 }
 \value{
-Describe what the function returns
+Invisibly returns \code{NULL}. For each input file, the function
+  writes a CSV file containing the most abundant non-reference base at each
+  position, its read depth, total coverage, and mismatch percentage to the
+  \code{AllMutations} subdirectory.
 }
 \description{
-Calculate all mutations
+Identify the most abundant mismatch at each position
+}
+\details{
+For each genomic position, identifies the most abundant non-reference base
+and calculates its percentage of the total coverage. For a complete
+chemistry-independent spectrum containing all non-reference substitutions,
+use \code{\link{CalculateMismatchSpectrum}}.
 }

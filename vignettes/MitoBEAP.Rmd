@@ -311,6 +311,45 @@ DepthFile()
 DepthFile(fromP = 1, toP = 500)
 ```
 
+## Complete mismatch spectrum
+
+In addition to editor-specific analysis, MitoBEAP can examine the complete single-nucleotide mismatch spectrum before applying chemistry-specific filtering. This can be useful for assessing whether editing is restricted to the expected nucleotide conversions or whether other substitution types are also present.
+
+`CalculateMismatchSpectrum()` retains every non-reference nucleotide reported at each position and calculates its percentage of the total sequencing coverage. The output therefore includes all 12 possible single-nucleotide substitution classes (A>C, A>G, A>T, C>A, C>G, C>T, G>A, G>C, G>T, T>A, T>C, and T>G).
+
+```{r eval=FALSE}
+MismatchSpectrum <- CalculateMismatchSpectrum(
+  out_dir_base = "."
+)
+```
+
+Alternatively, input files can be supplied explicitly:
+
+```{r eval=FALSE}
+MismatchSpectrum <- CalculateMismatchSpectrum(
+  AllReportFiles = AllReportFiles,
+  out_dir_base = "."
+)
+```
+
+The complete mismatch tables are written to the `MismatchSpectrum` directory and are also returned as a combined data frame with the following columns: `FileName`, `position`, `RefBase`, `MutBase`, `MutReads`, `Coverage`, `percentage`, and `Mutation`.
+
+This analysis is chemistry-independent. Editor-specific filtering can subsequently be performed using the appropriate MitoBEAP workflow, such as C-to-T/G-to-A substitutions for DdCBE or A-to-G/T-to-C substitutions for adenine base editors.
+
+### Most abundant mismatch per position
+
+For users interested only in the predominant non-reference nucleotide at each position, `CalcAllMutations()` provides a simplified summary:
+
+```{r eval=FALSE}
+CalcAllMutations(
+  out_dir_base = "."
+)
+```
+
+Unlike `CalculateMismatchSpectrum()`, `CalcAllMutations()` retains only the most abundant non-reference base at each position. This output is used by `DdCBE_df_All()` for the existing highest-mismatch analysis workflow.
+
+`CalculateMismatchSpectrum()` and `CalcAllMutations()` analyse single-nucleotide mismatches only. They do not detect or quantify insertions or deletions, and MitoBEAP does not currently assess nuclear off-target sites.
+
 ## Visualization options
 
 MitoBEAP provides several options for visualizing editing outcomes. One of the simplest figures is a barchart to show the on-target base editing for each sample:
