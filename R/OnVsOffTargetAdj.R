@@ -2,8 +2,8 @@
 #'
 #' Creates a scatterplot comparing on-target editing with adjusted off-target effects.
 #'
-#' @param xlab Character. Label for the x-axis. Default: "Off target effects (\%)".
-#' @param ylab Character. Label for the y-axis. Default: "Heteroplasmy level (\%)".
+#' @param xlab Character. Label for the x-axis. Default: "Adjusted off-target editing (\%)".
+#' @param ylab Character. Label for the y-axis. Default: "On-target editing (\%)".
 #' @param ggtitle Character. Plot title. Default: "On-versus off-target effects".
 #' @param condition Logical. If TRUE, points are grouped and colored by condition. Default is TRUE.
 #' @param Adj Data frame containing adjusted off-target editing data.
@@ -23,15 +23,15 @@
 #' @examples
 #' \dontrun{
 #' OnVsOffTargetAdj(
-#'   xlab = "Off target effects (%)",
-#'   ylab = "Heteroplasmy level (%)",
+#'   xlab = "Adjusted off-target editing (%)",
+#'   ylab = "On-target editing (%)",
 #'   ggtitle = "Comparison"
 #' )
 #' }
 OnVsOffTargetAdj <- function(
-    xlab = "Off target effects (%)",
-    ylab = "Heteroplasmy level (%)",
-    ggtitle = "On-versus off-target effects",
+    xlab = "Off target editing (%)",
+    ylab = "On target editing (%)",
+    ggtitle = "On-target versus off-target effects",
     condition = TRUE,
     Adj = NULL,
     All_ontarget = NULL,
@@ -76,9 +76,6 @@ OnVsOffTargetAdj <- function(
   Overview_adj <- as.data.frame(left_join(data, OnTarget))
   Overview_adj$'On target %' <- as.numeric(Overview_adj$'On target %')
 
-  # User-specified condition
-  #condition <- TRUE  # Set this to TRUE or FALSE as desired
-
   # Determine label column based on user-specified condition
   label_column <- if (condition) {
     Overview_adj$Condition
@@ -97,35 +94,50 @@ OnVsOffTargetAdj <- function(
     color_palette <- NULL
   }
 
-# Dynamic font size based on SampleName length
-# Determine global label size based on longest SampleName
-max_label_length <- max(nchar(Overview_adj$SampleName), na.rm = TRUE)
+  # Dynamic label size based on the longest sample name
+  max_label_length <- max(nchar(Overview_adj$SampleName), na.rm = TRUE)
 
-label_size <- dplyr::case_when(
-  max_label_length <= 10 ~ 6,
-  max_label_length <= 15 ~ 5,
-  max_label_length <= 20 ~ 4,
-  TRUE                  ~ 3
-)
+  label_size <- dplyr::case_when(
+    max_label_length <= 10 ~ 3.5,
+    max_label_length <= 15 ~ 3.2,
+    max_label_length <= 20 ~ 3.0,
+    TRUE                   ~ 2.8
+  )
   # Create scatterplot
-  p <- ggplot(Overview_adj, aes(x = `Adj_percentages`, y = `On target %`, colour = label_column)) +
-    geom_point(size = 3, aes(color = label_column)) +
-    ggtitle(ggtitle) +
-    geom_text_repel(
-    label = Overview_adj$SampleName, size = label_size,aes(color = label_column),box.padding = unit(0.3, "lines")) +
-    scale_color_manual(values = color_palette) +
-    theme(legend.position = "right") +
-    theme(axis.text = element_text(size = 12)) +
-    theme(axis.title = element_text(size = 16)) +
-    theme(panel.background = element_blank(),
-          axis.line = element_line(color = "black")) +
-    expand_limits(x = 0, y = 0) +
-    ggplot2::xlab(xlab) +
-    ggplot2::ylab(ylab) +
-    ggplot2::scale_size_identity() +
-    if (condition) guides(color = guide_legend(title = "Condition")) else guides(color = "none")  # Show legend only when condition is TRUE
-
-  print(p)
+  p <- ggplot2::ggplot(
+    Overview_adj,
+    ggplot2::aes(
+      x = Adj_percentages,
+      y = `On target %`,
+      colour = label_column
+    )
+  ) +
+    ggplot2::geom_point(size = 3) +
+    ggrepel::geom_text_repel(
+      ggplot2::aes(label = SampleName),
+      size = label_size,
+      box.padding = grid::unit(0.3, "lines")
+    ) +
+    ggplot2::expand_limits(x = 0, y = 0) +
+    ggplot2::labs(
+      title = ggtitle,
+      x = xlab,
+      y = ylab,
+      colour = if (condition) "Condition" else NULL
+    ) +
+    ggplot2::theme_classic(base_size = 11) +
+    ggplot2::theme(
+      axis.text = ggplot2::element_text(size = 10),
+      axis.title = ggplot2::element_text(size = 12),
+      plot.title = ggplot2::element_text(size = 13),
+      legend.text = ggplot2::element_text(size = 12),
+      legend.title = ggplot2::element_text(size = 12),
+      legend.position = if (condition) "right" else "none"
+    )
+  if (condition) {
+    p <- p +
+      ggplot2::scale_color_manual(values = color_palette)
+  }
 
   # Save plot
   the_dir <- file.path(out_dir_base, "Plots", "AdjustedPlots")
@@ -136,8 +148,20 @@ label_size <- dplyr::case_when(
   }
   check_create_dir(the_dir)
 
-  ggplot2::ggsave(file = file.path(the_dir, "OnOffTarget_Adj.png"), plot = p, width = 8, height = 6)
-  ggplot2::ggsave(filename = file.path(the_dir, "OnOffTarget_Adj.pdf"), plot = p, width = 8, height = 6)
+  ggplot2::ggsave(
+    file.path(the_dir, "OnOffTarget_Adj.png"),
+    plot = p,
+    width = 7,
+    height = 5,
+    dpi = 300
+  )
+
+  ggplot2::ggsave(
+    file.path(the_dir, "OnOffTarget_Adj.pdf"),
+    plot = p,
+    width = 7,
+    height = 5
+  )
 
   invisible(p)
 }

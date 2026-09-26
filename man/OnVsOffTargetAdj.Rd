@@ -5,9 +5,9 @@
 \title{OnVsOffTargetAdj}
 \usage{
 OnVsOffTargetAdj(
-  xlab = "Off target effects (\%)",
-  ylab = "Heteroplasmy level (\%)",
-  ggtitle = "On-versus off-target effects",
+  xlab = "Off target editing (\%)",
+  ylab = "On target editing (\%)",
+  ggtitle = "On-target versus off-target effects",
   condition = TRUE,
   Adj = NULL,
   All_ontarget = NULL,
@@ -16,9 +16,9 @@ OnVsOffTargetAdj(
 )
 }
 \arguments{
-\item{xlab}{Character. Label for the x-axis. Default: "Off target effects (\%)".}
+\item{xlab}{Character. Label for the x-axis. Default: "Adjusted off-target editing (\%)".}
 
-\item{ylab}{Character. Label for the y-axis. Default: "Heteroplasmy level (\%)".}
+\item{ylab}{Character. Label for the y-axis. Default: "On-target editing (\%)".}
 
 \item{ggtitle}{Character. Plot title. Default: "On-versus off-target effects".}
 
@@ -47,8 +47,8 @@ Creates a scatterplot comparing on-target editing with adjusted off-target effec
 \examples{
 \dontrun{
 OnVsOffTargetAdj(
-  xlab = "Off target effects (\%)",
-  ylab = "Heteroplasmy level (\%)",
+  xlab = "Adjusted off-target editing (\%)",
+  ylab = "On-target editing (\%)",
   ggtitle = "Comparison"
 )
 }

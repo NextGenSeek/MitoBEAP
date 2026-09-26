@@ -45,11 +45,11 @@ directory (`"."`). The heatmap is written to the `Plots` subdirectory
 within this directory.}
 }
 \value{
-A ggplot object. The heatmap is also saved as
-  `Plots/HeatmapBystanderEffect_only_relevant.png` within `out_dir_base`.
+Invisibly returns the ggplot object. PNG and PDF versions of the
+  heatmap are saved in the `Plots` subdirectory within `out_dir_base`.
 }
 \description{
-Creates a heatmap of adjusted heteroplasmy percentages for potential target sites surrounding the on-target site.
+Creates a heatmap of adjusted editing percentages for potential target sites surrounding the on-target site.
 Highlights potential bystander effects within a user-defined window.
 }
 \examples{

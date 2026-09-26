@@ -19,8 +19,8 @@ directory (`"."`). The plot is written to the `Plots/AdjustedPlots`
 subdirectory within this directory.}
 }
 \value{
-Invisibly returns `NULL`. The bar chart is saved to
-  `Plots/AdjustedPlots/Adjusted_Barchart_offTarget.png` within
+Invisibly returns the ggplot object. PNG and PDF versions of the
+  bar chart are saved to the `Plots/AdjustedPlots` subdirectory within
   `out_dir_base`.
 }
 \description{

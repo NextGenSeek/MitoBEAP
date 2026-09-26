@@ -32,12 +32,12 @@ directory (`"."`). The plot is written to the `Plots` subdirectory
 within this directory.}
 }
 \value{
-Invisibly returns the ggplot object. The bar chart is also saved as
-  `Plots/Barchart_<data_type>.png` within `out_dir_base`.
+Invisibly returns the ggplot object. PNG and PDF versions of the
+  bar chart are saved in the `Plots` subdirectory within `out_dir_base`.
 }
 \description{
 Creates bar charts for either on-target or off-target editing percentages per sample.
-Saves the resulting plot as a PNG in the "Plots" directory.
+Saves the resulting plot as PNG and PDF files in the "Plots" directory.
 }
 \examples{
 \dontrun{

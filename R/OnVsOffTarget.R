@@ -2,8 +2,8 @@
 #'
 #' Creates a scatterplot comparing on-target editing with off-target effects.
 #'
-#' @param xlab Character. Label for the x-axis. Default: "Off target effects (\%)".
-#' @param ylab Character. Label for the y-axis. Default: "Heteroplasmy level (\%)".
+#' @param xlab Character. Label for the x-axis. Default: "Off-target editing (\%)".
+#' @param ylab Character. Label for the y-axis. Default: "On-target editing (\%)".
 #' @param ggtitle Character. Plot title. Default: "On-versus off-target effects".
 #' @param All_mean Data frame containing mean off-target editing percentages.
 #'   Defaults to the global `All_mean` object if not supplied.
@@ -16,17 +16,20 @@
 #' @param out_dir_base Base analysis directory. Defaults to the current working
 #'   directory (`"."`). The plot is written to the `Plots` subdirectory
 #'   within this directory.
-#' @return Invisibly returns the ggplot object. A PNG plot is saved to the
-#'   `Plots` subdirectory within `out_dir_base`.
+#' @return Invisibly returns the ggplot object. PNG and PDF versions of the
+#'   plot are saved to the `Plots` subdirectory within `out_dir_base`.
 #' @export
 #' @examples
 #' \dontrun{
-#' OnVsOffTarget(ylab = "Heteroplasmy level (%)", ggtitle = "On vs Off")
+#' OnVsOffTarget(
+#'   ylab = "On-target editing (%)",
+#'   ggtitle = "On-target versus off-target effects"
+#' )
 #' }
 OnVsOffTarget <- function(
-    xlab = "Off target effects (%)",
-    ylab = "Heteroplasmy level (%)",
-    ggtitle = "On-versus off-target effects",
+    xlab = "Off target editing (%)",
+    ylab = "On-target editing (%)",
+    ggtitle = "On-target versus off-target effects",
     All_mean = NULL,
     OnTarget = NULL,
     Coverage = NULL,
@@ -84,15 +87,31 @@ Overview_df$`Off target %` <- as.numeric(gsub(pattern = "\\s+", "", x = Overview
 Overview_df$`On target %` <- as.numeric(Overview_df$`On target %`)
 
 # Build plot
-p <- ggplot(Overview_df,aes(x=`Off target %`, y=`On target %`, label = RealName)) +
-  geom_point(size = 4) +
-  ggtitle(ggtitle) +
-  geom_text_repel(size = 4, box.padding = unit(0.3, "lines")) +
-  theme(axis.text = element_text(size=14)) +
-  theme(axis.title = element_text(size = 20)) +
-  expand_limits(x=0,y=0) +
-  ggplot2::xlab(xlab) +
-  ggplot2::ylab(ylab)
+p <- ggplot2::ggplot(
+  Overview_df,
+  ggplot2::aes(
+    x = `Off target %`,
+    y = `On target %`,
+    label = RealName
+  )
+) +
+  ggplot2::geom_point(size = 3) +
+  ggrepel::geom_text_repel(
+    size = 3.5,
+    box.padding = grid::unit(0.3, "lines")
+  ) +
+  ggplot2::labs(
+    title = ggtitle,
+    x = xlab,
+    y = ylab
+  ) +
+  ggplot2::expand_limits(x = 0, y = 0) +
+  ggplot2::theme_classic(base_size = 11) +
+  ggplot2::theme(
+    axis.text = ggplot2::element_text(size = 10),
+    axis.title = ggplot2::element_text(size = 12),
+    plot.title = ggplot2::element_text(size = 13)
+  )
 
 # Create output directory
 the_dir <- file.path(out_dir_base, "Plots")
@@ -103,6 +122,22 @@ check_create_dir <- function(dir) {
 }
 check_create_dir(the_dir)
 
-ggplot2::ggsave(file = file.path(the_dir, "OnOffTarget.png"), plot = p, width = 8, height = 6)
+out_png <- file.path(the_dir, "OnOffTarget.png")
+out_pdf <- file.path(the_dir, "OnOffTarget.pdf")
+
+ggplot2::ggsave(
+  out_png,
+  plot = p,
+  width = 7,
+  height = 5,
+  dpi = 300
+)
+
+ggplot2::ggsave(
+  out_pdf,
+  plot = p,
+  width = 7,
+  height = 5
+)
 invisible(p)
 }

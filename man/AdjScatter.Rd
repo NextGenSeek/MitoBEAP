@@ -13,7 +13,7 @@ AdjScatter(
 )
 }
 \arguments{
-\item{min_threshold}{Numeric; minimum adjusted heteroplasmy percentage to display (default = 0).}
+\item{min_threshold}{Numeric; minimum adjusted editing percentage to display (default = 0).}
 
 \item{labelPercentage}{Numeric; threshold above which positions are labeled on the plot (default = 10).}
 
@@ -28,7 +28,7 @@ directory (`"."`). Plots are written to the `Plots/AdjustedPlots`
 subdirectory within this directory.}
 }
 \description{
-Creates scatterplots showing adjusted heteroplasmy levels for each sample,
+Creates scatterplots showing adjusted editing percentages for each sample,
 highlighting and labeling positions above a user-defined threshold.
 }
 \examples{

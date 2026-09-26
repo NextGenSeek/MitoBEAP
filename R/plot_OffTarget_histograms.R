@@ -1,19 +1,19 @@
-#' plot_offTarget_histograms
+#' plot_OffTarget_histograms
 #'
-#' Make histograms
+#' Creates per-sample histograms of adjusted off-target editing percentages.
 #'
-#' @param bw Bin width
-#' @param min_pct Minimum heteroplasmy percentage
-#' @param max_pct Maximum heteroplasmy percentage
-#' @param Adj Data frame containing editing percentages.
+#' @param bw Numeric. Histogram bin width.
+#' @param min_pct Numeric. Minimum adjusted editing percentage to include.
+#' @param max_pct Numeric. Maximum adjusted editing percentage to include.
+#' @param Adj Data frame containing adjusted editing percentages.
 #'   Defaults to the global `Adj` object if not supplied.
 #' @param OntargetPosition Numeric. Genomic position of the intended on-target
 #'   editing site. Defaults to the global `OntargetPosition` object if not supplied.
 #' @param out_dir_base Base analysis directory. Defaults to the current working
-#'   directory (`"."`). Histogram PDFs are written to the `Plots` subdirectory
+#'   directory (`"."`). Histograms are written to the `Plots` subdirectory
 #'   within this directory.
-#' @return Invisibly returns `NULL`. One histogram PDF per sample is saved
-#'   to the `Plots` subdirectory within `out_dir_base`.
+#' @return Invisibly returns `NULL`. PNG and PDF versions of each sample
+#'   histogram are saved to the `Plots` subdirectory within `out_dir_base`.
 #' @export
 plot_OffTarget_histograms <- function(
     bw = 1,
@@ -81,27 +81,55 @@ plot_OffTarget_histograms <- function(
 
       df_sub <- dplyr::filter(Adj_subset, SampleName == nm)
 
-      p <- ggplot(df_sub, aes(AdjPercentage)) +
-        geom_histogram(breaks = breaks_vec,
-                       fill   = "darkseagreen",
-                       colour = "black") +
-        scale_x_continuous(
-          limits       = c(lower_edge, upper_edge),
-          breaks       = pretty(breaks_vec, n = 10),   # << only ~10 labels
-          minor_breaks = breaks_vec                    # keep light minor gridlines
+      p <- ggplot2::ggplot(
+        df_sub,
+        ggplot2::aes(x = AdjPercentage)
+      ) +
+        ggplot2::geom_histogram(
+          breaks = breaks_vec,
+          fill = "darkseagreen",
+          colour = "black"
         ) +
-        labs(title = paste("Mutation Histogram _", nm),
-             x     = "Heteroplasmy (%)",
-             y     = "No. of mtDNA positions") +
-        theme_minimal()
+        ggplot2::scale_x_continuous(
+          limits = c(lower_edge, upper_edge),
+          breaks = pretty(breaks_vec, n = 10),
+          minor_breaks = breaks_vec
+        ) +
+        ggplot2::labs(
+          title = paste("Off-target editing:", nm),
+          x = "Adjusted editing (%)",
+          y = "Number of mtDNA positions"
+        ) +
+        ggplot2::theme_classic(base_size = 13) +
+        ggplot2::theme(
+          plot.title = ggplot2::element_text(size = 15),
+          axis.text = ggplot2::element_text(size = 12),
+          axis.title = ggplot2::element_text(size = 14)
+        )
 
       safe_nm <- gsub("[^A-Za-z0-9_]", "_", nm)
 
-      ggsave(
-        filename = file.path(the_dir, paste0("Histogram_", safe_nm, ".pdf")),
-        plot     = p,
-        width    = 7,
-        height   = 5
+      safe_nm <- gsub("[^A-Za-z0-9_]", "_", nm)
+
+      ggplot2::ggsave(
+        filename = file.path(
+          the_dir,
+          paste0("Histogram_", safe_nm, ".png")
+        ),
+        plot = p,
+        width = 7,
+        height = 5,
+        dpi = 300
+      )
+
+      ggplot2::ggsave(
+        filename = file.path(
+          the_dir,
+          paste0("Histogram_", safe_nm, ".pdf")
+        ),
+        plot = p,
+        width = 7,
+        height = 5
       )
     }
 

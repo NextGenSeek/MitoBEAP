@@ -1,7 +1,7 @@
 #' CreateBarChart
 #'
 #' Creates bar charts for either on-target or off-target editing percentages per sample.
-#' Saves the resulting plot as a PNG in the "Plots" directory.
+#' Saves the resulting plot as PNG and PDF files in the "Plots" directory.
 #'
 #' @param data_type A character string: either `"OnTarget"` or `"OffTarget"`. Determines the input data source.
 #' @param colour A color name or hex code for the bar fill. Default is `"skyblue"`.
@@ -15,8 +15,8 @@
 #'   directory (`"."`). The plot is written to the `Plots` subdirectory
 #'   within this directory.
 #'
-#' @return Invisibly returns the ggplot object. The bar chart is also saved as
-#'   `Plots/Barchart_<data_type>.png` within `out_dir_base`.
+#' @return Invisibly returns the ggplot object. PNG and PDF versions of the
+#'   bar chart are saved in the `Plots` subdirectory within `out_dir_base`.
 #' @export
 #'
 #' @examples
@@ -105,25 +105,73 @@ CreateBarChart <- function(
   the_dir <- file.path(out_dir_base, "Plots")
   if (!dir.exists(the_dir)) dir.create(the_dir, recursive = TRUE)
 
-  p <- ggplot2::ggplot(df, aes(x = SampleName, y = .data[[perc_col]])) +
-    geom_bar(stat = "identity", fill = colour, alpha = 0.7) +
-    geom_text(aes(label = sprintf("%.2f", .data[[perc_col]])),
-              hjust = 1.6, colour = "black", size = 6) +
-    labs(x = NULL, y = ylab_title) +
-    scale_y_continuous(breaks = seq(0, max(df[[perc_col]], na.rm = TRUE), 10),
-                       expand = c(0, 0)) +
-    scale_x_discrete(expand = c(0, 0)) +
-    theme(axis.text.y = element_text(size = 14),
-          axis.title  = element_text(size = 14),
-          panel.background = element_blank(),
-          axis.line  = element_line(colour = "black")) +
-    coord_flip()
+  p <- ggplot2::ggplot(
+    df,
+    ggplot2::aes(
+      x = SampleName,
+      y = .data[[perc_col]]
+    )
+  ) +
+    ggplot2::geom_bar(
+      stat = "identity",
+      fill = colour,
+      alpha = 0.7
+    ) +
+    ggplot2::geom_text(
+      ggplot2::aes(
+        label = sprintf("%.2f", .data[[perc_col]])
+      ),
+      hjust = 1.6,
+      colour = "black",
+      size = 4.5
+    ) +
+    ggplot2::labs(
+      x = NULL,
+      y = ylab_title
+    ) +
+    ggplot2::scale_y_continuous(
+      breaks = seq(
+        0,
+        max(df[[perc_col]], na.rm = TRUE),
+        10
+      ),
+      expand = c(0, 0)
+    ) +
+    ggplot2::scale_x_discrete(
+      expand = c(0, 0)
+    ) +
+    ggplot2::theme_classic(base_size = 13) +
+    ggplot2::theme(
+      axis.text.y = ggplot2::element_text(size = 13),
+      axis.text.x = ggplot2::element_text(size = 12),
+      axis.title = ggplot2::element_text(size = 14)
+    ) +
+    ggplot2::coord_flip()
 
-  print(p)
+  out_png <- file.path(
+    the_dir,
+    sprintf("Barchart_%s.png", data_type)
+  )
 
-  out_png <- file.path(the_dir,
-                       sprintf("Barchart_%s.png", data_type))
-  ggplot2::ggsave(out_png, plot = p, width = 8, height = 6)
+  out_pdf <- file.path(
+    the_dir,
+    sprintf("Barchart_%s.pdf", data_type)
+  )
+
+  ggplot2::ggsave(
+    out_png,
+    plot = p,
+    width = 8,
+    height = 6,
+    dpi = 300
+  )
+
+  ggplot2::ggsave(
+    out_pdf,
+    plot = p,
+    width = 8,
+    height = 6
+  )
 
   invisible(p)
 }

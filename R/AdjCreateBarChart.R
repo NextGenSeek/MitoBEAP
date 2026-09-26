@@ -12,8 +12,8 @@
 #' @param out_dir_base Base analysis directory. Defaults to the current working
 #'   directory (`"."`). The plot is written to the `Plots/AdjustedPlots`
 #'   subdirectory within this directory.
-#' @return Invisibly returns `NULL`. The bar chart is saved to
-#'   `Plots/AdjustedPlots/Adjusted_Barchart_offTarget.png` within
+#' @return Invisibly returns the ggplot object. PNG and PDF versions of the
+#'   bar chart are saved to the `Plots/AdjustedPlots` subdirectory within
 #'   `out_dir_base`.
 #' @export
 #' @name AdjCreateBarChart
@@ -73,27 +73,68 @@ data$Order <- as.integer(SampleList$Order[match(data$SampleName, SampleList$Samp
 # Reorder SampleName factor levels alphabetically
 data$SampleName <- factor(data$SampleName, levels = rev(SampleList$SampleName[order(SampleList$Order)]))
 
-p<- ggplot2::ggplot(data, aes(x=SampleName, y=offTarget_percentage)) +
-  geom_bar(stat='identity', fill=colour, alpha = 0.7) +
-  geom_text(aes(label = sprintf("%.2f", offTarget_percentage)),
-            hjust = 1.6, color = "black", size = 4) +
-  labs(x = NULL, y = "Off target %") +
-  scale_y_continuous(breaks = seq(0, max(data$offTarget_percentage), by = 10), expand = c(0, 0)) +
-  scale_x_discrete(expand = c(0, 0)) +
-  theme(axis.text.y = element_text(size = 12),
-        axis.title = element_text(size = 14),
-        panel.background = element_blank(),
-        axis.line = element_line(color = "black")
+p <- ggplot2::ggplot(
+  data,
+  ggplot2::aes(x = SampleName, y = offTarget_percentage)
+) +
+  ggplot2::geom_bar(
+    stat = "identity",
+    fill = colour,
+    alpha = 0.7
   ) +
-  coord_flip()
+  ggplot2::geom_text(
+    ggplot2::aes(label = sprintf("%.2f", offTarget_percentage)),
+    hjust = 1.6,
+    colour = "black",
+    size = 4.5
+  ) +
+  ggplot2::labs(
+    x = NULL,
+    y = "Adjusted off-target editing (%)"
+  ) +
+  ggplot2::scale_y_continuous(
+    breaks = seq(
+      0,
+      max(data$offTarget_percentage, na.rm = TRUE),
+      by = 10
+    ),
+    expand = c(0, 0)
+  ) +
+  ggplot2::scale_x_discrete(expand = c(0, 0)) +
+  ggplot2::theme_classic(base_size = 13) +
+  ggplot2::theme(
+    axis.text.y = ggplot2::element_text(size = 13),
+    axis.text.x = ggplot2::element_text(size = 12),
+    axis.title = ggplot2::element_text(size = 14)
+  ) +
+  ggplot2::coord_flip()
 
-plot(p)
 # Save plot
 outname_png <- file.path(
   the_dir,
   "Adjusted_Barchart_offTarget.png"
 )
-ggsave(outname_png, plot = p, width = 8, height = 6)
-invisible(dev.off())
+
+outname_pdf <- file.path(
+  the_dir,
+  "Adjusted_Barchart_offTarget.pdf"
+)
+
+ggplot2::ggsave(
+  outname_png,
+  plot = p,
+  width = 8,
+  height = 6,
+  dpi = 300
+)
+
+ggplot2::ggsave(
+  outname_pdf,
+  plot = p,
+  width = 8,
+  height = 6
+)
+
+invisible(p)
 
 }

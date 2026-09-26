@@ -1,6 +1,6 @@
 #' Bystander
 #'
-#' Creates a heatmap of adjusted heteroplasmy percentages for positions surrounding the on-target site.
+#' Creates a heatmap of adjusted editing percentages for positions surrounding the on-target site.
 #' Highlights potential bystander effects within a user-defined window.
 #'
 #' @param BystanderDistance Integer. Number of positions upstream/downstream from the on-target site to include.
@@ -20,8 +20,8 @@
 #' @param out_dir_base Base analysis directory. Defaults to the current working
 #'   directory (`"."`). The heatmap is written to the `Plots` subdirectory
 #'   within this directory.
-#' @return A ggplot object. The heatmap is also saved as
-#'   `Plots/HeatmapBystanderEffect.png` within `out_dir_base`.
+#' @return A ggplot object. PNG and PDF versions of the heatmap are saved
+#'   in the `Plots` subdirectory within `out_dir_base`.
 #' @export
 #'
 #' @examples
@@ -71,34 +71,60 @@ Bystander <- function(
 
 # Select region of interest
 AdjBy <- Adj[Adj$position>=(OntargetPosition-BystanderDistance) & Adj$position<=(OntargetPosition+BystanderDistance),] #select region of interest
-AdjBy <- AdjBy[ -c(2,4:9,11)] # remove columns that are not needed
+# Retain required columns explicitly rather than relying on column positions
+AdjBy <- AdjBy[, c(
+  "FileName",
+  "position",
+  "ref_base",
+  "percentage",
+  "Condition",
+  "AdjPercentage"
+)]
 AdjBy$SampleName <- SampleList$SampleName[match(AdjBy$FileName, SampleList$FileName)]
 
 AdjBy$Order <- as.integer(SampleList$Order[match(AdjBy$FileName, SampleList$FileName)])
 AdjBy$SampleName <- factor(AdjBy$SampleName, levels = rev(SampleList$SampleName[order(SampleList$Order)]))
 
 # Extract positions and corresponding letters for secondary axis
-secondary_labels <- Adj$X3[Adj$position >= (OntargetPosition - BystanderDistance) &
+secondary_labels <- Adj$ref_base[Adj$position >= (OntargetPosition - BystanderDistance) &
                              Adj$position <= (OntargetPosition + BystanderDistance)]
 positions <- Adj$position[Adj$position >= (OntargetPosition - BystanderDistance) &
                             Adj$position <= (OntargetPosition + BystanderDistance)]
 
 # Make heatmap from this file
 
-p <- ggplot(AdjBy, aes(x = position, y = SampleName, fill = AdjPercentage)) +
-  geom_tile(color = "white", lwd = 0.5, linetype = 1) +
+p <- ggplot2::ggplot(
+  AdjBy,
+  ggplot2::aes(
+    x = position,
+    y = SampleName,
+    fill = AdjPercentage
+  )
+) +
+  ggplot2::geom_tile(
+    color = "white",
+    linewidth = 0.5
+  ) +
   ggplot2::scale_fill_gradientn(
     colours = fill_colours,
     values = scales::rescale(fill_values),
     na.value = "grey96"
   ) +
-  scale_x_continuous(name = xlab,
-                     breaks = positions,  # Align the breaks with your positions
-                     sec.axis = dup_axis(name = "",
-                                         labels = secondary_labels)) +
-  guides(fill = guide_colorbar(title = "Percentage (%)")) +
+  ggplot2::scale_x_continuous(
+    name = xlab,
+    breaks = positions,
+    sec.axis = ggplot2::dup_axis(
+      name = "",
+      labels = secondary_labels
+    )
+  ) +
+  ggplot2::guides(
+    fill = ggplot2::guide_colorbar(
+      title = "Editing (%)"
+    )
+  ) +
   ggplot2::geom_rect(
-    aes(
+    ggplot2::aes(
       xmin = OntargetPosition - 0.5,
       xmax = OntargetPosition + 0.5,
       ymin = -Inf,
@@ -109,24 +135,53 @@ p <- ggplot(AdjBy, aes(x = position, y = SampleName, fill = AdjPercentage)) +
     fill = NA,
     linewidth = 1
   ) +
-  coord_fixed() +
-  theme(plot.title = element_text(hjust = 0.5),
-        axis.text.x = element_text(angle = 45, hjust = 1),
-        axis.text.y    = element_text(size = 14),
-        axis.text.x.top = element_text(angle = 0, hjust = 0.5)) +  # Set secondary axis labels horizontally
-  ggtitle(title) +
-  ggplot2::xlab(xlab) +
-  ggplot2::ylab(ylab)
+  ggplot2::coord_fixed() +
+  ggplot2::labs(
+    title = title,
+    x = xlab,
+    y = ylab
+  ) +
+  ggplot2::theme_classic(base_size = 11) +
+  ggplot2::theme(
+    plot.title = ggplot2::element_text(
+      size = 15,
+      hjust = 0.5
+    ),
+    axis.text.x = ggplot2::element_text(
+      size = 10,
+      angle = 45,
+      hjust = 1
+    ),
+    axis.text.y = ggplot2::element_text(size = 11),
+    axis.text.x.top = ggplot2::element_text(
+      size = 12,
+      angle = 0,
+      hjust = 0.5
+    ),
+    axis.title = ggplot2::element_text(size = 14)
+  )
 
 the_dir <- file.path(out_dir_base, "Plots")
 check_create_dir(the_dir)
 
-ggsave(
+# Adjust figure height to the number of samples
+n_samples <- length(unique(AdjBy$SampleName))
+plot_height <- max(4, min(10, 2.5 + 0.35 * n_samples))
+
+ggplot2::ggsave(
   filename = file.path(the_dir, "HeatmapBystanderEffect.png"),
+  plot = p,
+  width = 8,
+  height = plot_height,
+  dpi = 300
+)
+
+ggplot2::ggsave(
+  filename = file.path(the_dir, "HeatmapBystanderEffect.pdf"),
   plot = p,
   width = 8,
   height = 6
 )
 
-return(p)
+invisible(p)
 }

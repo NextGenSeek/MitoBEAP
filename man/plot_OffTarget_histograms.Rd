@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot_OffTarget_histograms.R
 \name{plot_OffTarget_histograms}
 \alias{plot_OffTarget_histograms}
-\title{plot_offTarget_histograms}
+\title{plot_OffTarget_histograms}
 \usage{
 plot_OffTarget_histograms(
   bw = 1,
@@ -14,26 +14,26 @@ plot_OffTarget_histograms(
 )
 }
 \arguments{
-\item{bw}{Bin width}
+\item{bw}{Numeric. Histogram bin width.}
 
-\item{min_pct}{Minimum heteroplasmy percentage}
+\item{min_pct}{Numeric. Minimum adjusted editing percentage to include.}
 
-\item{max_pct}{Maximum heteroplasmy percentage}
+\item{max_pct}{Numeric. Maximum adjusted editing percentage to include.}
 
-\item{Adj}{Data frame containing editing percentages.
+\item{Adj}{Data frame containing adjusted editing percentages.
 Defaults to the global `Adj` object if not supplied.}
 
 \item{OntargetPosition}{Numeric. Genomic position of the intended on-target
 editing site. Defaults to the global `OntargetPosition` object if not supplied.}
 
 \item{out_dir_base}{Base analysis directory. Defaults to the current working
-directory (`"."`). Histogram PDFs are written to the `Plots` subdirectory
+directory (`"."`). Histograms are written to the `Plots` subdirectory
 within this directory.}
 }
 \value{
-Invisibly returns `NULL`. One histogram PDF per sample is saved
-  to the `Plots` subdirectory within `out_dir_base`.
+Invisibly returns `NULL`. PNG and PDF versions of each sample
+  histogram are saved to the `Plots` subdirectory within `out_dir_base`.
 }
 \description{
-Make histograms
+Creates per-sample histograms of adjusted off-target editing percentages.
 }

@@ -1,9 +1,9 @@
 #' AdjScatter
 #'
-#' Creates scatterplots showing adjusted heteroplasmy levels for each sample,
+#' Creates scatterplots showing adjusted editing percentages for each sample,
 #' highlighting and labeling positions above a user-defined threshold.
 #'
-#' @param min_threshold Numeric; minimum adjusted heteroplasmy percentage to display (default = 0).
+#' @param min_threshold Numeric; minimum adjusted editing percentage to display (default = 0).
 #' @param labelPercentage Numeric; threshold above which positions are labeled on the plot (default = 10).
 #' @param Adj Data frame containing adjusted editing percentages.
 #'   Defaults to the global `Adj` object if not supplied.
@@ -66,26 +66,71 @@ for (sample_name in sample_names) {
   }
   check_create_dir(the_dir)
 
-  # Make a simple scatterplot for each file
-ggplot2::ggplot(sample_data, aes(x=position, y=AdjPercentage, color=legend)) +
-    geom_point(alpha = 0.3) +
-    geom_text_repel(data= subset(sample_data, AdjPercentage > labelPercentage), aes(label = position), vjust = -0.5, size = 3, show.legend = F) +  # Add labels for dots above specified %
-  guides(fill = guide_legend(override.aes = aes(label = ""))) +
-  labs(y="heteroplasmy level", x="Position") +
-    theme(axis.text=element_text(size=12)) +
+  # Make a scatterplot for each sample
+  p <- ggplot2::ggplot(
+    sample_data,
+    ggplot2::aes(
+      x = position,
+      y = AdjPercentage,
+      colour = legend
+    )
+  ) +
+    ggplot2::geom_point(alpha = 0.3) +
+    ggrepel::geom_text_repel(
+      data = subset(
+        sample_data,
+        AdjPercentage > labelPercentage
+      ),
+      ggplot2::aes(label = position),
+      size = 3,
+      show.legend = FALSE
+    ) +
+    ggplot2::labs(
+      title = sample_name,
+      x = "mtDNA position",
+      y = "Adjusted editing (%)",
+      colour = NULL
+    ) +
     ggplot2::ylim(0, 100) +
-    scale_color_manual(values = c("Off target / background" = "black", "On target" = "red")) +
-    ggtitle(paste(sample_name)) # Title with sample name
+    ggplot2::scale_color_manual(
+      values = c(
+        "Off target / background" = "black",
+        "On target" = "red"
+      )
+    ) +
+    ggplot2::theme_classic(base_size = 11) +
+    ggplot2::theme(
+      axis.text = ggplot2::element_text(size = 10),
+      axis.title = ggplot2::element_text(size = 12),
+      plot.title = ggplot2::element_text(size = 13),
+      legend.position = "right"
+    )
 
-  # Save plot
-outname_png <- file.path(
-  the_dir,
-  paste0(sample_name, ".png")
-)
-  ggsave(outname_png, width = 10, height = 4)
+  # Save high-resolution PNG and vector PDF
+  outname_png <- file.path(
+    the_dir,
+    paste0(sample_name, ".png")
+  )
 
-  # Ensure graphics devices are closed
-  while (!is.null(dev.list())) dev.off()
+  outname_pdf <- file.path(
+    the_dir,
+    paste0(sample_name, ".pdf")
+  )
+
+  ggplot2::ggsave(
+    outname_png,
+    plot = p,
+    width = 8,
+    height = 4,
+    dpi = 300
+  )
+
+  ggplot2::ggsave(
+    outname_pdf,
+    plot = p,
+    width = 8,
+    height = 4
+  )
 
   }
 

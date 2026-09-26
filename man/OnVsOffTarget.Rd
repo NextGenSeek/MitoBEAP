@@ -5,9 +5,9 @@
 \title{OnVsOffTarget}
 \usage{
 OnVsOffTarget(
-  xlab = "Off target effects (\%)",
-  ylab = "Heteroplasmy level (\%)",
-  ggtitle = "On-versus off-target effects",
+  xlab = "Off target editing (\%)",
+  ylab = "On-target editing (\%)",
+  ggtitle = "On-target versus off-target effects",
   All_mean = NULL,
   OnTarget = NULL,
   Coverage = NULL,
@@ -16,9 +16,9 @@ OnVsOffTarget(
 )
 }
 \arguments{
-\item{xlab}{Character. Label for the x-axis. Default: "Off target effects (\%)".}
+\item{xlab}{Character. Label for the x-axis. Default: "Off-target editing (\%)".}
 
-\item{ylab}{Character. Label for the y-axis. Default: "Heteroplasmy level (\%)".}
+\item{ylab}{Character. Label for the y-axis. Default: "On-target editing (\%)".}
 
 \item{ggtitle}{Character. Plot title. Default: "On-versus off-target effects".}
 
@@ -39,14 +39,17 @@ directory (`"."`). The plot is written to the `Plots` subdirectory
 within this directory.}
 }
 \value{
-Invisibly returns the ggplot object. A PNG plot is saved to the
-  `Plots` subdirectory within `out_dir_base`.
+Invisibly returns the ggplot object. PNG and PDF versions of the
+  plot are saved to the `Plots` subdirectory within `out_dir_base`.
 }
 \description{
 Creates a scatterplot comparing on-target editing with off-target effects.
 }
 \examples{
 \dontrun{
-OnVsOffTarget(ylab = "Heteroplasmy level (\%)", ggtitle = "On vs Off")
+OnVsOffTarget(
+  ylab = "On-target editing (\%)",
+  ggtitle = "On-target versus off-target effects"
+)
 }
 }
