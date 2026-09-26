@@ -47,17 +47,33 @@ DepthFile <- function(
   }
 
   df7 <- AllReportFiles %>%
-    purrr::set_names(nm = (basename(.) %>% tools::file_path_sans_ext())) %>% # Name without extension
-    purrr::map_df(read_csv,
-                  col_names = FALSE,
-                  skip = 1,
-                  .id = "FileName")
+    purrr::set_names(
+      nm = basename(.) %>% tools::file_path_sans_ext()
+    ) %>%
+    purrr::map_df(
+      readr::read_csv,
+      col_names = TRUE,
+      show_col_types = FALSE,
+      .id = "FileName"
+    )
 
-  # Assign column names
-  names(df7) [2]  <- "chr"
-  names(df7) [3] <- "position"
-  names(df7) [10] <- "percentage"
-  names(df7) [5] <- "depth"
+  required_columns <- c(
+    "FileName",
+    "position",
+    "depth",
+    "percentage"
+  )
+
+  missing_columns <- setdiff(required_columns, names(df7))
+
+  if (length(missing_columns) > 0) {
+    stop(
+      "Error: AllPositions files are missing required column(s): ",
+      paste(missing_columns, collapse = ", ")
+    )
+  }
+
+  df7 <- df7[, required_columns]
 
   # Handle missing toP
   if (is.null(toP)) {
@@ -66,7 +82,6 @@ DepthFile <- function(
 
   # Filter region of interest
   df7 <- df7[df7$position >= fromP & df7$position <= toP, ]
-  df7 <- df7[, -c(2, 4, 6:9)]  # remove unneeded columns
 
 # Match sample names
 df7$SampleName <- SampleList$SampleName[match(df7$FileName, SampleList$FileName)]

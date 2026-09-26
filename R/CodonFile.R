@@ -29,13 +29,28 @@ CodonFile <- function(
     Adj <- get("Adj", envir = .GlobalEnv, inherits = FALSE)
   }
 
-cols_to_remove <- c( "X4", "X5", "X6", "X8","percentage")
-AdjCodon <- Adj[, !(names(Adj) %in% cols_to_remove)]
+  required_columns <- c(
+    "FileName",
+    "position",
+    "ref_base",
+    "MutBase",
+    "SampleName",
+    "Condition",
+    "AdjPercentage"
+  )
 
-# Rename
-colnames(AdjCodon)[colnames(AdjCodon) == "X3"] <- "ref_base"
-colnames(AdjCodon)[colnames(AdjCodon) == "X7"] <- "MutBase"
-colnames(AdjCodon)[colnames(AdjCodon) == "AdjPercentage"] <- "percentage"
+  missing_columns <- setdiff(required_columns, names(Adj))
+
+  if (length(missing_columns) > 0) {
+    stop(
+      "Error: 'Adj' is missing required column(s): ",
+      paste(missing_columns, collapse = ", ")
+    )
+  }
+
+  AdjCodon <- Adj[, required_columns]
+
+  names(AdjCodon)[names(AdjCodon) == "AdjPercentage"] <- "percentage"
 
 # Get unique sample names
 unique_samples <- unique(AdjCodon$FileName)
