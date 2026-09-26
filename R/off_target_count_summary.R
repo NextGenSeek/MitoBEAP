@@ -1,12 +1,17 @@
 #' off_target_count_summary
 #'
-#' @description What the function does.
+#' @description
+#' Summarises the number of adjusted off-target positions within a specified
+#' editing range for each sample and experimental group. Group means and
+#' standard errors are calculated and can be displayed as a bar chart.
 #' @param Adj Data frame containing adjusted off-target editing data.
 #'   Defaults to the global `Adj` object if not supplied.
 #' @param SampleList Data frame containing sample metadata.
 #'   Defaults to the global `SampleList` object if not supplied.
-#' @param lower minimum heteroplasmy level to take into account
-#' @param upper maximum heteroplasmy level to take into account
+#' @param lower Numeric. Minimum adjusted editing percentage to include.
+#'   This can be set to the empirical control-derived detection limit returned
+#'   by `CalculateLOD()`.
+#' @param upper Numeric. Maximum adjusted editing percentage to include.
 #' @param condition_levels Default control and treated
 #' @param out_dir_base Base analysis directory. Defaults to the current working
 #'   directory (`"."`). By default, output files are written to the `Plots`
@@ -22,16 +27,22 @@
 #'   Default is `"CombinedName"`.
 #' @param condition_col Character. Name of the column containing the experimental
 #'   condition. Default is `"Condition"`.
+#' @param OntargetPosition Optional numeric vector containing one or more
+#'   intended on-target mtDNA positions to exclude from the off-target count.
+#'   Default is `NULL`.
 #' @return A list containing per-sample counts (`counts`), grouped summary
-#'   statistics (`stats`), and the joined input data (`data_joined`).
-#'   When `make_plot = TRUE`, the returned list also contains the ggplot
-#'   object (`p`).
+#'   statistics (`stats`), the sample-level Wilcoxon rank-sum comparison
+#'   (`burden_test`), and the joined input data (`data_joined`).
+#'   `burden_test` is `NULL` when both conditions are not represented by
+#'   at least two samples. When `make_plot = TRUE`, the returned list also
+#'   contains the ggplot object (`p`).
 #' @export
 off_target_count_summary <- function(
     Adj = NULL,
     SampleList = NULL,
     lower = 0.1,
     upper = 70,
+    OntargetPosition = NULL,
     condition_levels = c("control", "treated"),
     out_dir_base = ".",
     out_dir = NULL,
@@ -104,6 +115,12 @@ off_target_count_summary <- function(
     # final required columns now present?
     stopifnot(all(c("FileName", "CombinedName", "AdjPercentage", condition_col) %in% names(data)))
 
+    # Exclude intended on-target position(s), if supplied
+    if (!is.null(OntargetPosition)) {
+      data <- data %>%
+        dplyr::filter(!.data$position %in% OntargetPosition)
+    }
+
     # --- per-sample counts ------------------------------------------------
     counts <- data %>%
         dplyr::group_by(.data$FileName, .data$CombinedName, .data[[condition_col]]) %>%
@@ -115,6 +132,50 @@ off_target_count_summary <- function(
         ) %>%
         dplyr::rename(Condition = dplyr::all_of(condition_col)) %>%
         dplyr::mutate(Condition = factor(.data$Condition, levels = condition_levels))
+
+    # --- sample-level statistical comparison -------------------------------
+    burden_test <- NULL
+
+    test_data <- counts %>%
+      dplyr::filter(
+        !is.na(.data$Condition),
+        !is.na(.data$count_non_missing)
+      )
+
+    conditions_present <- unique(as.character(test_data$Condition))
+
+    if (all(condition_levels %in% conditions_present)) {
+
+      control_counts <- test_data$count_non_missing[
+        test_data$Condition == condition_levels[1]
+      ]
+
+      treated_counts <- test_data$count_non_missing[
+        test_data$Condition == condition_levels[2]
+      ]
+
+      if (length(control_counts) >= 2 && length(treated_counts) >= 2) {
+
+        wt <- stats::wilcox.test(
+          treated_counts,
+          control_counts,
+          alternative = "two.sided",
+          exact = FALSE
+        )
+
+        burden_test <- data.frame(
+          test = "Wilcoxon rank-sum",
+          control_condition = condition_levels[1],
+          treated_condition = condition_levels[2],
+          n_control = length(control_counts),
+          n_treated = length(treated_counts),
+          median_control = stats::median(control_counts),
+          median_treated = stats::median(treated_counts),
+          W = unname(wt$statistic),
+          p_value = wt$p.value
+        )
+      }
+    }
 
     # --- group stats (mean ± SE) -----------------------------------------
     stats <- counts %>%
@@ -135,32 +196,62 @@ off_target_count_summary <- function(
 
     # --- plot -------------------------------------------------------------
     if (make_plot) {
-        p <- ggplot2::ggplot(
-            stats,
-            ggplot2::aes(x = .data$CombinedName, y = .data$avg_count, fill = .data$Condition)
+      p <- ggplot2::ggplot(
+        stats,
+        ggplot2::aes(
+          x = .data$CombinedName,
+          y = .data$avg_count,
+          fill = .data$Condition
+        )
+      ) +
+        ggplot2::geom_col(width = 0.7) +
+        ggplot2::geom_errorbar(
+          ggplot2::aes(
+            ymin = .data$avg_count - .data$se_count,
+            ymax = .data$avg_count + .data$se_count
+          ),
+          width = 0.2
         ) +
-            ggplot2::geom_col(width = 0.7) +
-            ggplot2::geom_errorbar(
-                ggplot2::aes(ymin = .data$avg_count - .data$se_count,
-                             ymax = .data$avg_count + .data$se_count),
-                width = 0.2
-            ) +
-            ggplot2::scale_fill_manual(values = c(control = "skyblue", treated = "lightcoral")) +
-            ggplot2::labs(x = NULL, y = "No. of off-target positions") +
-            ggplot2::theme_minimal(base_size = 14) +
-            ggplot2::theme(
-                axis.text.x  = ggplot2::element_text(angle = 45, hjust = 1, size = 12),
-                axis.text.y  = ggplot2::element_text(size = 12),
-                axis.title.y = ggplot2::element_text(size = 14),
-                legend.text  = ggplot2::element_text(size = 12),
-                legend.title = ggplot2::element_text(size = 14)
-            )
+        ggplot2::scale_fill_manual(
+          values = c(
+            control = "skyblue",
+            treated = "lightcoral"
+          )
+        ) +
+        ggplot2::labs(
+          x = NULL,
+          y = "Number of off-target positions",
+          fill = "Condition"
+        ) +
+        ggplot2::theme_classic(base_size = 11) +
+        ggplot2::theme(
+          axis.text.x = ggplot2::element_text(
+            angle = 45,
+            hjust = 1,
+            size = 10
+          ),
+          axis.text.y = ggplot2::element_text(size = 10),
+          axis.title.y = ggplot2::element_text(size = 12),
+          legend.text = ggplot2::element_text(size = 10),
+          legend.title = ggplot2::element_text(size = 11)
+        )
 
         if (!is.null(out_dir))
             ggplot2::ggsave(file.path(out_dir, plot_file), p, width = 7, height = 7)
 
-        return(list(counts = counts, stats = stats, p = p, data_joined = data))
+      return(list(
+        counts = counts,
+        stats = stats,
+        burden_test = burden_test,
+        p = p,
+        data_joined = data
+      ))
     }
 
-    list(counts = counts, stats = stats, data_joined = data)
+    list(
+      counts = counts,
+      stats = stats,
+      burden_test = burden_test,
+      data_joined = data
+    )
 }

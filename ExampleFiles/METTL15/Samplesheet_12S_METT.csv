@@ -1,0 +1,7 @@
+Order,SampleName,Condition,FileName,CombinedName
+3,WT12S1,treated,5H10_S34,WT12S
+4,WT12S2,treated,5H11_S35,WT12S
+5,MET12S1,treated,5H12_S36,METT12S
+6,MET12S2,treated,5I1_S37,METT12S
+1,Control1,control,i707-i521,Control
+2,Control2,control,i712-i520,Control

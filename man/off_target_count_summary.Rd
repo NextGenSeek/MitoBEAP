@@ -9,6 +9,7 @@ off_target_count_summary(
   SampleList = NULL,
   lower = 0.1,
   upper = 70,
+  OntargetPosition = NULL,
   condition_levels = c("control", "treated"),
   out_dir_base = ".",
   out_dir = NULL,
@@ -26,9 +27,15 @@ Defaults to the global `Adj` object if not supplied.}
 \item{SampleList}{Data frame containing sample metadata.
 Defaults to the global `SampleList` object if not supplied.}
 
-\item{lower}{minimum heteroplasmy level to take into account}
+\item{lower}{Numeric. Minimum adjusted editing percentage to include.
+This can be set to the empirical control-derived detection limit returned
+by `CalculateLOD()`.}
 
-\item{upper}{maximum heteroplasmy level to take into account}
+\item{upper}{Numeric. Maximum adjusted editing percentage to include.}
+
+\item{OntargetPosition}{Optional numeric vector containing one or more
+intended on-target mtDNA positions to exclude from the off-target count.
+Default is `NULL`.}
 
 \item{condition_levels}{Default control and treated}
 
@@ -55,10 +62,14 @@ condition. Default is `"Condition"`.}
 }
 \value{
 A list containing per-sample counts (`counts`), grouped summary
-  statistics (`stats`), and the joined input data (`data_joined`).
-  When `make_plot = TRUE`, the returned list also contains the ggplot
-  object (`p`).
+  statistics (`stats`), the sample-level Wilcoxon rank-sum comparison
+  (`burden_test`), and the joined input data (`data_joined`).
+  `burden_test` is `NULL` when both conditions are not represented by
+  at least two samples. When `make_plot = TRUE`, the returned list also
+  contains the ggplot object (`p`).
 }
 \description{
-What the function does.
+Summarises the number of adjusted off-target positions within a specified
+editing range for each sample and experimental group. Group means and
+standard errors are calculated and can be displayed as a bar chart.
 }
