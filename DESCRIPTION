@@ -23,6 +23,7 @@ Imports:
     RColorBrewer,
     readr,
     reshape2,
+    scales,
     tibble,
     ggrepel,
     stringr,
