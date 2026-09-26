@@ -1,7 +1,7 @@
 ---
 title: "MitoBEAP"
 author: "Lindsey Van Haute"
-date: "2026-06-09"
+date: "2026-09-26"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{MitoBEAP}
@@ -20,11 +20,11 @@ MitoBEAP is an R package designed to analyze mitochondrial base editing data fro
 
 The package is optimized for input from VarScan2 output in .csv format, and includes functionality for depth filtering, control heteroplasmy adjustment, heatmaps, and summary statistics.
 
-For more detail, see our associated publication: "Development of the Mitochondrial Base Editor Analysis Package (MitoBEAP)." <http://link.to.paper.com>.
+For more detail, see our associated publication: "Development of the Mitochondrial Base Editor Analysis Package (MitoBEAP)." Publication details will be added following publication.
 
 ## Input samples
 
-This package is optimized to be used in combination with the output of VarScan2 (samtools mpileup -ABQ0 -aa --no-output-ins --no-output-ins --no-output-del --no-output-del --max-depth 0 --fasta-ref /path/to/ref.fasta | java -jar VarScan.jar readcounts --min-coverage 0) in .csv format. Example files can be downloaded here: <https://github.com/NextGenSeek/MitoBEAP/ExampleFiles>. However, other input files can be used too. We'll discuss this option later.
+This package is optimized to be used in combination with the output of VarScan2 (samtools mpileup -ABQ0 -aa --no-output-ins --no-output-ins --no-output-del --no-output-del --max-depth 0 --fasta-ref /path/to/ref.fasta | java -jar VarScan.jar readcounts --min-coverage 0) in .csv format. Two example datasets are provided in the ExampleFiles directory: 12S, containing the 12S rRNA base-editing dataset, and METTL15, containing the METTL15-related dataset used in the accompanying study. Each directory also contains the corresponding sample sheet required for the MitoBEAP workflow. The example datasets are available from the MitoBEAP GitHub repository: https://github.com/NextGenSeek/MitoBEAP/tree/main/ExampleFiles. Users can also analyse their own VarScan2 output or appropriately formatted pre-processed variant files, as described below.
 
 Before starting, ensure you are working in the correct directory: (setwd("/path/to/working/directory") ). 
 
@@ -51,15 +51,29 @@ To begin, list your raw VarScan2 output files and define a minimum depth thresho
 
 ```{r echo=F}
 ###### NOT VISIBLE, BUT SCRIPT WILL RUN
-setwd("/Users/lindadmin/Desktop/SamplesForMitoDD/ExampleFiles/12S")
-# List input files
-RawCountFiles <- list.files("./raw", 
-                            pattern = "*.csv",
-                            full.names = TRUE)
-# Specify prefered minimum depth first
-depth = 100
-# Run the following command
-invisible(lapply(RawCountFiles, LoadRawCount))
+
+example_dir <- system.file(
+  "extdata",
+  "12S",
+  package = "MitoBEAP"
+)
+
+RawCountFiles <- list.files(
+  example_dir,
+  pattern = "\\.csv$",
+  full.names = TRUE
+)
+
+RawCountFiles <- RawCountFiles[
+  !grepl("Samplesheet", basename(RawCountFiles), ignore.case = TRUE)
+]
+
+# Filter positions by sequencing depth
+invisible(lapply(
+  RawCountFiles,
+  LoadRawCount,
+  depth = 100
+))
 ```
 
 ```{r eval=FALSE}
@@ -68,11 +82,12 @@ RawCountFiles <- list.files("./raw",
                             pattern = "*.csv",
                             full.names = TRUE)
 
-# Specify prefered minimum depth first
-depth = 100
-
-# Run the following command
-lapply(RawCountFiles, LoadRawCount)
+# Filter positions below the selected minimum sequencing depth
+lapply(
+  RawCountFiles,
+  LoadRawCount,
+  depth = 100
+)
 
 # To select a certain region use: this can be done with the function RegionSelection:
 
@@ -81,52 +96,74 @@ RegionSelection(RawCountFiles, position_range = c(1000, 5000), depth_filter = TR
 
 ```
 
-To use all functions of the package, the user needs to generate a SampleList or upload a .csv with sample information FileName (file name, without .csv), SampleName (how you want the samples to be labelled) and Condition (e.g. control - treated) as shown in the example and name this SampleList.
+To use all MitoBEAP functions, a sample sheet is required to link input files to sample metadata. At minimum, this should contain FileName (the input filename without the .csv extension), SampleName (the label used for the sample), and Condition (for example, control or treated). Additional columns, such as Order and CombinedName, are used by some plotting and grouping functions. Example sample sheets are provided with the 12S and METTL15 example datasets.
 
 ```{r, eval=FALSE}
-SampleList <- read.delim("filename.csv", 
-                         row.names = NULL, 
-                         sep = ",")
+SampleList <- read.csv("Samplesheet_12S.csv")
 head(SampleList)
 ```
 
 ```{r echo=FALSE, results='markup'}
 # NOT VISIBLE
-SampleList <- read.delim("/Users/lindadmin/Desktop/SamplesForMitoDD/Samples_MitoDD.csv", 
-                         row.names = NULL, 
-                         sep = ",")
-head(SampleList)
+SampleList <- read.csv(
+  system.file(
+    "extdata",
+    "12S",
+    "Samplesheet_12S.csv",
+    package = "MitoBEAP"
+  )
+)
 ```
 
 ## Run Base Editing Analysis
 
 Next, we'll perform the basic calculations. For this step, there are two variants, depending on the input files (VarScan2 as in the example) or alternative input files. As this tool is specifically designed to analyse cytosine base editors (CBE) or adenine base editors (ABE), it will only take C-T and G-A (CBE) or A-T to G-C (ABE) conversions into account and will ignore other changes, as those are existing variants or technical errors. In this step, you also have to assign the on-target position for your analysis. This matches the position of the reference genome you used to create the original input files.
 
+Note: MitoBEAP's editor-specific off-target analyses focus on the expected substitution classes for the selected editor. Other mismatch types are not currently included in these editor-specific off-target summaries. MitoBEAP also does not currently assess indels or nuclear off-target editing; these require separate analyses.
+
 The function below can be used if you use VarScan2 input files, like in our example. Otherwise, use the subsequent code (FilterCGEdits/FilterATEdits).
+
 ```{r eval=FALSE}
 # List files. If you didn't change anything, you can just use the line below:
-MinXFiles <- list.files("./minimum",full.names = TRUE) #Is there a way to avoid this line?
+MinXFiles <- list.files("./minimum",full.names = TRUE)
 
-# On-target position:
-OntargetPosition <- 1561 #CHANGE ME 
+# Specify the on-target position
+OntargetPosition <- 1561
 
-# Run script for CBE
-lapply(MinXFiles, OnTargetCalcCBE)
-# Alternatively, run script for ABE
-lapply(MinXFiles, OnTargetCalcABE)
+# Run analysis for CBE
+lapply(
+  MinXFiles,
+  OnTargetCalcCBE,
+  OntargetPosition = OntargetPosition
+)
+
+# Alternatively, run analysis for ABE
+lapply(
+  MinXFiles,
+  OnTargetCalcABE,
+  OntargetPosition = OntargetPosition
+)
 ```
 
 ```{r echo=FALSE, results='hide'}
 # NOT VISIBLE
-setwd("/Users/lindadmin/Desktop/SamplesForMitoDD/ExampleFiles/12S")
-# List files. If you didn't change anything, you can just use the line below:
-MinXFiles <- list.files("./minimum",full.names = TRUE)
 
-# On-target position:
-OntargetPosition <- 1561 #CHANGE ME 
+# List depth-filtered files generated by LoadRawCount()
+MinXFiles <- list.files(
+  "./minimum",
+  pattern = "\\.csv$",
+  full.names = TRUE
+)
 
-# Run script
-lapply(MinXFiles, OnTargetCalcCBE)
+# Specify the on-target position
+OntargetPosition <- 1561
+
+# Calculate on-target editing
+invisible(lapply(
+  MinXFiles,
+  OnTargetCalcCBE,
+  OntargetPosition = OntargetPosition
+))
 ```
 
 The following chunk should not be run when using the VarScan2 workflow above. It is intended for users starting from pre-processed variant files instead. These input files should be in CSV format and contain the following columns: chrom, position, ref_base, depth, base (alternative base), reads, and percentage.
@@ -145,45 +182,29 @@ From here onwards, all steps should be the same, regardless of the input files.
 
 ## Summary Table Generation
 
-Use the following functions to generate overall summaries of coverage, on-target, and off-target activity:
-
-```{r echo=FALSE, results='hide'}
-# NOT VISIBLE
-setwd("/Users/lindadmin/Desktop/SamplesForMitoDD/ExampleFiles/12S")
-# If you didn't change anything, you can use the lines below
-CoverageFiles <- list.files("./Coverage", 
-                            pattern = "*.txt",
-                            full.names = TRUE)
-Coverage <- as.data.frame(CoverageCalc(CoverageFiles))
-
-MeanFiles <- list.files("./mean", pattern = "*mean.txt",
-                        full.names = TRUE)
-Mean <- as.data.frame(MeanCalc(MeanFiles))
-
-OnTargetFiles <- list.files("./OnTarget", pattern = "*ontarget.txt",
-                             full.names = TRUE)
-OnTarget <- as.data.frame(CombineOnTarget(OnTargetFiles))
-
-#CreateOverview()
-```
-
+Use the following functions to generate summaries of coverage, on-target editing, and mean off-target editing, and combine these with the sample information into a single overview table:
 
 ```{r eval=FALSE}
-# If you didn't change anything, you can use the lines below
-CoverageFiles <- list.files("./Coverage", 
+# Calculate average coverage
+CoverageFiles <- list.files("./Coverage",
                             pattern = "*.txt",
                             full.names = TRUE)
 Coverage <- as.data.frame(CoverageCalc(CoverageFiles))
 
-MeanFiles <- list.files("./mean", pattern = "*mean.txt",
+# Calculate mean off-target editing
+MeanFiles <- list.files("./mean",
+                        pattern = "*mean.txt",
                         full.names = TRUE)
 Mean <- as.data.frame(MeanCalc(MeanFiles))
 
-OnTargetFiles <- list.files("./OnTarget", pattern = "*ontarget.txt",
-                             full.names = TRUE)
+# Combine on-target editing results
+OnTargetFiles <- list.files("./OnTarget",
+                            pattern = "*ontarget.txt",
+                            full.names = TRUE)
 OnTarget <- as.data.frame(CombineOnTarget(OnTargetFiles))
 
-CreateOverview(
+# Create the combined overview table
+Overview <- CreateOverview(
   All_mean = Mean,
   OnTarget = OnTarget,
   Coverage = Coverage,
@@ -191,21 +212,80 @@ CreateOverview(
 )
 ```
 
-This creates All_Ontarget_mean_Coverage.csv in the ./Overview directory. CreateOverview() generates the combined summary table and, by default, retains the intermediate output directories (minimum, Coverage, mean, OnTarget, and percentages). If these intermediate files are no longer required, they can be removed automatically after the summary table is generated by running CreateOverview(cleanup = TRUE).
+```{r echo=FALSE, results='hide'}
+# Generate summary objects used by subsequent vignette sections
 
-```{r, echo=FALSE}
-# Script NOT VISIBLE, but results are
-setwd("/Users/lindadmin/Desktop/SamplesForMitoDD/ExampleFiles/12S")
-Overview <- read.csv("/Users/lindadmin/Desktop/Rtest/MitoBEAP/vignettes/All_Ontarget_mean_Coverage.csv")
-Overview
+CoverageFiles <- list.files(
+  "./Coverage",
+  pattern = "*.txt",
+  full.names = TRUE
+)
+Coverage <- as.data.frame(CoverageCalc(CoverageFiles))
+
+MeanFiles <- list.files(
+  "./mean",
+  pattern = "*mean.txt",
+  full.names = TRUE
+)
+Mean <- as.data.frame(MeanCalc(MeanFiles))
+
+OnTargetFiles <- list.files(
+  "./OnTarget",
+  pattern = "*ontarget.txt",
+  full.names = TRUE
+)
+OnTarget <- as.data.frame(CombineOnTarget(OnTargetFiles))
+
+Overview <- CreateOverview(
+  All_mean = Mean,
+  OnTarget = OnTarget,
+  Coverage = Coverage,
+  SampleList = SampleList
+)
 ```
+This creates `All_Ontarget_mean_Coverage.csv` in the `Overview` directory and returns the combined overview table.
+
+By default, `CreateOverview()` retains the intermediate output directories (`minimum`, `Coverage`, `mean`, `OnTarget`, and `percentages`). If these intermediate files are no longer required, they can be removed automatically after the overview is generated by setting `cleanup = TRUE`.
+
+### Coverage differences between samples
+
+`CreateOverview()` checks for large differences in average sequencing coverage between samples. By default, a warning is issued when the highest-coverage sample has more than 10-fold the coverage of the lowest-coverage sample. Large differences in sequencing depth may affect comparisons of low-frequency editing events. The warning does not alter or stop the analysis.
+
+The warning threshold can be changed, for example:
+
+```{r eval=FALSE}
+Overview <- CreateOverview(
+  All_mean = Mean,
+  OnTarget = OnTarget,
+  Coverage = Coverage,
+  SampleList = SampleList,
+  coverage_ratio_warning = 5
+)
+```
+
+Set `coverage_ratio_warning = NULL` to disable this check.
+
+### Output location
+
+By default, MitoBEAP writes output to subdirectories of the current working directory. The `out_dir_base` argument can be used to specify a different base directory without changing the R working directory. For example:
+
+```{r eval=FALSE}
+Overview <- CreateOverview(
+  All_mean = Mean,
+  OnTarget = OnTarget,
+  Coverage = Coverage,
+  SampleList = SampleList,
+  out_dir_base = "/path/to/analysis"
+)
+```
+
+In this example, the overview table is written to `/path/to/analysis/Overview/All_Ontarget_mean_Coverage.csv`.
 
 ## Export Excel Workbook
 
 MitoBEAP also has the option to generate an excel spreadsheet with all data, which could be used as overview table when uploading the raw fastq files to a data repository. A spreadsheet can be easily created by the following command:
 
 ```{r echo=FALSE}
-setwd("/Users/lindadmin/Desktop/SamplesForMitoDD/ExampleFiles/12S")
 CreateSpreadsheet()
 ```
 
@@ -217,22 +297,23 @@ After running this command, the spreadsheet should now be available in the folde
 
 ## Depth and Heteroplasmy Overview
 
-Some users might also find the following file useful: The function DepthFile generates a .csv file that shows the heteroplasmy percentage as well as the coverage depth for each position and each sample. Default settings show the entire genome, but users can specify the region of interest. The generated file can also be used to generate heatmaps or other figures using excel, Prism or other software packages.
+DepthFile() generates a CSV file containing the sequencing depth and heteroplasmy percentage for each position in each sample. By default, the entire analysed sequence is included, but users can restrict the output to a specific region using fromP and toP. The resulting table can be used for additional visualization or downstream analysis in R, Excel, GraphPad Prism, or other software.
 
 ```{r echo=FALSE}
-setwd("/Users/lindadmin/Desktop/SamplesForMitoDD/ExampleFiles/12S")
 DepthFile(fromP = 1, toP = 500) # default is from start to end
 ```
 
 ```{r eval=FALSE}
-DepthFile() # default is from start to end
+# Generate depth and heteroplasmy information for the entire sequence
+DepthFile()
 
-# DepthFile(fromP = 1, toP = 500) # generates the file for the first 500 positions of the genome
+# Alternatively, restrict the output to a specific region
+DepthFile(fromP = 1, toP = 500)
 ```
 
 ## Visualization options
 
-MitoDD also has several options to easily visualize the samples. One of the simples figures is a barchart to show the on-target base editing for each sample:
+MitoBEAP provides several options for visualizing editing outcomes. One of the simplest figures is a barchart to show the on-target base editing for each sample:
 
 ```{r eval=FALSE}
 CreateBarChart(
@@ -243,8 +324,17 @@ CreateBarChart(
 )
 ```
 
-```{r, echo=FALSE, dpi=72, out.width= '50%'}
-knitr::include_graphics("/Users/lindadmin/Desktop/Rtest/MitoBEAP/vignettes/Overview/Barchart_OnTarget.png")
+```{r echo=FALSE, results='hide', fig.show='hide'}
+CreateBarChart(
+  data_type = "OnTarget",
+  colour = "lightgreen",
+  All_ontarget = OnTarget,
+  SampleList = SampleList
+)
+```
+
+```{r, echo=FALSE, out.width= '70%'}
+knitr::include_graphics("Plots/Barchart_OnTarget.png")
 ```
 
 Or a barchart showing the mean off-target levels
@@ -258,8 +348,17 @@ CreateBarChart(
 )
 ```
 
-```{r, echo=FALSE, dpi=72, out.width='50%'}
-knitr::include_graphics("/Users/lindadmin/Desktop/Rtest/MitoBEAP/vignettes/Overview/Barchart_OffTarget.png")
+```{r echo=FALSE, results='hide', fig.show='hide'}
+CreateBarChart(
+  data_type = "OffTarget",
+  colour = "skyblue",
+  All_mean = Mean,
+  SampleList = SampleList
+)
+```
+
+```{r, echo=FALSE, out.width='70%'}
+knitr::include_graphics("Plots/Barchart_OffTarget.png")
 ```
 
 ## Scatterplots of Off-target Editing
@@ -267,13 +366,18 @@ knitr::include_graphics("/Users/lindadmin/Desktop/Rtest/MitoBEAP/vignettes/Overv
 To visualize off-target effects for each sample individually, scatter plots are very helpful. Again, these can easily be generated. The user can specify to label the dots above a certain level by position.
 
 ```{r echo=FALSE}
-setwd("/Users/lindadmin/Desktop/SamplesForMitoDD/ExampleFiles/12S")
 Adj <- DdCBE_df(SampleList = SampleList)
 
 AdjScatter(
   labelPercentage = 10,
   Adj = Adj,
   OntargetPosition = OntargetPosition
+)
+
+file.copy(
+  "Plots/AdjustedPlots/12S-2.png",
+  "Plots/AdjustedPlots/12S-2_unadjusted.png",
+  overwrite = TRUE
 )
 ```
 
@@ -287,19 +391,20 @@ AdjScatter(
 )
 ```
 
-```{r, echo=FALSE, dpi=72, out.width= '80%'}
-knitr::include_graphics("/Users/lindadmin/Desktop/Rtest/MitoBEAP/vignettes/Overview/12S-2.png")
+```{r, echo=FALSE, out.width= '80%'}
+knitr::include_graphics("Plots/AdjustedPlots/12S-2_unadjusted.png")
 ```
 
 ## Remove Control Backgrounds (heteroplasmy)
 
-For most experiments, the cells or tissue analysed, will not 100% match with the reference genome. It is expected that these positions remain unaltered during the experiment, so they could be considered background. However, the user might want to remove these positions, both for visualization and off-target calculation purposes. Therefore, the user can specify to remove positions that have more than X % heteroplasmy levels in some or all of the control samples. If the user prefers not to remove those highly heteroplasmic positions, max_threshold = 100 can be used
+For most experiments, the cells or tissues analysed will not match the reference genome at every position. Positions with high heteroplasmy in control samples may represent pre-existing variants rather than editing events. MitoBEAP therefore allows these positions to be excluded from adjusted off-target calculations. max_threshold specifies the heteroplasmy percentage used to identify these positions, while controls specifies the minimum number of control samples in which the threshold must be reached. For example, max_threshold = 90 and controls = 3 masks a position if it has at least 90% heteroplasmy in at least three control samples. If no control-background masking is desired, max_threshold = 100 can be used.
+
+When DdCBE_df() is run, MitoBEAP reports the number of positions masked using these criteria and, when applicable, their genomic coordinates. This makes the control-derived filtering explicit and allows users to record which positions were excluded from the adjusted analysis.
 
 The user can also further optimize the figure, by removing dots below a certain value from the figure (however, it should be noted that those positions will be taken into account for off-target calculations)
 
 To exclude polymorphic positions present in controls:
 ```{r echo=FALSE}
-setwd("/Users/lindadmin/Desktop/SamplesForMitoDD/ExampleFiles/12S")
 Adj <- DdCBE_df(
   max_threshold = 90,
   controls = 3,
@@ -312,6 +417,12 @@ AdjScatter(
   Adj = Adj,
   OntargetPosition = OntargetPosition
 ) # labelPercentage = default = 10
+
+file.copy(
+  "Plots/AdjustedPlots/12S-2.png",
+  "Plots/AdjustedPlots/12S-2_90.png",
+  overwrite = TRUE
+)
 ```
 
 ```{r eval=FALSE}
@@ -329,14 +440,13 @@ AdjScatter(
 ) # labelPercentage = default = 10
 ```
 
-```{r, echo=FALSE, dpi=72, out.width= '80%'}
-knitr::include_graphics("/Users/lindadmin/Desktop/Rtest/MitoBEAP/vignettes/Overview/12S-2_90.png")
+```{r, echo=FALSE, out.width= '80%'}
+knitr::include_graphics("Plots/AdjustedPlots/12S-2_90.png")
 ```
 
 The user might also want to recalculate off-target averages and create a barchart with the above specified maximum heteroplasmy levels in controls. 
 
 ```{r echo=FALSE}
-setwd("/Users/lindadmin/Desktop/SamplesForMitoDD/ExampleFiles/12S")
 # Recalculate off-target barchart with this max_threshold
 AdjCreateBarChart(
   colour = "skyblue",
@@ -361,8 +471,9 @@ AdjCreateBarChart(
 )
 ```
 
-```{r, echo=FALSE, dpi=72, out.width='50%'}
-knitr::include_graphics("/Users/lindadmin/Desktop/Rtest/MitoBEAP/vignettes/Overview/Adjusted_Barchart_offTarget.png")
+```{r, echo=FALSE, out.width='70%'}
+knitr::include_graphics(
+  "Plots/AdjustedPlots/Adjusted_Barchart_offTarget.png")
 ```
 
 ## Comparative Plot: On- vs Off-target
@@ -375,13 +486,12 @@ OnVsOffTargetAdj(
   All_ontarget = OnTarget,
   SampleList = SampleList
 ) #standard = Condition = TRUE, FALSE= no condition information
-# default xlab = "Off target effects (%)",
-# default ylab = "Heteroplasmy level (%)"
+# default xlab = "Off-target editing (%)"
+# default ylab = "On target editing (%)"
 # default ggtitle = "On-versus off-target effects"
 ```
 
-```{r echo=FALSE, dpi=72, out.width='60%'}
-setwd("/Users/lindadmin/Desktop/SamplesForMitoDD/ExampleFiles/12S")
+```{r echo=FALSE, results='hide', fig.show='hide'}
 OnVsOffTargetAdj(
   Adj = Adj,
   All_ontarget = OnTarget,
@@ -389,27 +499,85 @@ OnVsOffTargetAdj(
 ) #standard = Condition = TRUE, FALSE= no condition information
 ```
 
-## Comparative Plot: grouped results
-
-This function generates a bar chart showing the mean of the replicates with error bars (sd).
-
-In order to use this function, the SampleList should contain a column "CombinedName" with the group names.
-
-```{r eval=FALSE}
-off_target_count_summary(
-  Adj = Adj,
-  SampleList = SampleList
-)
-# default lower = 0.1
-# default upper = 70
-# default condition_levels = c("control", "treated")
-# default out_dir = "."
-# default csv_prefix = "MutationCount"
-# default plot_file = "MutationCount_grouped.pdf"
+```{r echo=FALSE, out.width='70%'}
+knitr::include_graphics(
+  "Plots/AdjustedPlots/OnOffTarget_Adj.png")
 ```
 
-```{r, echo=FALSE, dpi=72, out.width='60%'}
-knitr::include_graphics("/Users/lindadmin/Desktop/Rtest/MitoBEAP/vignettes/Overview/MutationCount_grouped.pdf")
+## Statistical analysis of editing outcomes
+
+In addition to visualizing editing frequencies, MitoBEAP can statistically compare editing between treated and control samples. Two complementary approaches are provided: an empirical control-derived background threshold and per-position comparison of editing read counts.
+
+### Empirical control-derived detection limit
+
+`CalculateLOD()` estimates an empirical detection threshold from the distribution of editing percentages observed in control samples. By default, the 99th percentile of the control background is used. Positions previously masked during control-background filtering are excluded, and the intended on-target position can also be excluded.
+
+This threshold represents an empirical control-derived background threshold and should not be interpreted as an instrument-specific analytical limit of detection established by a dilution series.
+
+```{r eval=FALSE}
+LOD_results <- CalculateLOD(
+  Adj = Adj,
+  control = "control",
+  percentile = 0.99,
+  OntargetPosition = OntargetPosition
+)
+
+LOD_results$LOD
+```
+
+The returned object also contains the percentile used, the number of control observations and control samples contributing to the calculation, and the background values used to derive the threshold.
+
+### Per-position treated versus control comparison
+
+`CompareEditing()` compares treated and control editing at each mitochondrial position using pooled edited and non-edited read counts. Fisher's exact test is performed for each position and p-values are adjusted for multiple testing using the Benjamini-Hochberg false discovery rate (FDR) procedure. The function also reports 95% Wilson confidence intervals for editing percentages.
+
+```{r eval=FALSE}
+EditingStats <- CompareEditing(
+  Adj = Adj,
+  treated = "treated",
+  control = "control"
+)
+
+head(EditingStats)
+```
+
+The output includes treated and control read depth, edited-read counts, editing percentages, 95% confidence intervals, the difference in editing percentage, odds ratio, raw p-value, and FDR-adjusted p-value.
+
+The Fisher's exact test operates on pooled sequencing reads at each position. It therefore assesses evidence for a difference in editing read proportions but does not model biological replicate-to-replicate variability. Biological samples should not be treated as independent sequencing reads when evaluating experiment-level effects. Sample-level off-target burden can instead be compared across biological samples as described below.
+
+## Comparative Plot: grouped results
+
+## Sample-level off-target burden
+
+For datasets containing biological replicates, `off_target_count_summary()` can be used to quantify off-target burden at the sample level. The function counts the number of off-target positions within a specified editing range for each sample and summarizes these counts across experimental groups.
+
+The empirical control-derived threshold calculated by `CalculateLOD()` can be supplied as `lower`, so that only positions with editing above the observed control background are counted. The intended on-target position can be excluded using `OntargetPosition`.
+
+When both control and treated conditions contain at least two samples, the function also performs a two-sided Wilcoxon rank-sum test comparing the per-sample off-target burden between conditions. In contrast to the per-position Fisher's exact test above, the biological sample is therefore the unit of analysis for this comparison.
+
+For grouped plotting, `SampleList` must contain a `CombinedName` column specifying which samples belong to the same replicate group.
+
+```{r eval=FALSE}
+off_target_results <- off_target_count_summary(
+  Adj = Adj,
+  SampleList = SampleList,
+  lower = LOD_results$LOD,
+  upper = 70,
+  OntargetPosition = OntargetPosition
+)
+
+# Per-sample number of off-target positions above the empirical threshold
+off_target_results$counts
+
+# Group summary
+off_target_results$stats
+
+# Sample-level treated versus control comparison
+off_target_results$burden_test
+```
+An example output from a separate dataset is shown below to illustrate the grouped summary plot.
+```{r, echo=FALSE, out.width='60%'}
+knitr::include_graphics("figures/MutationCount_grouped.png")
 ```
 
 ## Heatmap of Bystander Editing
@@ -430,7 +598,6 @@ Bystander(
 ```
 
 ```{r echo=FALSE}
-setwd("/Users/lindadmin/Desktop/SamplesForMitoDD/ExampleFiles/12S")
 Bystander(
   BystanderDistance = 10,
   xlab = "mtDNA position",
@@ -453,8 +620,8 @@ This creates the desired heatmap in the folder Plots. By default, the heatmap us
 # )
 ```
 
-```{r, echo=FALSE, dpi=72, out.width='70%'}
-knitr::include_graphics("/Users/lindadmin/Desktop/Rtest/MitoBEAP/vignettes/Overview/HeatmapBystanderEffect.png")
+```{r, echo=FALSE, out.width='70%'}
+knitr::include_graphics("Plots/HeatmapBystanderEffect.png")
 ```
 
 Alternatively, to create this heatmap with only the potential target sites (CG for CBE or AT for ABE) use the following function
@@ -470,8 +637,19 @@ bystander_only_relevant(
 )
 ```
 
-```{r, echo=FALSE, dpi=72, out.width='60%'}
-knitr::include_graphics("/Users/lindadmin/Desktop/Rtest/MitoBEAP/vignettes/Overview/HeatmapBystanderEffect_only_relevant.png")
+```{r echo=FALSE, results='hide'}
+bystander_only_relevant(
+  BystanderDistance = 10,
+  title = "Bystander effect",
+  xlab = "mtDNA position",
+  Adj = Adj,
+  SampleList = SampleList,
+  OntargetPosition = OntargetPosition
+)
+```
+
+```{r, echo=FALSE, out.width='60%'}
+knitr::include_graphics("Plots/HeatmapBystanderEffect_only_relevant.png")
 ```
 
 
@@ -491,8 +669,7 @@ plot_OffTarget_histograms(
 # default max_pct = Inf
 ```
 
-```{r echo=FALSE, dpi=72, out.width='60%'}
-setwd("/Users/lindadmin/Desktop/SamplesForMitoDD/ExampleFiles/12S")
+```{r echo=FALSE, out.width='60%'}
 plot_OffTarget_histograms(
   bw = 0.1,
   min_pct = 0.1,
@@ -502,8 +679,8 @@ plot_OffTarget_histograms(
 )
 ```
 
-```{r, echo=FALSE, dpi=72, out.width='50%'}
-knitr::include_graphics("/Users/lindadmin/Desktop/Rtest/MitoBEAP/vignettes/Overview/Histogram_12S_1.pdf")
+```{r, echo=FALSE, out.width='70%'}
+knitr::include_graphics("Plots/Histogram_12S_1.png")
 ```
 
 ## Conclusion

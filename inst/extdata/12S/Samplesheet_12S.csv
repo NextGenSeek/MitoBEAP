@@ -1,0 +1,11 @@
+Order,SampleName,FileName,Condition,Replicate
+3,12S-1,E8_S56,treated,1
+4,12S-2,E9_S57,treated,1
+5,12S-3,E10_S58,treated,2
+6,12S-4,E11_S59,treated,3
+7,12S-5,E12_S60,treated,1
+8,12S-6,F1_S61,treated,1
+9,12S-7,F2_S62,treated,1
+10,12S-8,F3_S63,treated,1
+1,Control1,i707-i521,control,control
+2,Control2,i712-i520,control,control
