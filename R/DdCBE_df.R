@@ -58,17 +58,16 @@ DdCBE_df <- function(
     stop("Error: No report files found in '", all_positions_dir, "'.")
   }
 
-df7 <- AllReportFiles %>%
-  purrr::set_names(nm = (basename(.) %>% tools::file_path_sans_ext())) %>% # Name without extension
-  purrr::map_df(read_csv,
-                col_names = FALSE,
-                skip = 1,
-                .id = "FileName")
-
-# Rename required columns
-names(df7) [2]  <- "chr"
-names(df7) [3] <- "position"
-names(df7) [10] <- "percentage"
+  df7 <- AllReportFiles %>%
+    purrr::set_names(
+      nm = basename(.) %>% tools::file_path_sans_ext()
+    ) %>%
+    purrr::map_df(
+      readr::read_csv,
+      col_names = TRUE,
+      show_col_types = FALSE,
+      .id = "FileName"
+    )
 
 # Clean filenames and merge metadata
 df7$FileName <- gsub("_R30", "", df7$FileName)
