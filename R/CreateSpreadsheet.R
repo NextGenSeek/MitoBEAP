@@ -36,11 +36,22 @@ suppressWarnings(rm(wb)) # remove old workbook if present
 suppressWarnings(rm(sheet)) # remove old sheets if present
 wb <- openxlsx::createWorkbook()
 
+# Create valid, unique Excel worksheet names
+sheet_names <- tools::file_path_sans_ext(basename(ReportFiles))
+sheet_names <- substr(sheet_names, 1, 28)
+sheet_names <- make.unique(sheet_names, sep = "_")
+
 # going through each csv file
-for (item in ReportFiles)
+for (i in seq_along(ReportFiles))
 {
+  item <- ReportFiles[i]
+  sheet_name <- sheet_names[i]
+
   # create a sheet in the workbook
-  sheet <- openxlsx::addWorksheet(wb, sheetName=strsplit(item, "\\/|[.]")[[1]][4])
+  sheet <- openxlsx::addWorksheet(
+    wb,
+    sheetName = sheet_name
+  )
 
   # add the data to the new sheet
   openxlsx::writeData(wb, x= read.csv(item), sheet,rowNames=FALSE)
