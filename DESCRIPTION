@@ -9,9 +9,9 @@ Authors@R: c(
       role = c("aut", "cre")
     )
   )
-Description: MitoBEAP is an R package designed to analyze mitochondrial base editing data from 
-	DdCBE experiments. It calculates both on-target and off-target editing efficiencies, 
-	visualizes editing patterns, and produces reports for submission to data repositories.
+Description: MitoBEAP is an R package designed to analyze mitochondrial base editing data.
+       It calculates both on-target and off-target editing efficiencies,
+       visualizes editing patterns, and produces reports for submission to data repositories.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
