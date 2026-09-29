@@ -219,7 +219,7 @@ OnTargetCalcABE <- function(
      } else if (isTRUE(ontarget$base.4 == "G") ==TRUE) {
        ontarget <- transform(ontarget , percentage = (reads.4 / depth)*100)
      } else if (isTRUE(ontarget$base.1 == "C") ==TRUE) {
-       ontarget <- transform(ontarget , percentage = (reads.2 / depth)*100)
+       ontarget <- transform(ontarget , percentage = (reads.1 / depth)*100)
      } else if (isTRUE(ontarget$base.2 == "C") ==TRUE) {
        ontarget <- transform(ontarget , percentage = (reads.2 / depth)*100)
      } else if (isTRUE(ontarget$base.3 == "C") ==TRUE){
