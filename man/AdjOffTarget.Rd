@@ -21,14 +21,17 @@ directory (`"."`). Output is written to the `Overview/Adjusted`
 subdirectory within this directory.}
 }
 \value{
-A data frame containing the adjusted off-target percentage,
-  on-target percentage, and coverage for each sample. The same data are
-  also written to `Overview/Adjusted/Adj_Off_Target_mean_coverage.csv`
-  within `out_dir_base`.
+A data frame containing the recalculated adjusted off-target
+  percentage, on-target percentage, coverage, sample name, and sample order.
+  The same data are also written to
+  `Overview/Adjusted/All_Ontarget_adjusted_mean_Coverage.csv` within
+  `out_dir_base`.
 }
 \description{
-Calculates mean adjusted off-target heteroplasmy percentages per sample,
-and merges with corresponding on-target percentages and average coverage.
+Recalculates the mean adjusted off-target heteroplasmy percentage for each
+sample directly from the background-corrected per-position data in `Adj`.
+The recalculated values are then combined with the corresponding on-target
+percentages, average coverage, and sample metadata.
 }
 \examples{
 \dontrun{

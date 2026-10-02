@@ -71,9 +71,21 @@ DdCBE_df <- function(
 
 # Clean filenames and merge metadata
 df7$FileName <- gsub("_R30", "", df7$FileName)
+df7$FileName <- sub("_counts$", "", df7$FileName)
 idx5 <- match(df7$FileName, SampleList$FileName)
 df7$SampleName <- SampleList$SampleName[idx5]
 df7$Condition <- SampleList$Condition[idx5]
+
+if (anyNA(df7$SampleName) || anyNA(df7$Condition)) {
+  unmatched <- unique(df7$FileName[
+    is.na(df7$SampleName) | is.na(df7$Condition)
+  ])
+
+  stop(
+    "Sample metadata could not be matched for: ",
+    paste(unmatched, collapse = ", ")
+  )
+}
 
 # Apply max thresholds on control samples to know which positions to ignore
 df8 <- df7[df7$Condition == "control" & (df7$percentage >= max_threshold), ]

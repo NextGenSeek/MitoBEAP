@@ -1,7 +1,9 @@
 #' AdjOffTarget
 #'
-#' Calculates mean adjusted off-target heteroplasmy percentages per sample,
-#' and merges with corresponding on-target percentages and average coverage.
+#' Recalculates the mean adjusted off-target heteroplasmy percentage for each
+#' sample directly from the background-corrected per-position data in `Adj`.
+#' The recalculated values are then combined with the corresponding on-target
+#' percentages, average coverage, and sample metadata.
 #'
 #' @param Adj Data frame containing adjusted editing percentages.
 #'   Defaults to the global `Adj` object if not supplied.
@@ -14,10 +16,11 @@
 #' @param out_dir_base Base analysis directory. Defaults to the current working
 #'   directory (`"."`). Output is written to the `Overview/Adjusted`
 #'   subdirectory within this directory.
-#' @return A data frame containing the adjusted off-target percentage,
-#'   on-target percentage, and coverage for each sample. The same data are
-#'   also written to `Overview/Adjusted/Adj_Off_Target_mean_coverage.csv`
-#'   within `out_dir_base`.
+#' @return A data frame containing the recalculated adjusted off-target
+#'   percentage, on-target percentage, coverage, sample name, and sample order.
+#'   The same data are also written to
+#'   `Overview/Adjusted/All_Ontarget_adjusted_mean_Coverage.csv` within
+#'   `out_dir_base`.
 #' @keywords off-target, adjusted, heteroplasmy, summary
 #' @export
 #' @name AdjOffTarget
@@ -69,45 +72,51 @@ AdjOffTarget <- function(
     Coverage <- get("Coverage", envir = .GlobalEnv, inherits = FALSE)
   }
 
-  # Compute per-sample mean off-target percentage
+  # Recalculate the per-sample mean from the corrected per-position values.
+  # Do not reuse or relabel the unadjusted Mean/All_mean table here.
   offTarget_percentages <- Adj %>%
     dplyr::group_by(SampleName) %>%
-    dplyr::summarise(`Off target %` = mean(AdjPercentage, na.rm = TRUE), .groups = "drop")
+    dplyr::summarise(
+      `Off target %` = mean(AdjPercentage, na.rm = TRUE),
+      .groups = "drop"
+    )
 
-  # Clean formatting (if needed)
-  offTarget_percentages$`Off target %` <- gsub("^1_", "", offTarget_percentages$`Off target %`)
+  #OnTarget$Sample <- gsub(pattern = "_ontarget", "", x=OnTarget$Sample)
+  #Coverage$Sample <- gsub(pattern = "_coverage", "", x=Coverage$Sample)
+  idx3 <- match(offTarget_percentages$SampleName, SampleList$SampleName)
+  offTarget_percentages$FileName <- SampleList$FileName [idx3]
 
+  idx3 <- match(offTarget_percentages$FileName, OnTarget$FileName)
+  offTarget_percentages$`On target %` <- OnTarget$`On target %` [idx3]
 
-#OnTarget$Sample <- gsub(pattern = "_ontarget", "", x=OnTarget$Sample)
-#Coverage$Sample <- gsub(pattern = "_coverage", "", x=Coverage$Sample)
-idx3 <- match(offTarget_percentages$SampleName, SampleList$SampleName)
-offTarget_percentages$FileName <- SampleList$FileName [idx3]
+  idx4 <- match(offTarget_percentages$FileName, Coverage$FileName)
+  offTarget_percentages$Coverage <- Coverage$Coverage [idx4]
 
-idx3 <- match(offTarget_percentages$FileName, OnTarget$FileName)
-offTarget_percentages$`On target %` <- OnTarget$`On target %` [idx3]
+  idx5 <- match(offTarget_percentages$FileName, SampleList$FileName)
+  offTarget_percentages$RealName <- SampleList$SampleName [idx5]
+  offTarget_percentages$Order <- SampleList$Order[idx5]
 
-idx4 <- match(offTarget_percentages$FileName, Coverage$FileName)
-offTarget_percentages$Coverage <- Coverage$Coverage [idx4]
+  offTarget_percentages <- dplyr::arrange(offTarget_percentages, Order)
 
-idx5 <- match(offTarget_percentages$FileName, SampleList$FileName)
-offTarget_percentages$RealName <- SampleList$SampleName [idx5]
-
-# Output directory
-the_dir <- file.path(out_dir_base, "Overview", "Adjusted")
-check_create_dir <- function(dir) {
-  if (!dir.exists(dir)) {
-    dir.create(dir, recursive = TRUE)
+  # Output directory
+  the_dir <- file.path(out_dir_base, "Overview", "Adjusted")
+  check_create_dir <- function(dir) {
+    if (!dir.exists(dir)) {
+      dir.create(dir, recursive = TRUE)
+    }
   }
-}
-check_create_dir(the_dir)
+  check_create_dir(the_dir)
 
-# Write the means to a file
-write.csv(
-  offTarget_percentages,
-  file = file.path(the_dir, "Adj_Off_Target_mean_coverage.csv"),
-  row.names = FALSE
-)
+  # Write the means to a file
+  write.csv(
+    offTarget_percentages,
+    file = file.path(
+      the_dir,
+      "All_Ontarget_adjusted_mean_Coverage.csv"
+    ),
+    row.names = FALSE
+  )
 
-return(offTarget_percentages)
+  return(offTarget_percentages)
 
 }

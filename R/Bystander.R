@@ -80,16 +80,22 @@ AdjBy <- AdjBy[, c(
   "Condition",
   "AdjPercentage"
 )]
+
 AdjBy$SampleName <- SampleList$SampleName[match(AdjBy$FileName, SampleList$FileName)]
 
 AdjBy$Order <- as.integer(SampleList$Order[match(AdjBy$FileName, SampleList$FileName)])
 AdjBy$SampleName <- factor(AdjBy$SampleName, levels = rev(SampleList$SampleName[order(SampleList$Order)]))
 
 # Extract positions and corresponding letters for secondary axis
-secondary_labels <- Adj$ref_base[Adj$position >= (OntargetPosition - BystanderDistance) &
-                             Adj$position <= (OntargetPosition + BystanderDistance)]
-positions <- Adj$position[Adj$position >= (OntargetPosition - BystanderDistance) &
-                            Adj$position <= (OntargetPosition + BystanderDistance)]
+label_df <- AdjBy[
+  !duplicated(AdjBy$position),
+  c("position", "ref_base")
+]
+
+label_df <- label_df[order(label_df$position), ]
+
+positions <- label_df$position
+secondary_labels <- label_df$ref_base
 
 # Make heatmap from this file
 

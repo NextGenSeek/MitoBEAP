@@ -91,6 +91,9 @@ bystander_only_relevant <- function(
   valid_positions <- sort(unique(AdjBy$position[!is.na(AdjBy$AdjPercentage)]))
   AdjBy <- AdjBy[AdjBy$position %in% valid_positions, ]
 
+  # Drop sample levels that are no longer represented after filtering
+  AdjBy$SampleName <- droplevels(AdjBy$SampleName)
+
   # discrete x-axis
   AdjBy$position_f <- factor(AdjBy$position, levels = valid_positions)
 
@@ -105,17 +108,11 @@ bystander_only_relevant <- function(
   position_labels <- as.character(label_df$position)
   names(position_labels) <- as.character(label_df$position)
 
-  # rectangle around on-target
-  rect_df <- NULL
-  if (OntargetPosition %in% valid_positions) {
-    idx <- match(OntargetPosition, valid_positions)
-    rect_df <- data.frame(
-      xmin = idx - 0.5,
-      xmax = idx + 0.5,
-      ymin = 0.5,
-      ymax = length(levels(AdjBy$SampleName)) + 0.5
-    )
-  }
+  # Find the on-target column on the discrete x-axis
+  ontarget_index <- match(
+    OntargetPosition,
+    valid_positions
+  )
 
   p <- ggplot2::ggplot(
     AdjBy,
@@ -130,19 +127,18 @@ bystander_only_relevant <- function(
       linewidth = 0.5
     ) +
     {
-      if (!is.null(rect_df)) {
+      if (!is.na(ontarget_index)) {
         ggplot2::geom_rect(
-          data = rect_df,
           ggplot2::aes(
-            xmin = .data$xmin,
-            xmax = .data$xmax,
-            ymin = .data$ymin,
-            ymax = .data$ymax
+            xmin = ontarget_index - 0.5,
+            xmax = ontarget_index + 0.5,
+            ymin = -Inf,
+            ymax = Inf
           ),
           inherit.aes = FALSE,
           color = "black",
           fill = NA,
-          linewidth = 0.5
+          linewidth = 1
         )
       }
     } +

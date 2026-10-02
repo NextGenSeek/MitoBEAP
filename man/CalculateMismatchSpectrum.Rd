@@ -8,8 +8,8 @@ CalculateMismatchSpectrum(AllReportFiles = NULL, out_dir_base = ".")
 }
 \arguments{
 \item{AllReportFiles}{Optional character vector of input CSV file paths.
-If not supplied, files ending in \code{_allMutations.csv} are read from
-the \code{counts} subdirectory within \code{out_dir_base}.}
+If not supplied, files ending in \code{_counts.csv} are read from the
+\code{minimum} subdirectory within \code{out_dir_base}.}
 
 \item{out_dir_base}{Base analysis directory. Defaults to the current working
 directory (\code{"."}). Output files are written to the
@@ -23,9 +23,10 @@ A data frame containing all non-reference single-nucleotide
   \code{Mutation}.
 }
 \description{
-Calculates the complete single-nucleotide mismatch spectrum from mutation
-count files. Unlike \code{CalcAllMutations()}, which retains only the most
-abundant non-reference base at each position, this function retains every
+Calculates the complete single-nucleotide mismatch spectrum from
+minimum-depth mitochondrial nucleotide count files. Unlike
+\code{CalcAllMutations()}, which retains only the most abundant
+non-reference base at each position, this function retains every
 non-reference base reported in the input.
 }
 \details{
