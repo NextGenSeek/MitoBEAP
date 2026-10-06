@@ -11,8 +11,8 @@
 #' DdCBE or A-to-G/T-to-C filtering for adenine base editors).
 #'
 #' @param AllReportFiles Optional character vector of input CSV file paths.
-#'   If not supplied, files ending in \code{_counts.csv} are read from the
-#'   \code{minimum} subdirectory within \code{out_dir_base}.
+#'   If not supplied, CSV files are read from the \code{minimum}
+#'   subdirectory within \code{out_dir_base}.
 #' @param out_dir_base Base analysis directory. Defaults to the current working
 #'   directory (\code{"."}). Output files are written to the
 #'   \code{MismatchSpectrum} subdirectory.
@@ -40,7 +40,7 @@ CalculateMismatchSpectrum <- function(
 
     AllReportFiles <- list.files(
       minimum_dir,
-      pattern = "_counts\\.csv$",
+      pattern = "\\.csv$",
       full.names = TRUE
     )
 

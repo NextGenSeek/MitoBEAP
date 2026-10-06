@@ -241,7 +241,7 @@ OnTargetCalcCBE <- function(
      check_create_dir(the_dir)
 
      # Calculate average coverage and save as separate file
-     coverage <- mean(data$depth)
+     coverage <- mean(data$depth, na.rm = TRUE)
      write.table(coverage,file = paste0(the_dir, "/", file_path_sans_ext(basename(input)), '_coverage',".txt"))
 
      ### Create files with all positions, but only off targets and no background

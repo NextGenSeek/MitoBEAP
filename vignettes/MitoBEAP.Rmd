@@ -1,7 +1,7 @@
 ---
 title: "MitoBEAP"
 author: "Lindsey Van Haute"
-date: "2026-09-26"
+date: "2026-10-05"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{MitoBEAP}
@@ -28,18 +28,9 @@ This package is optimized to be used in combination with the output of VarScan2 
 
 Before starting, ensure you are working in the correct directory: (setwd("/path/to/working/directory") ). 
 
-Then load the necessary libraries:
+Then load MitoBEAP and necessary packages:
 
 ```{r}
-library(readr)
-library(tools)
-library(splitstackshape)
-library(tibble)
-library(ggplot2)
-library(dplyr)
-library(tidyr)
-library(ggrepel)
-library(RColorBrewer)
 library(MitoBEAP); packageVersion("MitoBEAP")
 ```
 
@@ -208,7 +199,8 @@ Overview_unadjusted <- CreateOverview(
   All_mean = Mean,
   OnTarget = OnTarget,
   Coverage = Coverage,
-  SampleList = SampleList
+  SampleList = SampleList,
+  output_file = "All_Ontarget_mean_Coverage.csv"
 )
 ```
 
@@ -402,23 +394,23 @@ knitr::include_graphics("Plots/Barchart_OffTarget.png")
 
 ## Remove Control Backgrounds (heteroplasmy)
 
-For most experiments, the cells or tissues analysed will not match the reference genome at every position. Positions with high heteroplasmy in control samples may represent pre-existing variants rather than editing events. MitoBEAP therefore allows these positions to be excluded from adjusted off-target calculations. max_threshold specifies the heteroplasmy percentage used to identify these positions, while controls specifies the minimum number of control samples in which the threshold must be reached. For example, max_threshold = 90 and controls = 3 masks a position if it has at least 90% heteroplasmy in at least three control samples. If no control-background masking is desired, max_threshold = 100 can be used.
+For most experiments, the cells or tissues analysed will not match the reference genome at every position. Positions with high heteroplasmy in control samples may represent pre-existing variants rather than editing events. MitoBEAP therefore allows these positions to be excluded from adjusted off-target calculations. `max_threshold` specifies the heteroplasmy percentage used to identify these positions, while `controls` specifies the minimum number of control samples in which the threshold must be reached. In the bundled 12S example, `max_threshold = 70` and `controls = 2` masks a position if it has at least 70% heteroplasmy in both control samples. If no control-background masking is desired, `max_threshold = 100` can be used.
 
 When DdCBE_df() is run, MitoBEAP reports the number of positions masked using these criteria and, when applicable, their genomic coordinates. This makes the control-derived filtering explicit and allows users to record which positions were excluded from the adjusted analysis.
 
 To exclude polymorphic positions present in controls:
 ```{r echo=FALSE}
 Adj <- DdCBE_df(
-  max_threshold = 90,
-  controls = 3,
+  max_threshold = 70,
+  controls = 2,
   SampleList = SampleList
 )
 ```
 
 ```{r eval=FALSE}
 Adj <- DdCBE_df(
-  max_threshold = 90,
-  controls = 3,
+  max_threshold = 70,
+  controls = 2,
   SampleList = SampleList
 )
 ```
@@ -457,43 +449,62 @@ AdjScatter(
 knitr::include_graphics("Plots/AdjustedPlots/12S-2_90.png")
 ```
 
-After control-background correction, the mean off-target value must be recalculated from the corrected per-position `AdjPercentage` values. The unadjusted `Mean` table is not reused or relabelled. `AdjOffTarget()` performs this recalculation and combines the resulting adjusted means with the on-target, coverage, and sample information.
+After control-background correction, the mean off-target value must be recalculated from the corrected per-position `AdjPercentage` values. The unadjusted `Mean` table is not modified or relabelled. `AdjustedMeanCalc()` calculates the mean background-adjusted off-target editing for each sample directly from `Adj`, excluding the intended on-target position and excluding non-evaluable (`NA`) positions rather than treating them as zero.
 
 ```{r echo=FALSE}
-# Recalculate adjusted means and generate the adjusted overview table
-Overview_adjusted <- AdjOffTarget(
+# Calculate adjusted mean off-target editing
+AdjustedMean <- AdjustedMeanCalc(
   Adj = Adj,
-  SampleList = SampleList,
-  OnTarget = OnTarget,
-  Coverage = Coverage
+  OntargetPosition = OntargetPosition,
+  out_dir_base = "."
 )
 
-# Recalculate off-target barchart with this max_threshold
+# Create the adjusted combined overview table
+Overview_adjusted <- CreateOverview(
+  All_mean = AdjustedMean,
+  OnTarget = OnTarget,
+  Coverage = Coverage,
+  SampleList = SampleList,
+  output_file = "All_Ontarget_adjusted_mean_Coverage.csv"
+)
+
+# Create adjusted off-target bar chart
 AdjCreateBarChart(
+  AdjustedMean = AdjustedMean,
+  SampleList = SampleList,
   colour = "skyblue",
-  Adj = Adj,
-  SampleList = SampleList
+  out_dir_base = "."
 )
 ```
 
 ```{r eval=FALSE}
-# Recalculate adjusted mean off-target editing from the corrected
-# per-position data and create the adjusted overview table
-Overview_adjusted <- AdjOffTarget(
+# Calculate adjusted mean off-target editing from the corrected
+# position-level data
+AdjustedMean <- AdjustedMeanCalc(
   Adj = Adj,
-  SampleList = SampleList,
-  OnTarget = OnTarget,
-  Coverage = Coverage
+  OntargetPosition = OntargetPosition,
+  out_dir_base = "."
 )
-# Create barchart with this max_threshold
+
+# Create the adjusted combined overview table
+Overview_adjusted <- CreateOverview(
+  All_mean = AdjustedMean,
+  OnTarget = OnTarget,
+  Coverage = Coverage,
+  SampleList = SampleList,
+  output_file = "All_Ontarget_adjusted_mean_Coverage.csv"
+)
+
+# Create adjusted off-target bar chart
 AdjCreateBarChart(
+  AdjustedMean = AdjustedMean,
+  SampleList = SampleList,
   colour = "skyblue",
-  Adj = Adj,
-  SampleList = SampleList
+  out_dir_base = "."
 )
 ```
 
-This creates `Overview/Adjusted/All_Ontarget_adjusted_mean_Coverage.csv`. This adjusted overview is the recommended table for interpreting off-target editing after correction for control-background heteroplasmy. The earlier unadjusted overview is retained for transparency and quality control.
+AdjustedMeanCalc() writes the sample-level adjusted means to Overview/All_OffTarget_Adjusted_Mean.csv. CreateOverview() then combines these adjusted off-target means with the on-target editing values, coverage information, and sample metadata. The original unadjusted overview is retained separately, allowing both the measurements before control-background correction and the adjusted results to be inspected.
 
 ```{r, echo=FALSE, out.width='70%'}
 knitr::include_graphics(
@@ -502,24 +513,26 @@ knitr::include_graphics(
 
 ## Comparative Plot: On- vs Off-target
 
-This plot shows on-target versus adjusted off-target editing:
+This plot compares on-target editing with the mean background-adjusted off-target editing calculated by `AdjustedMeanCalc()`:
 
 ```{r eval=FALSE}
 OnVsOffTargetAdj(
-  Adj = Adj,
+  AdjustedMean = AdjustedMean,
   All_ontarget = OnTarget,
-  SampleList = SampleList
+  SampleList = SampleList,
+  out_dir_base = "."
 ) #standard = Condition = TRUE, FALSE= no condition information
-# default xlab = "Off-target editing (%)"
+# default xlab = "Adjusted off-target editing (%)"
 # default ylab = "On target editing (%)"
 # default ggtitle = "On-versus off-target effects"
 ```
 
 ```{r echo=FALSE, results='hide', fig.show='hide'}
 OnVsOffTargetAdj(
-  Adj = Adj,
+  AdjustedMean = AdjustedMean,
   All_ontarget = OnTarget,
-  SampleList = SampleList
+  SampleList = SampleList,
+  out_dir_base = "."
 ) #standard = Condition = TRUE, FALSE= no condition information
 ```
 
@@ -584,19 +597,18 @@ GroupedOnTarget <- PlotGroupedOnTarget(
 )
 ```
 
-`PlotGroupedOffTarget()` summarizes the background-adjusted off-target editing percentages generated by `DdCBE_df()`. For each sample, the mean `AdjPercentage` is calculated across all evaluable off-target positions, excluding the intended on-target position. These sample-level means are then summarized for each `CombinedName` group.
+`PlotGroupedOffTarget()` summarizes the sample-level mean background-adjusted off-target editing values generated by `AdjustedMeanCalc()`. These sample-level means are grouped using `CombinedName` and summarized across replicate samples. Because the intended on-target position and non-evaluable positions are already handled by `AdjustedMeanCalc()`, the grouped plotting function does not recalculate off-target editing from the position-level data.
 
 ```{r eval=FALSE}
 GroupedOffTarget <- PlotGroupedOffTarget(
-  Adj = Adj,
+  AdjustedMean = AdjustedMean,
   SampleList = SampleList,
-  OntargetPosition = OntargetPosition,
   error = "SD",
   show_points = TRUE
 )
 ```
 
-Missing adjusted values are excluded from the off-target calculation rather than treated as zero. Both functions save the sample/group summaries and PNG and PDF figures in the `GroupedBarChart` directory.
+Missing position-level adjusted values are excluded rather than treated as zero when the sample-level means are calculated by `AdjustedMeanCalc()`. `PlotGroupedOffTarget()` uses these previously calculated sample-level means. Both grouped plotting functions save the sample/group summaries and PNG and PDF figures in the `GroupedBarChart` directory.
 
 The bundled example dataset does not contain replicate groups suitable for demonstrating this analysis, so these commands are shown but are not executed here.
 

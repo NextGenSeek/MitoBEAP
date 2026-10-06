@@ -3,6 +3,7 @@
 export(AdjCreateBarChart)
 export(AdjOffTarget)
 export(AdjScatter)
+export(AdjustedMeanCalc)
 export(Bystander)
 export(CalcAllMutations)
 export(CalculateLOD)

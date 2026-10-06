@@ -8,8 +8,8 @@ CalculateMismatchSpectrum(AllReportFiles = NULL, out_dir_base = ".")
 }
 \arguments{
 \item{AllReportFiles}{Optional character vector of input CSV file paths.
-If not supplied, files ending in \code{_counts.csv} are read from the
-\code{minimum} subdirectory within \code{out_dir_base}.}
+If not supplied, CSV files are read from the \code{minimum}
+subdirectory within \code{out_dir_base}.}
 
 \item{out_dir_base}{Base analysis directory. Defaults to the current working
 directory (\code{"."}). Output files are written to the

@@ -16,11 +16,12 @@ Default is 30.}
 directory (`"."`). The `minimum` subdirectory is created within this directory.}
 }
 \description{
-Loads raw count files from specified file paths, filters rows based on minimum read depth, and writes the filtered data to a subdirectory called "minimum".
+Loads raw count files from specified file paths, filters rows based on
+minimum read depth, and writes the filtered data to a subdirectory
+called "minimum".
 }
 \examples{
 \dontrun{
-# Usage example
 file_paths <- c("file1.csv", "file2.csv", "file3.csv")
 LoadRawCount(file_paths)
 }

@@ -8,8 +8,8 @@
 #' use \code{\link{CalculateMismatchSpectrum}}.
 #'
 #' @param AllReportFiles Optional character vector of input CSV file paths.
-#'   If not supplied, files ending in `_counts.csv` are read from the
-#'   `AllPositions` subdirectory within `out_dir_base`.
+#'   If not supplied, CSV files are read from the `AllPositions`
+#'   subdirectory within `out_dir_base`.
 #' @param out_dir_base Base analysis directory. Defaults to the current working
 #'   directory (`"."`). Input files are read from the `AllPositions`
 #'   subdirectory when `AllReportFiles` is not supplied, and output is written
@@ -33,7 +33,7 @@ CalcAllMutations <- function(
 
     AllReportFiles <- list.files(
       allpositions_dir,
-      pattern = "_counts\\.csv$",
+      pattern = "\\.csv$",
       full.names = TRUE
     )
 

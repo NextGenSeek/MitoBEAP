@@ -88,7 +88,7 @@ for (sample_name in sample_names) {
     ggplot2::labs(
       title = sample_name,
       x = "mtDNA position",
-      y = "Adjusted editing (%)",
+      y = "Editing (%)",
       colour = NULL
     ) +
     ggplot2::ylim(0, 100) +

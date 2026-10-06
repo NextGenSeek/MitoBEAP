@@ -8,8 +8,8 @@ CalcAllMutations(AllReportFiles = NULL, out_dir_base = ".")
 }
 \arguments{
 \item{AllReportFiles}{Optional character vector of input CSV file paths.
-If not supplied, files ending in `_counts.csv` are read from the
-`AllPositions` subdirectory within `out_dir_base`.}
+If not supplied, CSV files are read from the `AllPositions`
+subdirectory within `out_dir_base`.}
 
 \item{out_dir_base}{Base analysis directory. Defaults to the current working
 directory (`"."`). Input files are read from the `AllPositions`

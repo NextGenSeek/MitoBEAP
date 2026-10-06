@@ -7,26 +7,36 @@
 MeanCalc(MeanFiles, out_dir_base = ".")
 }
 \arguments{
-\item{MeanFiles}{A character vector of file paths to mean off-target output files (one per sample).}
+\item{MeanFiles}{A character vector of file paths to mean off-target
+output files, one per sample.}
 
 \item{out_dir_base}{Base output directory. Defaults to the current working
-directory (`"."`). The `Overview` subdirectory is created within this directory.}
+directory (`"."`). The `Overview` subdirectory is created within this
+directory.}
 }
 \value{
-A data frame containing the mean off-target percentage for each sample.
-  The same data are also written to `Overview/All_OffTarget_Mean.csv`
-  within `out_dir_base`.
+A data frame containing the unadjusted mean off-target percentage
+  for each sample. The same data are written to
+  `Overview/All_OffTarget_Mean.csv`.
 }
 \description{
-Combines off-target mean percentage values from multiple samples into a single summary file.
-The result is saved as "All_OffTarget_Mean.csv" in the "Overview" directory.
+Combine mean off-target editing values from multiple samples
+}
+\details{
+Combines unadjusted mean off-target percentage values generated for
+individual samples into a single summary table.
 }
 \examples{
 \dontrun{
-mean_files <- list.files("./mean", pattern = "*.txt", full.names = TRUE)
-MeanCalc(mean_files)
+mean_files <- list.files(
+  "./mean",
+  pattern = "*mean.txt",
+  full.names = TRUE
+)
+
+Mean <- MeanCalc(mean_files)
 }
 }
-\keyword{mean,}
-\keyword{off-target,}
+\keyword{mean}
+\keyword{off-target}
 \keyword{summary}
