@@ -96,8 +96,8 @@ CreateOverview <- function(
     stop("Error: 'Coverage' must contain 'FileName' and 'Coverage'.")
   }
 
-  if (!all(c("FileName", "SampleName", "Order") %in% names(SampleList))) {
-    stop("Error: 'SampleList' must contain 'FileName', 'SampleName', and 'Order'.")
+  if (!all(c("FileName", "SampleName") %in% names(SampleList))) {
+    stop("Error: 'SampleList' must contain 'FileName' and 'SampleName'.")
   }
 
   # Clean file names
@@ -171,10 +171,6 @@ CreateOverview <- function(
   # Add sample metadata
   idx5 <- match(All_mean$FileName, SampleList$FileName)
   All_mean$RealName <- SampleList$SampleName[idx5]
-  All_mean$Order <- SampleList$Order[idx5]
-
-  # Sort according to sample order
-  All_mean <- dplyr::arrange(All_mean, .data$Order)
 
   # Create output directory
   the_dir <- file.path(out_dir_base, "Overview")
