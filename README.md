@@ -63,6 +63,11 @@ These files can be used to reproduce the analyses and figures shown in the vigne
 
 ---
 
+## Contributing
+
+Contributions, bug reports and suggestions are welcome.
+Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details.
+
 # Citations
 If you use MitoBEAP in your work, please cite:
 Mutti et al. Development of the Mitochondrial Base Editor Analysis Package (MitoBEAP).
