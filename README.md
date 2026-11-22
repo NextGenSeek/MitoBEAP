@@ -70,7 +70,7 @@ Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details.
 
 # Citations
 If you use MitoBEAP in your work, please cite:
-Mutti et al. Development of the Mitochondrial Base Editor Analysis Package (MitoBEAP).
+Mutti et al. Development of the Mitochondrial Base Editor Analysis Package (MitoBEAP). BMC Bioinformatics 2026
 
 ---
 
