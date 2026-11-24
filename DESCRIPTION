@@ -1,7 +1,7 @@
 Package: MitoBEAP
 Type: Package
 Title: Mitochondrial Base Editor Analysis Package (MitoBEAP)
-Version: 0.1.2
+Version: 0.1.3
 Authors@R: c(
     person(
       "Lindsey", "Van Haute",
