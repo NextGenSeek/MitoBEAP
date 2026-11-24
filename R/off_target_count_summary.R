@@ -24,7 +24,8 @@
 #'   Default is `TRUE`.
 #' @param combined_col_in_samplelist Character. Name of the column in
 #'   `SampleList` containing the combined sample/group name.
-#'   Default is `"CombinedName"`.
+#'   Defaults to `"CombinedName"`. If this column is absent,
+#'   `"SampleName"` is used instead.
 #' @param condition_col Character. Name of the column containing the experimental
 #'   condition. Default is `"Condition"`.
 #' @param OntargetPosition Optional numeric vector containing one or more
@@ -75,7 +76,18 @@ off_target_count_summary <- function(
     stopifnot(is.data.frame(Adj), is.data.frame(SampleList))
     stopifnot(all(c("FileName", "AdjPercentage") %in% names(Adj)))
     stopifnot("FileName" %in% names(SampleList))
-    stopifnot(combined_col_in_samplelist %in% names(SampleList))
+    # Use SampleName if CombinedName is not available
+    if (!(combined_col_in_samplelist %in% names(SampleList))) {
+      if ("SampleName" %in% names(SampleList)) {
+        combined_col_in_samplelist <- "SampleName"
+      } else {
+        stop(
+          "SampleList must contain either '",
+          combined_col_in_samplelist,
+          "' or 'SampleName'."
+        )
+      }
+    }
     stopifnot(condition_col %in% names(Adj) || condition_col %in% names(SampleList))
 
     if (!is.null(out_dir) && !dir.exists(out_dir))

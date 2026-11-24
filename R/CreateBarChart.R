@@ -89,15 +89,17 @@ CreateBarChart <- function(
   df$FileName  <- gsub("_mean|_ontarget", "", df$FileName)
   df[[perc_col]] <- as.numeric(df[[perc_col]])
 
-  ## Map to sample names / order
-  df$SampleName <- SampleList$SampleName[match(df$FileName,
-                                               SampleList$FileName)]
-  df$Order      <- SampleList$Order[match(df$FileName,
-                                          SampleList$FileName)]
+  # Use Order if available, otherwise preserve sample sheet order
+  if ("Order" %in% names(SampleList)) {
+    sample_order <- order(SampleList$Order)
+  } else {
+    sample_order <- seq_len(nrow(SampleList))
+  }
 
-  df$SampleName <- factor(df$SampleName,
-                          levels = rev(SampleList$SampleName[
-                            order(SampleList$Order)]))
+  df$SampleName <- factor(
+    df$SampleName,
+    levels = rev(unique(SampleList$SampleName[sample_order]))
+  )
 
   ## ------------------------------------------------------------------------
   ## 4.  Build the bar chart

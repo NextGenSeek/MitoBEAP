@@ -173,7 +173,11 @@ OnVsOffTargetAdj <- function(
     ggrepel::geom_text_repel(
       ggplot2::aes(label = .data$SampleName),
       size = label_size,
-      box.padding = grid::unit(0.3, "lines")
+      box.padding = grid::unit(0.3, "lines"),
+      point.padding = grid::unit(0.2, "lines"),
+      max.overlaps = Inf,
+      min.segment.length = 0,
+      seed = 123
     ) +
     ggplot2::expand_limits(
       x = 0,

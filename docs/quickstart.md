@@ -73,15 +73,17 @@ For cytosine base editors:
 ```r
 MinXFiles <- list.files("./minimum", full.names = TRUE)
 OntargetPosition <- 1561
-lapply(MinXFiles, OnTargetCalcCBE)
+lapply(MinXFiles, OnTargetCalcCBE,
+       OntargetPosition = OntargetPosition)
 ```
 
 For adenine base editors:
 
 ```r
 MinXFiles <- list.files("./minimum", full.names = TRUE)
-OntargetPosition <- 1561
-lapply(MinXFiles, OnTargetCalcABE)
+OntargetPosition <- 8071
+lapply(MinXFiles, OnTargetCalcABE,
+       OntargetPosition = OntargetPosition)
 ```
 
 ## 7. Generate summary tables
@@ -96,19 +98,40 @@ Mean <- as.data.frame(MeanCalc(MeanFiles))
 OnTargetFiles <- list.files("./OnTarget", pattern = "*ontarget.txt", full.names = TRUE)
 OnTarget <- as.data.frame(CombineOnTarget(OnTargetFiles))
 
-CreateOverview()
+Overview <- CreateOverview(
+    All_mean = Mean,
+    OnTarget = OnTarget,
+    Coverage = Coverage,
+    SampleList = SampleList
+)
 ```
 
 ## 8. Create your first plot
 
 ```r
-CreateBarChart(data_type = "OnTarget", colour = "lightgreen")
+CreateBarChart(
+  data_type = "OnTarget",
+  colour = "lightgreen",
+  All_ontarget = OnTarget,
+  SampleList = SampleList
+)
+
+# Generate adjusted editing data
+Adj <- DdCBE_df(
+  min_threshold = 0,
+  max_threshold = 70,
+  controls = 2,
+  SampleList = SampleList
+)
 ```
 
 Other common plots:
 
 ```r
-AdjScatter()
+AdjScatter(
+  Adj = Adj,
+  OntargetPosition = OntargetPosition
+)
 OnVsOffTargetAdj()
 Bystander()
 bystander_only_relevant()

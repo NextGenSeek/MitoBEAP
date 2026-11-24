@@ -55,7 +55,8 @@ Default is `TRUE`.}
 
 \item{combined_col_in_samplelist}{Character. Name of the column in
 `SampleList` containing the combined sample/group name.
-Default is `"CombinedName"`.}
+Defaults to `"CombinedName"`. If this column is absent,
+`"SampleName"` is used instead.}
 
 \item{condition_col}{Character. Name of the column containing the experimental
 condition. Default is `"Condition"`.}
